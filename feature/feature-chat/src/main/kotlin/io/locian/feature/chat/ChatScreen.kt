@@ -1,6 +1,15 @@
 package io.locian.feature.chat
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -28,8 +37,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.SmartToy
 import androidx.compose.material.icons.filled.Stop
@@ -51,23 +63,28 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import io.locian.core.common.Formatters
 import io.locian.core.model.ChatMessage
 import io.locian.core.model.ChatRole
 import io.locian.core.ui.components.MarkdownContent
 import io.locian.core.ui.components.TelemetryPill
 import io.locian.core.ui.theme.CyanNeon
 import io.locian.core.ui.theme.UserBubbleDark
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -214,6 +231,9 @@ fun MessageBubble(
     modifier: Modifier = Modifier
 ) {
     val isUser = message.role == ChatRole.USER
+    val context = LocalContext.current
+    var isCopied by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -238,7 +258,7 @@ fun MessageBubble(
         }
 
         Column(
-            modifier = Modifier.widthIn(max = 320.dp),
+            modifier = Modifier.widthIn(max = 330.dp),
             horizontalAlignment = if (isUser) Alignment.End else Alignment.Start
         ) {
             Box(
@@ -271,13 +291,49 @@ fun MessageBubble(
                 }
             }
 
-            if (!isUser) {
-                TelemetryPill(
-                    tokensPerSecond = message.tokensPerSecond,
-                    timeToFirstTokenMs = message.timeToFirstTokenMs,
-                    totalTokens = message.totalTokens,
-                    modifier = Modifier.padding(top = 4.dp)
+            // Message footer (timestamp, telemetry, copy action)
+            Row(
+                modifier = Modifier
+                    .padding(top = 4.dp, start = 4.dp, end = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Text(
+                    text = Formatters.formatTimestamp(message.timestamp),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                    fontSize = 10.sp
                 )
+
+                // Copy button
+                IconButton(
+                    onClick = {
+                        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                        clipboard.setPrimaryClip(ClipData.newPlainText("Message", message.content))
+                        isCopied = true
+                        Toast.makeText(context, "Message copied", Toast.LENGTH_SHORT).show()
+                        scope.launch {
+                            delay(2000)
+                            isCopied = false
+                        }
+                    },
+                    modifier = Modifier.size(20.dp)
+                ) {
+                    Icon(
+                        imageVector = if (isCopied) Icons.Default.Check else Icons.Default.ContentCopy,
+                        contentDescription = "Copy message",
+                        tint = if (isCopied) CyanNeon else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                        modifier = Modifier.size(12.dp)
+                    )
+                }
+
+                if (!isUser) {
+                    TelemetryPill(
+                        tokensPerSecond = message.tokensPerSecond,
+                        timeToFirstTokenMs = message.timeToFirstTokenMs,
+                        totalTokens = message.totalTokens
+                    )
+                }
             }
         }
     }
@@ -288,6 +344,17 @@ fun AssistantStreamingBubble(
     text: String,
     modifier: Modifier = Modifier
 ) {
+    val infiniteTransition = rememberInfiniteTransition(label = "cursor")
+    val cursorAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.2f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(500),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "cursorAlpha"
+    )
+
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Start
@@ -310,7 +377,7 @@ fun AssistantStreamingBubble(
 
         Box(
             modifier = Modifier
-                .widthIn(max = 320.dp)
+                .widthIn(max = 330.dp)
                 .clip(
                     RoundedCornerShape(
                         topStart = 16.dp,
@@ -327,10 +394,20 @@ fun AssistantStreamingBubble(
                 )
                 .padding(horizontal = 14.dp, vertical = 10.dp)
         ) {
-            MarkdownContent(
-                content = text,
-                textColor = MaterialTheme.colorScheme.onSurface
-            )
+            Column {
+                MarkdownContent(
+                    content = text,
+                    textColor = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                // Pulsing typing indicator dot
+                Box(
+                    modifier = Modifier
+                        .size(8.dp)
+                        .clip(CircleShape)
+                        .background(CyanNeon.copy(alpha = cursorAlpha))
+                )
+            }
         }
     }
 }

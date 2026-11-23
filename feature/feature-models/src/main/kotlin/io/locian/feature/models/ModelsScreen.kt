@@ -22,13 +22,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.Memory
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -46,12 +48,14 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -79,6 +83,7 @@ fun ModelsScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var selectedTab by remember { mutableIntStateOf(0) }
     val snackbarHostState = remember { SnackbarHostState() }
+    var modelPendingDeletion by remember { mutableStateOf<ModelInfo?>(null) }
 
     val filePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -101,7 +106,7 @@ fun ModelsScreen(
                 title = { Text("Model Manager", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 actions = {
@@ -187,13 +192,12 @@ fun ModelsScreen(
                         CuratedModelCard(
                             model = model,
                             isDownloaded = downloadedMatch != null,
-                            downloadedPath = downloadedMatch?.localPath,
                             isActive = isActive,
                             downloadProgress = progress,
-                            isLoading = uiState.isLoadingModel && isActive,
                             deviceRamGb = (uiState.hardwareInfo?.totalRamMb ?: 4096) / 1024,
                             onDownload = { viewModel.downloadModel(model) },
-                            onLoad = { downloadedMatch?.let { viewModel.loadModel(it) } }
+                            onLoad = { downloadedMatch?.let { viewModel.loadModel(it) } },
+                            onDelete = { modelPendingDeletion = downloadedMatch ?: model }
                         )
                     }
                 }
@@ -237,12 +241,60 @@ fun ModelsScreen(
                             model = model,
                             isActive = uiState.activeModelId == model.id,
                             onLoad = { viewModel.loadModel(model) },
-                            onDelete = { viewModel.deleteModel(model) }
+                            onDelete = { modelPendingDeletion = model }
                         )
                     }
                 }
             }
         }
+    }
+
+    // Deletion confirmation dialog
+    modelPendingDeletion?.let { modelToDelete ->
+        AlertDialog(
+            onDismissRequest = { modelPendingDeletion = null },
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.DeleteForever,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.size(32.dp)
+                )
+            },
+            title = {
+                Text("Delete Model?", fontWeight = FontWeight.Bold)
+            },
+            text = {
+                Column {
+                    Text(
+                        text = "Are you sure you want to delete ${modelToDelete.name} (${Formatters.formatBytes(modelToDelete.sizeBytes)})?",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = "This will permanently delete the downloaded GGUF file from your device storage to free up disk space.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.deleteModel(modelToDelete)
+                        modelPendingDeletion = null
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                ) {
+                    Text("Delete Model")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { modelPendingDeletion = null }) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 }
 
@@ -250,13 +302,12 @@ fun ModelsScreen(
 fun CuratedModelCard(
     model: ModelInfo,
     isDownloaded: Boolean,
-    downloadedPath: String?,
     isActive: Boolean,
     downloadProgress: io.locian.core.model.DownloadProgress?,
-    isLoading: Boolean,
     deviceRamGb: Long,
     onDownload: () -> Unit,
     onLoad: () -> Unit,
+    onDelete: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val isDownloading = downloadProgress?.status == DownloadStatus.DOWNLOADING
@@ -320,19 +371,56 @@ fun CuratedModelCard(
                 }
 
                 if (isDownloaded) {
-                    if (isActive) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.Check, contentDescription = null, tint = CyanNeon, modifier = Modifier.size(16.dp))
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text("Active", color = CyanNeon, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        if (isActive) {
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(6.dp))
+                                    .background(CyanNeon.copy(alpha = 0.15f))
+                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        Icons.Default.Check,
+                                        contentDescription = null,
+                                        tint = CyanNeon,
+                                        modifier = Modifier.size(14.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        "Active",
+                                        color = CyanNeon,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                        } else {
+                            Button(
+                                onClick = onLoad,
+                                shape = RoundedCornerShape(8.dp),
+                                colors = ButtonDefaults.buttonColors(containerColor = CyanNeon, contentColor = Color.Black)
+                            ) {
+                                Icon(Icons.Default.PlayArrow, contentDescription = null, modifier = Modifier.size(16.dp))
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text("Load")
+                            }
                         }
-                    } else {
-                        Button(
-                            onClick = onLoad,
-                            shape = RoundedCornerShape(8.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = CyanNeon, contentColor = Color.Black)
+
+                        // Option to delete the model right after download
+                        IconButton(
+                            onClick = onDelete,
+                            modifier = Modifier.size(36.dp)
                         ) {
-                            Text("Load")
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "Delete downloaded model",
+                                tint = MaterialTheme.colorScheme.error.copy(alpha = 0.85f),
+                                modifier = Modifier.size(20.dp)
+                            )
                         }
                     }
                 } else if (isDownloading) {
@@ -424,14 +512,21 @@ fun DownloadedModelCard(
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (isActive) {
-                    Text("Active", color = CyanNeon, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(CyanNeon.copy(alpha = 0.15f))
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                    ) {
+                        Text("Active", color = CyanNeon, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold)
+                    }
                 } else {
                     IconButton(onClick = onLoad) {
                         Icon(Icons.Default.PlayArrow, contentDescription = "Load model", tint = CyanNeon)
                     }
                 }
                 IconButton(onClick = onDelete) {
-                    Icon(Icons.Default.Delete, contentDescription = "Delete", tint = MaterialTheme.colorScheme.error)
+                    Icon(Icons.Default.Delete, contentDescription = "Delete model", tint = MaterialTheme.colorScheme.error)
                 }
             }
         }

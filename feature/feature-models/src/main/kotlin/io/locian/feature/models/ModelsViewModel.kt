@@ -97,7 +97,7 @@ class ModelsViewModel @Inject constructor(
     }
 
     fun loadModel(model: ModelInfo) {
-        val path = model.localPath ?: return
+        val path = model.localPath ?: File(context.filesDir, "models/${model.filename}").absolutePath
         viewModelScope.launch {
             _uiState.update { it.copy(isLoadingModel = true, userMessage = "Loading ${model.name}...") }
             val config = appPreferences.inferenceConfig.first()
@@ -127,14 +127,21 @@ class ModelsViewModel @Inject constructor(
     }
 
     fun deleteModel(model: ModelInfo) {
-        val path = model.localPath ?: return
+        val candidatePath = model.localPath ?: File(context.filesDir, "models/${model.filename}").absolutePath
         viewModelScope.launch {
             if (_uiState.value.activeModelId == model.id) {
                 loadModelUseCase.unloadModel()
                 appPreferences.clearActiveModel()
             }
-            modelRepository.deleteModel(model.id, path)
-            _uiState.update { it.copy(userMessage = "${model.name} deleted") }
+            modelRepository.deleteModel(model.id, candidatePath)
+            _uiState.update { state ->
+                val map = state.downloadProgressMap.toMutableMap()
+                map.remove(model.id)
+                state.copy(
+                    downloadProgressMap = map,
+                    userMessage = "${model.name} deleted to free device storage."
+                )
+            }
         }
     }
 
