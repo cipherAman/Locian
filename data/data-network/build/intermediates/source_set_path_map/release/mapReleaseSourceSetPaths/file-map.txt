@@ -1,0 +1,9 @@
+io.locian.data.network.data-network-release-0 /mnt/devzone/Locian/core/core-common/build/intermediates/packaged_res/release/packageReleaseResources
+io.locian.data.network.data-network-release-1 /mnt/devzone/Locian/core/core-model/build/intermediates/packaged_res/release/packageReleaseResources
+io.locian.data.network.data-network-pngs-2 /mnt/devzone/Locian/data/data-network/build/generated/res/pngs/release
+io.locian.data.network.data-network-resValues-3 /mnt/devzone/Locian/data/data-network/build/generated/res/resValues/release
+io.locian.data.network.data-network-mergeReleaseResources-4 /mnt/devzone/Locian/data/data-network/build/intermediates/incremental/release/mergeReleaseResources/merged.dir
+io.locian.data.network.data-network-mergeReleaseResources-5 /mnt/devzone/Locian/data/data-network/build/intermediates/incremental/release/mergeReleaseResources/stripped.dir
+io.locian.data.network.data-network-release-6 /mnt/devzone/Locian/data/data-network/build/intermediates/merged_res/release/mergeReleaseResources
+io.locian.data.network.data-network-main-7 /mnt/devzone/Locian/data/data-network/src/main/res
+io.locian.data.network.data-network-release-8 /mnt/devzone/Locian/data/data-network/src/release/res

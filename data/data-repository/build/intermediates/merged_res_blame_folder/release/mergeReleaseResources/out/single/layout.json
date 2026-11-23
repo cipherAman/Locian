@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "io.locian.data.repository.data-repository-release-25:/layout/notification_template_part_time.xml",
+        "source": "io.locian.data.repository.data-repository-core-1.8.0-8:/layout/notification_template_part_time.xml"
+    },
+    {
+        "merged": "io.locian.data.repository.data-repository-release-25:/layout/custom_dialog.xml",
+        "source": "io.locian.data.repository.data-repository-core-1.8.0-8:/layout/custom_dialog.xml"
+    },
+    {
+        "merged": "io.locian.data.repository.data-repository-release-25:/layout/notification_template_part_chronometer.xml",
+        "source": "io.locian.data.repository.data-repository-core-1.8.0-8:/layout/notification_template_part_chronometer.xml"
+    }
+]

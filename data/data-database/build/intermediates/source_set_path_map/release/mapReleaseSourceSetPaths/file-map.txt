@@ -1,0 +1,15 @@
+io.locian.data.database.data-database-room-runtime-2.6.1-0 /mnt/devzone/.gradle/caches/8.11.1/transforms/67a113d7f56ba4c776d7ee61ea4d61d8/transformed/room-runtime-2.6.1/res
+io.locian.data.database.data-database-sqlite-framework-2.4.0-1 /mnt/devzone/.gradle/caches/8.11.1/transforms/6a823595fbac88710ecc4f61dcdd8a6e/transformed/sqlite-framework-2.4.0/res
+io.locian.data.database.data-database-core-runtime-2.2.0-2 /mnt/devzone/.gradle/caches/8.11.1/transforms/95f7e38128a6d67471670fc979ba8190/transformed/core-runtime-2.2.0/res
+io.locian.data.database.data-database-sqlite-2.4.0-3 /mnt/devzone/.gradle/caches/8.11.1/transforms/a89320f18c344797123a307430222e08/transformed/sqlite-2.4.0/res
+io.locian.data.database.data-database-room-ktx-2.6.1-4 /mnt/devzone/.gradle/caches/8.11.1/transforms/cd00124e273f7b8732a2ea56b0c59df9/transformed/room-ktx-2.6.1/res
+io.locian.data.database.data-database-annotation-experimental-1.1.0-rc01-5 /mnt/devzone/.gradle/caches/8.11.1/transforms/fc9a777704d156dcc082878b4eb808a0/transformed/annotation-experimental-1.1.0-rc01/res
+io.locian.data.database.data-database-release-6 /mnt/devzone/Locian/core/core-common/build/intermediates/packaged_res/release/packageReleaseResources
+io.locian.data.database.data-database-release-7 /mnt/devzone/Locian/core/core-model/build/intermediates/packaged_res/release/packageReleaseResources
+io.locian.data.database.data-database-pngs-8 /mnt/devzone/Locian/data/data-database/build/generated/res/pngs/release
+io.locian.data.database.data-database-resValues-9 /mnt/devzone/Locian/data/data-database/build/generated/res/resValues/release
+io.locian.data.database.data-database-mergeReleaseResources-10 /mnt/devzone/Locian/data/data-database/build/intermediates/incremental/release/mergeReleaseResources/merged.dir
+io.locian.data.database.data-database-mergeReleaseResources-11 /mnt/devzone/Locian/data/data-database/build/intermediates/incremental/release/mergeReleaseResources/stripped.dir
+io.locian.data.database.data-database-release-12 /mnt/devzone/Locian/data/data-database/build/intermediates/merged_res/release/mergeReleaseResources
+io.locian.data.database.data-database-main-13 /mnt/devzone/Locian/data/data-database/src/main/res
+io.locian.data.database.data-database-release-14 /mnt/devzone/Locian/data/data-database/src/release/res

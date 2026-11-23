@@ -1,0 +1,22 @@
+[
+    {
+        "merged": "io.locian.data.repository.data-repository-release-25:/drawable-mdpi-v4/notify_panel_notification_icon_bg.png",
+        "source": "io.locian.data.repository.data-repository-core-1.8.0-8:/drawable-mdpi-v4/notify_panel_notification_icon_bg.png"
+    },
+    {
+        "merged": "io.locian.data.repository.data-repository-release-25:/drawable-mdpi-v4/notification_bg_low_normal.9.png",
+        "source": "io.locian.data.repository.data-repository-core-1.8.0-8:/drawable-mdpi-v4/notification_bg_low_normal.9.png"
+    },
+    {
+        "merged": "io.locian.data.repository.data-repository-release-25:/drawable-mdpi-v4/notification_bg_low_pressed.9.png",
+        "source": "io.locian.data.repository.data-repository-core-1.8.0-8:/drawable-mdpi-v4/notification_bg_low_pressed.9.png"
+    },
+    {
+        "merged": "io.locian.data.repository.data-repository-release-25:/drawable-mdpi-v4/notification_bg_normal_pressed.9.png",
+        "source": "io.locian.data.repository.data-repository-core-1.8.0-8:/drawable-mdpi-v4/notification_bg_normal_pressed.9.png"
+    },
+    {
+        "merged": "io.locian.data.repository.data-repository-release-25:/drawable-mdpi-v4/notification_bg_normal.9.png",
+        "source": "io.locian.data.repository.data-repository-core-1.8.0-8:/drawable-mdpi-v4/notification_bg_normal.9.png"
+    }
+]

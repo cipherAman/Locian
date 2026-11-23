@@ -1,0 +1,7 @@
+io.locian.core.model.core-model-pngs-0 /mnt/devzone/Locian/core/core-model/build/generated/res/pngs/release
+io.locian.core.model.core-model-resValues-1 /mnt/devzone/Locian/core/core-model/build/generated/res/resValues/release
+io.locian.core.model.core-model-mergeReleaseResources-2 /mnt/devzone/Locian/core/core-model/build/intermediates/incremental/release/mergeReleaseResources/merged.dir
+io.locian.core.model.core-model-mergeReleaseResources-3 /mnt/devzone/Locian/core/core-model/build/intermediates/incremental/release/mergeReleaseResources/stripped.dir
+io.locian.core.model.core-model-release-4 /mnt/devzone/Locian/core/core-model/build/intermediates/merged_res/release/mergeReleaseResources
+io.locian.core.model.core-model-main-5 /mnt/devzone/Locian/core/core-model/src/main/res
+io.locian.core.model.core-model-release-6 /mnt/devzone/Locian/core/core-model/src/release/res

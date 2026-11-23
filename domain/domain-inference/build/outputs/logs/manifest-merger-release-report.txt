@@ -1,0 +1,16 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /mnt/devzone/Locian/domain/domain-inference/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest1241018578670654085.xml:2:13-83
+INJECTED from /mnt/devzone/Locian/domain/domain-inference/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest1241018578670654085.xml:2:13-83
+	package
+		INJECTED from /mnt/devzone/Locian/domain/domain-inference/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest1241018578670654085.xml
+	xmlns:android
+		ADDED from /mnt/devzone/Locian/domain/domain-inference/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest1241018578670654085.xml:2:23-81
+uses-sdk
+INJECTED from /mnt/devzone/Locian/domain/domain-inference/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest1241018578670654085.xml reason: use-sdk injection requested
+INJECTED from /mnt/devzone/Locian/domain/domain-inference/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest1241018578670654085.xml
+INJECTED from /mnt/devzone/Locian/domain/domain-inference/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest1241018578670654085.xml
+	android:targetSdkVersion
+		INJECTED from /mnt/devzone/Locian/domain/domain-inference/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest1241018578670654085.xml
+	android:minSdkVersion
+		INJECTED from /mnt/devzone/Locian/domain/domain-inference/build/intermediates/tmp/ProcessLibraryManifest/release/tempAndroidManifest1241018578670654085.xml

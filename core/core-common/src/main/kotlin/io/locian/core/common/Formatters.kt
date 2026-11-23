@@ -1,0 +1,29 @@
+package io.locian.core.common
+
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
+object Formatters {
+    fun formatBytes(bytes: Long): String {
+        if (bytes <= 0) return "0 B"
+        val units = arrayOf("B", "KB", "MB", "GB", "TB")
+        val digitGroups = (Math.log10(bytes.toDouble()) / Math.log10(1024.0)).toInt()
+        val index = digitGroups.coerceIn(0, units.size - 1)
+        val value = bytes / Math.pow(1024.0, index.toDouble())
+        return String.format(Locale.US, "%.1f %s", value, units[index])
+    }
+
+    fun formatSpeed(bytesPerSec: Long): String {
+        return "${formatBytes(bytesPerSec)}/s"
+    }
+
+    fun formatTokensPerSecond(tokPerSec: Float): String {
+        return String.format(Locale.US, "%.1f tok/s", tokPerSec)
+    }
+
+    fun formatTimestamp(timestamp: Long): String {
+        val sdf = SimpleDateFormat("MMM d, HH:mm", Locale.getDefault())
+        return sdf.format(Date(timestamp))
+    }
+}

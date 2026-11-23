@@ -1,0 +1,16 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /mnt/devzone/Locian/data/data-network/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest10338448049378823929.xml:2:13-83
+INJECTED from /mnt/devzone/Locian/data/data-network/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest10338448049378823929.xml:2:13-83
+	package
+		INJECTED from /mnt/devzone/Locian/data/data-network/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest10338448049378823929.xml
+	xmlns:android
+		ADDED from /mnt/devzone/Locian/data/data-network/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest10338448049378823929.xml:2:23-81
+uses-sdk
+INJECTED from /mnt/devzone/Locian/data/data-network/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest10338448049378823929.xml reason: use-sdk injection requested
+INJECTED from /mnt/devzone/Locian/data/data-network/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest10338448049378823929.xml
+INJECTED from /mnt/devzone/Locian/data/data-network/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest10338448049378823929.xml
+	android:targetSdkVersion
+		INJECTED from /mnt/devzone/Locian/data/data-network/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest10338448049378823929.xml
+	android:minSdkVersion
+		INJECTED from /mnt/devzone/Locian/data/data-network/build/intermediates/tmp/ProcessLibraryManifest/debug/tempAndroidManifest10338448049378823929.xml
