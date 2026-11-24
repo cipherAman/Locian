@@ -10,13 +10,11 @@ import io.locian.domain.inference.usecases.ManageConversationUseCase
 import io.locian.domain.inference.usecases.StreamChatResponseUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -46,6 +44,7 @@ class ChatViewModel @Inject constructor(
     val uiState: StateFlow<ChatUiState> = _uiState.asStateFlow()
 
     private var streamJob: Job? = null
+    private var messagesJob: Job? = null
 
     init {
         appPreferences.activeModelName.onEach { modelName ->
@@ -58,13 +57,46 @@ class ChatViewModel @Inject constructor(
     }
 
     fun setConversation(id: Long) {
-        _uiState.update { it.copy(conversationId = id) }
-        manageConversationUseCase.getMessages(id).onEach { msgs ->
-            _uiState.update { it.copy(messages = msgs) }
-        }.launchIn(viewModelScope)
+        // Stop any active generation and reset native engine session memory
+        stopGeneration()
+        streamChatResponseUseCase.clearSession()
+
+        // Cancel previous message observer to avoid leaking or overwriting messages
+        messagesJob?.cancel()
+
+        viewModelScope.launch {
+            val conv = manageConversationUseCase.getConversation(id)
+            val title = conv?.title ?: "Chat"
+
+            _uiState.update {
+                it.copy(
+                    conversationId = id,
+                    conversationTitle = title,
+                    messages = emptyList(),
+                    streamingText = "",
+                    isGenerating = false,
+                    errorMessage = null
+                )
+            }
+
+            messagesJob = manageConversationUseCase.getMessages(id).onEach { msgs ->
+                _uiState.update { it.copy(messages = msgs) }
+            }.launchIn(viewModelScope)
+        }
     }
 
     fun startNewConversation() {
+        // 1. Immediately abort active inference
+        stopGeneration()
+
+        // 2. Clear native LLM context & session cache so past conversation context is not retained
+        streamChatResponseUseCase.clearSession()
+
+        // 3. Cancel the message stream listener for the previous conversation
+        messagesJob?.cancel()
+        messagesJob = null
+
+        // 4. Reset UI state to a clean slate
         _uiState.update {
             it.copy(
                 conversationId = null,
@@ -72,7 +104,10 @@ class ChatViewModel @Inject constructor(
                 messages = emptyList(),
                 streamingText = "",
                 isGenerating = false,
-                errorMessage = null
+                errorMessage = null,
+                latestSpeed = null,
+                latestTtft = null,
+                latestTokens = null
             )
         }
     }
@@ -95,8 +130,10 @@ class ChatViewModel @Inject constructor(
                     modelId = _uiState.value.activeModelName ?: "model"
                 )
                 _uiState.update { it.copy(conversationId = convId, conversationTitle = title) }
-                // Start observing messages for the new conversation
-                manageConversationUseCase.getMessages(convId).onEach { msgs ->
+
+                // Cancel previous and start observing messages for the new conversation
+                messagesJob?.cancel()
+                messagesJob = manageConversationUseCase.getMessages(convId).onEach { msgs ->
                     _uiState.update { it.copy(messages = msgs) }
                 }.launchIn(viewModelScope)
             }
@@ -106,15 +143,18 @@ class ChatViewModel @Inject constructor(
                 role = ChatRole.USER,
                 content = trimmed
             )
-            streamChatResponseUseCase.saveMessage(userMsg)
 
+            // Optimistically append user message so it shows immediately in the UI
             _uiState.update {
                 it.copy(
+                    messages = it.messages + userMsg,
                     isGenerating = true,
                     streamingText = "",
                     errorMessage = null
                 )
             }
+
+            streamChatResponseUseCase.saveMessage(userMsg)
 
             val accumulated = StringBuilder()
             var tokenCount = 0
@@ -133,7 +173,6 @@ class ChatViewModel @Inject constructor(
                         )
                     }
                 }
-                .onEach { }
                 .launchIn(viewModelScope)
 
             streamJob?.invokeOnCompletion { cause ->
@@ -169,6 +208,7 @@ class ChatViewModel @Inject constructor(
 
     fun stopGeneration() {
         streamJob?.cancel()
+        streamJob = null
         streamChatResponseUseCase.stopGeneration()
         _uiState.update { it.copy(isGenerating = false) }
     }

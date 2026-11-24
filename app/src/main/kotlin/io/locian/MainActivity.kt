@@ -84,6 +84,11 @@ fun LocianAppRoot() {
                     chatViewModel.startNewConversation()
                     coroutineScope.launch { drawerState.close() }
                 },
+                onDeleteConversation = { convId ->
+                    if (chatUiState.conversationId == convId) {
+                        chatViewModel.startNewConversation()
+                    }
+                },
                 onNavigateToModels = {
                     navController.navigate(AppDestinations.MODELS)
                     coroutineScope.launch { drawerState.close() }

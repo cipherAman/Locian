@@ -26,6 +26,10 @@ class StreamChatResponseUseCase @Inject constructor(
         inferenceRepository.stopGeneration()
     }
 
+    fun clearSession() {
+        inferenceRepository.clearSessionMessages()
+    }
+
     suspend fun saveMessage(message: ChatMessage) {
         chatRepository.saveMessage(message)
     }
@@ -65,6 +69,8 @@ class ManageConversationUseCase @Inject constructor(
     fun getAllConversations(): Flow<List<Conversation>> = chatRepository.getAllConversations()
 
     fun getMessages(conversationId: Long): Flow<List<ChatMessage>> = chatRepository.getMessages(conversationId)
+
+    suspend fun getConversation(id: Long): Conversation? = chatRepository.getConversation(id)
 
     suspend fun createConversation(title: String, modelId: String, systemPrompt: String? = null): Long {
         return chatRepository.createConversation(title, modelId, systemPrompt)

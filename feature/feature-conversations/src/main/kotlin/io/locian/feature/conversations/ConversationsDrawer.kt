@@ -58,6 +58,7 @@ fun ConversationsDrawerContent(
     activeConversationId: Long?,
     onSelectConversation: (Long) -> Unit,
     onNewChat: () -> Unit,
+    onDeleteConversation: (Long) -> Unit = {},
     onNavigateToModels: () -> Unit,
     onNavigateToSettings: () -> Unit,
     modifier: Modifier = Modifier
@@ -192,7 +193,10 @@ fun ConversationsDrawerContent(
                                 )
                             }
                             IconButton(
-                                onClick = { viewModel.deleteConversation(conv.id) },
+                                onClick = {
+                                    viewModel.deleteConversation(conv.id)
+                                    onDeleteConversation(conv.id)
+                                },
                                 modifier = Modifier.size(28.dp)
                             ) {
                                 Icon(
