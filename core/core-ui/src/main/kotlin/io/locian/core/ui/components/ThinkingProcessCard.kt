@@ -70,18 +70,11 @@ fun ThinkingProcessCard(
     thinking: String,
     isStillThinking: Boolean,
     modifier: Modifier = Modifier,
-    initialExpanded: Boolean? = null
+    initialExpanded: Boolean = false
 ) {
-    // By default: expand while actively thinking so the user sees progress, collapse when finished
+    // Collapsed by default
     var isExpanded by remember {
-        mutableStateOf(initialExpanded ?: isStillThinking)
-    }
-
-    // Auto-expand if thinking starts afresh, and allow user toggle
-    LaunchedEffect(isStillThinking) {
-        if (isStillThinking) {
-            isExpanded = true
-        }
+        mutableStateOf(initialExpanded)
     }
 
     val context = LocalContext.current
