@@ -29,6 +29,7 @@ class AppPreferences(private val context: Context) {
         val KEY_USE_MMAP = booleanPreferencesKey("use_mmap")
         val KEY_SYSTEM_PROMPT = stringPreferencesKey("system_prompt")
         val KEY_DARK_THEME = booleanPreferencesKey("is_dark_theme")
+        val KEY_SHOW_THINKING = booleanPreferencesKey("show_thinking")
     }
 
     val activeModelId: Flow<String?> = context.dataStore.data.map { it[KEY_ACTIVE_MODEL_ID] }
@@ -48,6 +49,7 @@ class AppPreferences(private val context: Context) {
     }
 
     val isDarkTheme: Flow<Boolean?> = context.dataStore.data.map { it[KEY_DARK_THEME] }
+    val showThinking: Flow<Boolean> = context.dataStore.data.map { it[KEY_SHOW_THINKING] ?: true }
 
     suspend fun setActiveModel(modelId: String, name: String, localPath: String) {
         context.dataStore.edit { prefs ->
@@ -84,6 +86,12 @@ class AppPreferences(private val context: Context) {
             } else {
                 prefs[KEY_DARK_THEME] = isDark
             }
+        }
+    }
+
+    suspend fun setShowThinking(show: Boolean) {
+        context.dataStore.edit { prefs ->
+            prefs[KEY_SHOW_THINKING] = show
         }
     }
 }

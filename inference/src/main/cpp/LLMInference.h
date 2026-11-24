@@ -20,6 +20,7 @@ class LLMInference {
     std::string _response;
     std::string _cacheResponseTokens;
     bool _storeChats = false;
+    bool _promptPrefilledThink = false;
 
     int64_t _responseGenerationTime = 0;
     long    _responseNumTokens      = 0;

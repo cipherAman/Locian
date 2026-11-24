@@ -78,6 +78,7 @@ LLMInference::clearMessages() {
     _messages.clear();
     _response.clear();
     _cacheResponseTokens.clear();
+    _promptPrefilledThink = false;
     if (_ctx) {
         llama_memory_clear(llama_get_memory(_ctx), false);
     }
@@ -147,6 +148,16 @@ LLMInference::startCompletion(const char *query) {
     }
     _promptTokens = common_tokenize(llama_model_get_vocab(_model), prompt, true, true);
 
+    _promptPrefilledThink = false;
+    size_t lastThink = prompt.rfind("<think>");
+    if (lastThink != std::string::npos) {
+        size_t lastCloseThink = prompt.rfind("</think>");
+        if (lastCloseThink == std::string::npos || lastCloseThink < lastThink) {
+            _promptPrefilledThink = true;
+            LOGi("Detected unclosed <think> tag prefilled in prompt");
+        }
+    }
+
     delete _batch;
     _batch = new llama_batch(llama_batch_get_one(_promptTokens.data(), _promptTokens.size()));
 
@@ -186,6 +197,12 @@ LLMInference::_isValidUtf8(const char *response) {
 
 std::string
 LLMInference::completionLoop() {
+    if (_promptPrefilledThink) {
+        _promptPrefilledThink = false;
+        _response += "<think>\n";
+        return "<think>\n";
+    }
+
     uint32_t contextSize = llama_n_ctx(_ctx);
     _nCtxUsed = llama_memory_seq_pos_max(llama_get_memory(_ctx), 0) + 1;
     if (_nCtxUsed + _batch->n_tokens > contextSize) {

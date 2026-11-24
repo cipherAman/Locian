@@ -27,6 +27,7 @@ data class ChatUiState(
     val streamingText: String = "",
     val activeModelName: String? = null,
     val isModelLoaded: Boolean = false,
+    val showThinking: Boolean = true,
     val latestSpeed: Float? = null,
     val latestTtft: Long? = null,
     val latestTokens: Int? = null,
@@ -53,6 +54,10 @@ class ChatViewModel @Inject constructor(
 
         appPreferences.activeModelPath.onEach { path ->
             _uiState.update { it.copy(isModelLoaded = !path.isNullOrEmpty()) }
+        }.launchIn(viewModelScope)
+
+        appPreferences.showThinking.onEach { show ->
+            _uiState.update { it.copy(showThinking = show) }
         }.launchIn(viewModelScope)
     }
 

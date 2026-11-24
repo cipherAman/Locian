@@ -20,6 +20,7 @@ import javax.inject.Inject
 data class SettingsUiState(
     val config: InferenceConfig = InferenceConfig(),
     val isDarkTheme: Boolean? = null,
+    val showThinking: Boolean = true,
     val maxCpuCores: Int = 8
 )
 
@@ -42,6 +43,10 @@ class SettingsViewModel @Inject constructor(
         appPreferences.isDarkTheme.onEach { dark ->
             _uiState.update { it.copy(isDarkTheme = dark) }
         }.launchIn(viewModelScope)
+
+        appPreferences.showThinking.onEach { show ->
+            _uiState.update { it.copy(showThinking = show) }
+        }.launchIn(viewModelScope)
     }
 
     fun updateConfig(config: InferenceConfig) {
@@ -53,6 +58,12 @@ class SettingsViewModel @Inject constructor(
     fun setDarkTheme(isDark: Boolean?) {
         viewModelScope.launch {
             appPreferences.setDarkTheme(isDark)
+        }
+    }
+
+    fun setShowThinking(show: Boolean) {
+        viewModelScope.launch {
+            appPreferences.setShowThinking(show)
         }
     }
 

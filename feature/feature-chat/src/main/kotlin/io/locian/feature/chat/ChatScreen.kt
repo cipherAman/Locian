@@ -72,15 +72,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.locian.core.common.Formatters
+import io.locian.core.common.MessageContentParser
 import io.locian.core.model.ChatMessage
 import io.locian.core.model.ChatRole
 import io.locian.core.ui.components.MarkdownContent
 import io.locian.core.ui.components.TelemetryPill
+import io.locian.core.ui.components.ThinkingProcessCard
 import io.locian.core.ui.theme.CyanNeon
 import io.locian.core.ui.theme.UserBubbleDark
 import kotlinx.coroutines.delay
@@ -189,12 +192,12 @@ fun ChatScreen(
                 }
 
                 items(uiState.messages, key = { it.id }) { message ->
-                    MessageBubble(message = message)
+                    MessageBubble(message = message, showThinking = uiState.showThinking)
                 }
 
                 if (uiState.isGenerating && uiState.streamingText.isNotEmpty()) {
                     item {
-                        AssistantStreamingBubble(text = uiState.streamingText)
+                        AssistantStreamingBubble(text = uiState.streamingText, showThinking = uiState.showThinking)
                     }
                 }
             }
@@ -228,12 +231,16 @@ fun ChatScreen(
 @Composable
 fun MessageBubble(
     message: ChatMessage,
+    showThinking: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     val isUser = message.role == ChatRole.USER
     val context = LocalContext.current
     var isCopied by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    val parsed = remember(message.content) {
+        MessageContentParser.parse(message.content, isStreaming = false)
+    }
 
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -284,10 +291,30 @@ fun MessageBubble(
                         color = Color.White
                     )
                 } else {
-                    MarkdownContent(
-                        content = message.content,
-                        textColor = MaterialTheme.colorScheme.onSurface
-                    )
+                    Column {
+                        val thinkingText = parsed.thinking
+                        if (showThinking && thinkingText != null) {
+                            ThinkingProcessCard(
+                                thinking = thinkingText,
+                                isStillThinking = false,
+                                modifier = Modifier.padding(bottom = if (parsed.response.isNotEmpty()) 8.dp else 0.dp)
+                            )
+                        }
+
+                        if (parsed.response.isNotEmpty()) {
+                            MarkdownContent(
+                                content = parsed.response,
+                                textColor = MaterialTheme.colorScheme.onSurface
+                            )
+                        } else if (thinkingText != null && !showThinking) {
+                            Text(
+                                text = "(Thinking hidden)",
+                                style = MaterialTheme.typography.bodySmall,
+                                fontStyle = FontStyle.Italic,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
                 }
             }
 
@@ -305,11 +332,16 @@ fun MessageBubble(
                     fontSize = 10.sp
                 )
 
-                // Copy button
+                // Copy button (copies the clean final response)
                 IconButton(
                     onClick = {
                         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                        clipboard.setPrimaryClip(ClipData.newPlainText("Message", message.content))
+                        val textToCopy = if (isUser) {
+                            message.content
+                        } else {
+                            parsed.response.ifEmpty { parsed.thinking ?: message.content }
+                        }
+                        clipboard.setPrimaryClip(ClipData.newPlainText("Message", textToCopy))
                         isCopied = true
                         Toast.makeText(context, "Message copied", Toast.LENGTH_SHORT).show()
                         scope.launch {
@@ -342,6 +374,7 @@ fun MessageBubble(
 @Composable
 fun AssistantStreamingBubble(
     text: String,
+    showThinking: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "cursor")
@@ -354,6 +387,10 @@ fun AssistantStreamingBubble(
         ),
         label = "cursorAlpha"
     )
+
+    val parsed = remember(text) {
+        MessageContentParser.parse(text, isStreaming = true)
+    }
 
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -395,18 +432,36 @@ fun AssistantStreamingBubble(
                 .padding(horizontal = 14.dp, vertical = 10.dp)
         ) {
             Column {
-                MarkdownContent(
-                    content = text,
-                    textColor = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                // Pulsing typing indicator dot
-                Box(
-                    modifier = Modifier
-                        .size(8.dp)
-                        .clip(CircleShape)
-                        .background(CyanNeon.copy(alpha = cursorAlpha))
-                )
+                val thinkingText = parsed.thinking
+                if (showThinking && thinkingText != null) {
+                    ThinkingProcessCard(
+                        thinking = thinkingText,
+                        isStillThinking = parsed.isStillThinking,
+                        modifier = Modifier.padding(bottom = if (parsed.response.isNotEmpty()) 8.dp else 0.dp)
+                    )
+                }
+
+                if (parsed.response.isNotEmpty()) {
+                    MarkdownContent(
+                        content = parsed.response,
+                        textColor = MaterialTheme.colorScheme.onSurface
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Box(
+                        modifier = Modifier
+                            .size(8.dp)
+                            .clip(CircleShape)
+                            .background(CyanNeon.copy(alpha = cursorAlpha))
+                    )
+                } else if (!parsed.isStillThinking) {
+                    // Pulsing typing indicator dot if waiting for initial tokens
+                    Box(
+                        modifier = Modifier
+                            .size(8.dp)
+                            .clip(CircleShape)
+                            .background(CyanNeon.copy(alpha = cursorAlpha))
+                    )
+                }
             }
         }
     }
