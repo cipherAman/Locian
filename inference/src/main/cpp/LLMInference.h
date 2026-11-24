@@ -16,6 +16,7 @@ class LLMInference {
     std::vector<char> _formattedMessages;
     std::vector<llama_token> _promptTokens;
     const char*              _chatTemplate = nullptr;
+    std::string              _systemPrompt;
 
     std::string _response;
     std::string _cacheResponseTokens;
@@ -32,8 +33,10 @@ class LLMInference {
     bool _isValidUtf8(const char* response);
 
 public:
-    void loadModel(const char* modelPath, float minP, float temperature, bool storeChats, long contextSize,
-                   const char* chatTemplate, int nThreads, bool useMmap, bool useMlock);
+    void loadModel(const char* modelPath, float minP, float temperature, float topP,
+                   float repeatPenalty, int repeatLastN, bool storeChats, long contextSize,
+                   const char* chatTemplate, const char* systemPrompt, int nThreads,
+                   bool useMmap, bool useMlock);
 
     void addChatMessage(const char* message, const char* role);
 

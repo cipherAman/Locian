@@ -24,6 +24,7 @@ class AppPreferences(private val context: Context) {
         val KEY_TEMPERATURE = floatPreferencesKey("temperature")
         val KEY_TOP_P = floatPreferencesKey("top_p")
         val KEY_MIN_P = floatPreferencesKey("min_p")
+        val KEY_REPEAT_PENALTY = floatPreferencesKey("repeat_penalty")
         val KEY_CONTEXT_LENGTH = intPreferencesKey("context_length")
         val KEY_N_THREADS = intPreferencesKey("n_threads")
         val KEY_USE_MMAP = booleanPreferencesKey("use_mmap")
@@ -41,6 +42,7 @@ class AppPreferences(private val context: Context) {
             temperature = prefs[KEY_TEMPERATURE] ?: 0.7f,
             topP = prefs[KEY_TOP_P] ?: 0.9f,
             minP = prefs[KEY_MIN_P] ?: 0.05f,
+            repeatPenalty = prefs[KEY_REPEAT_PENALTY] ?: 1.10f,
             contextLength = prefs[KEY_CONTEXT_LENGTH] ?: 2048,
             nThreads = prefs[KEY_N_THREADS] ?: 4,
             useMmap = prefs[KEY_USE_MMAP] ?: true,
@@ -72,6 +74,7 @@ class AppPreferences(private val context: Context) {
             prefs[KEY_TEMPERATURE] = config.temperature
             prefs[KEY_TOP_P] = config.topP
             prefs[KEY_MIN_P] = config.minP
+            prefs[KEY_REPEAT_PENALTY] = config.repeatPenalty
             prefs[KEY_CONTEXT_LENGTH] = config.contextLength
             prefs[KEY_N_THREADS] = config.nThreads
             prefs[KEY_USE_MMAP] = config.useMmap

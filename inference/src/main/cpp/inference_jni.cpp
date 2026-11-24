@@ -4,22 +4,26 @@
 extern "C" JNIEXPORT jlong JNICALL
 Java_io_locian_inference_InferenceEngine_loadModel(
     JNIEnv* env, jobject thiz, jstring modelPath, jfloat minP,
-    jfloat temperature, jboolean storeChats, jlong contextSize,
-    jstring chatTemplate, jint nThreads, jboolean useMmap, jboolean useMlock) {
+    jfloat temperature, jfloat topP, jfloat repeatPenalty, jint repeatLastN,
+    jboolean storeChats, jlong contextSize, jstring chatTemplate,
+    jstring systemPrompt, jint nThreads, jboolean useMmap, jboolean useMlock) {
 
     jboolean isCopy = true;
     const char* modelPathCstr = env->GetStringUTFChars(modelPath, &isCopy);
     const char* chatTemplateCstr = chatTemplate ? env->GetStringUTFChars(chatTemplate, &isCopy) : nullptr;
+    const char* systemPromptCstr = systemPrompt ? env->GetStringUTFChars(systemPrompt, &isCopy) : nullptr;
     auto* llmInference = new LLMInference();
 
     try {
         llmInference->loadModel(
-            modelPathCstr, minP, temperature, storeChats,
-            contextSize, chatTemplateCstr, nThreads, useMmap, useMlock
+            modelPathCstr, minP, temperature, topP, repeatPenalty, repeatLastN,
+            storeChats, contextSize, chatTemplateCstr, systemPromptCstr,
+            nThreads, useMmap, useMlock
         );
     } catch (const std::exception& error) {
         env->ReleaseStringUTFChars(modelPath, modelPathCstr);
         if (chatTemplateCstr) env->ReleaseStringUTFChars(chatTemplate, chatTemplateCstr);
+        if (systemPromptCstr) env->ReleaseStringUTFChars(systemPrompt, systemPromptCstr);
         delete llmInference;
         env->ThrowNew(env->FindClass("java/lang/IllegalStateException"), error.what());
         return 0;
@@ -27,6 +31,7 @@ Java_io_locian_inference_InferenceEngine_loadModel(
 
     env->ReleaseStringUTFChars(modelPath, modelPathCstr);
     if (chatTemplateCstr) env->ReleaseStringUTFChars(chatTemplate, chatTemplateCstr);
+    if (systemPromptCstr) env->ReleaseStringUTFChars(systemPrompt, systemPromptCstr);
     return reinterpret_cast<jlong>(llmInference);
 }
 

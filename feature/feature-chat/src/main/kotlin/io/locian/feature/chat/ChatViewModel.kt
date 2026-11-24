@@ -3,9 +3,11 @@ package io.locian.feature.chat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.locian.core.common.AppResult
 import io.locian.core.model.ChatMessage
 import io.locian.core.model.ChatRole
 import io.locian.data.datastore.AppPreferences
+import io.locian.domain.inference.usecases.LoadModelUseCase
 import io.locian.domain.inference.usecases.ManageConversationUseCase
 import io.locian.domain.inference.usecases.StreamChatResponseUseCase
 import kotlinx.coroutines.Job
@@ -13,10 +15,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 data class ChatUiState(
@@ -37,6 +41,7 @@ data class ChatUiState(
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val streamChatResponseUseCase: StreamChatResponseUseCase,
+    private val loadModelUseCase: LoadModelUseCase,
     private val manageConversationUseCase: ManageConversationUseCase,
     private val appPreferences: AppPreferences
 ) : ViewModel() {
@@ -121,12 +126,22 @@ class ChatViewModel @Inject constructor(
         val trimmed = prompt.trim()
         if (trimmed.isEmpty() || _uiState.value.isGenerating) return
 
-        if (!_uiState.value.isModelLoaded) {
-            _uiState.update { it.copy(errorMessage = "Please download and load a model from the Models tab first.") }
-            return
-        }
-
         viewModelScope.launch {
+            if (!loadModelUseCase.isModelLoaded()) {
+                val activePath = appPreferences.activeModelPath.first()
+                if (!activePath.isNullOrEmpty() && File(activePath).exists()) {
+                    val config = appPreferences.inferenceConfig.first()
+                    val loadRes = loadModelUseCase(activePath, config)
+                    if (loadRes !is AppResult.Success) {
+                        val errorMsg = (loadRes as? AppResult.Error)?.message ?: "Unknown error"
+                        _uiState.update { it.copy(errorMessage = "Failed to load active model: $errorMsg") }
+                        return@launch
+                    }
+                } else {
+                    _uiState.update { it.copy(errorMessage = "Please download and load a model from the Models tab first.") }
+                    return@launch
+                }
+            }
             var convId = _uiState.value.conversationId
             if (convId == null) {
                 val title = if (trimmed.length > 30) trimmed.take(30) + "..." else trimmed

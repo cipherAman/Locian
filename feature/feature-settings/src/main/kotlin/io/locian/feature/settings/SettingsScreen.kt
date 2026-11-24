@@ -222,6 +222,27 @@ fun SettingsScreen(
                             colors = SliderDefaults.colors(thumbColor = CyanNeon, activeTrackColor = CyanNeon)
                         )
                     }
+
+                    // Repeat Penalty
+                    Column {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text("Repeat Penalty", style = MaterialTheme.typography.bodyMedium)
+                            Text(
+                                text = String.format(Locale.US, "%.2f", config.repeatPenalty),
+                                color = CyanNeon,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        Slider(
+                            value = config.repeatPenalty,
+                            onValueChange = { viewModel.updateConfig(config.copy(repeatPenalty = it)) },
+                            valueRange = 1.0f..1.5f,
+                            colors = SliderDefaults.colors(thumbColor = CyanNeon, activeTrackColor = CyanNeon)
+                        )
+                    }
                 }
             }
 

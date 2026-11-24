@@ -9,9 +9,12 @@
 #define LOGe(...) __android_log_print(ANDROID_LOG_ERROR, TAG, __VA_ARGS__)
 
 void
-LLMInference::loadModel(const char *model_path, float minP, float temperature, bool storeChats, long contextSize,
-                        const char *chatTemplate, int nThreads, bool useMmap, bool useMlock) {
-    LOGi("loading model from: %s (threads: %d, ctx: %ld, mmap: %d)", model_path, nThreads, contextSize, useMmap);
+LLMInference::loadModel(const char *model_path, float minP, float temperature, float topP,
+                        float repeatPenalty, int repeatLastN, bool storeChats, long contextSize,
+                        const char *chatTemplate, const char *systemPrompt, int nThreads,
+                        bool useMmap, bool useMlock) {
+    LOGi("loading model from: %s (threads: %d, ctx: %ld, topP: %.2f, minP: %.2f, repPen: %.2f, mmap: %d)",
+         model_path, nThreads, contextSize, topP, minP, repeatPenalty, useMmap);
 
     ggml_backend_load_all();
 
@@ -47,14 +50,33 @@ LLMInference::loadModel(const char *model_path, float minP, float temperature, b
     llama_sampler_chain_params sampler_params = llama_sampler_chain_default_params();
     sampler_params.no_perf = true;
     _sampler = llama_sampler_chain_init(sampler_params);
+
+    if (topP > 0.0f && topP < 1.0f) {
+        llama_sampler_chain_add(_sampler, llama_sampler_init_top_p(topP, 1));
+    }
     if (minP >= 0.01f) {
         llama_sampler_chain_add(_sampler, llama_sampler_init_min_p(minP, 1));
+    }
+    if (repeatPenalty > 1.0f && repeatLastN > 0) {
+        int32_t nVocab = llama_vocab_n_tokens(llama_model_get_vocab(_model));
+        llama_sampler_chain_add(_sampler, llama_sampler_init_penalties(
+            nVocab,
+            repeatLastN,
+            repeatPenalty,
+            0.0f,
+            0.0f
+        ));
     }
     llama_sampler_chain_add(_sampler, llama_sampler_init_temp(temperature));
     llama_sampler_chain_add(_sampler, llama_sampler_init_dist(LLAMA_DEFAULT_SEED));
 
     _formattedMessages = std::vector<char>(llama_n_ctx(_ctx));
     _messages.clear();
+
+    _systemPrompt = (systemPrompt && strlen(systemPrompt) > 0) ? systemPrompt : "";
+    if (!_systemPrompt.empty()) {
+        _messages.push_back({strdup("system"), strdup(_systemPrompt.c_str())});
+    }
 
     if (chatTemplate == nullptr || strlen(chatTemplate) == 0) {
         _chatTemplate = llama_model_chat_template(_model, nullptr);
@@ -81,6 +103,9 @@ LLMInference::clearMessages() {
     _promptPrefilledThink = false;
     if (_ctx) {
         llama_memory_clear(llama_get_memory(_ctx), false);
+    }
+    if (!_systemPrompt.empty()) {
+        _messages.push_back({strdup("system"), strdup(_systemPrompt.c_str())});
     }
 }
 
@@ -119,34 +144,76 @@ LLMInference::startCompletion(const char *query) {
     _responseNumTokens = 0;
     _timeToFirstToken       = 0;
     _isPrefill              = true;
+
+    // Ensure system prompt is at the beginning if configured
+    if (!_systemPrompt.empty()) {
+        if (_messages.empty() || strcmp(_messages[0].role, "system") != 0) {
+            _messages.insert(_messages.begin(), {strdup("system"), strdup(_systemPrompt.c_str())});
+        }
+    }
+
     addChatMessage(query, "user");
 
-    std::vector<common_chat_msg> messages;
-    for (const llama_chat_message& message : _messages) {
-        common_chat_msg msg;
-        msg.role    = message.role;
-        msg.content = message.content;
-        messages.push_back(msg);
-    }
-    auto templates = common_chat_templates_init(_model, _chatTemplate ? _chatTemplate : "");
+    auto applyTemplate = [&](const std::vector<llama_chat_message>& msgs) -> std::pair<std::string, bool> {
+        std::vector<common_chat_msg> chatMsgs;
+        for (const llama_chat_message& message : msgs) {
+            common_chat_msg msg;
+            msg.role    = message.role;
+            msg.content = message.content;
+            chatMsgs.push_back(msg);
+        }
+        auto templates = common_chat_templates_init(_model, _chatTemplate ? _chatTemplate : "");
 
-    common_chat_templates_inputs inputs;
-    inputs.messages = messages;
-    inputs.use_jinja = true;
-    inputs.chat_template_kwargs["tools"] = "[]";
+        common_chat_templates_inputs inputs;
+        inputs.messages = chatMsgs;
+        inputs.use_jinja = true;
+        // NOTE: We deliberately do NOT define inputs.chat_template_kwargs["tools"].
+        // When tools is defined, models like LLaMA 3.2 switch to JSON function-calling mode!
 
-    std::string prompt;
-    bool usedJinja = true;
-    try {
-        prompt = common_chat_templates_apply(templates.get(), inputs).prompt.str();
-    } catch (const std::exception &e) {
-        LOGe("Jinja template failed: %s — retrying with legacy renderer", e.what());
-        inputs.use_jinja = false;
-        inputs.chat_template_kwargs.clear();
-        prompt = common_chat_templates_apply(templates.get(), inputs).prompt.str();
-        usedJinja = false;
-    }
+        std::string promptStr;
+        bool usedJinja = true;
+        try {
+            promptStr = common_chat_templates_apply(templates.get(), inputs).prompt.str();
+        } catch (const std::exception &e) {
+            LOGe("Jinja template failed: %s — retrying with legacy renderer", e.what());
+            inputs.use_jinja = false;
+            inputs.chat_template_kwargs.clear();
+            promptStr = common_chat_templates_apply(templates.get(), inputs).prompt.str();
+            usedJinja = false;
+        }
+        return {promptStr, usedJinja};
+    };
+
+    auto [prompt, usedJinja] = applyTemplate(_messages);
     _promptTokens = common_tokenize(llama_model_get_vocab(_model), prompt, true, true);
+
+    // Sliding window context management:
+    // Reserve at least 384 tokens for generation to prevent abrupt context exhaustion.
+    uint32_t contextSize = llama_n_ctx(_ctx);
+    size_t reserveTokens = (contextSize > 512) ? 384 : (contextSize / 4);
+    size_t maxPromptTokens = (contextSize > reserveTokens) ? (contextSize - reserveTokens) : contextSize;
+
+    size_t systemOffset = (!_systemPrompt.empty() && !_messages.empty() && strcmp(_messages[0].role, "system") == 0) ? 1 : 0;
+
+    while (_promptTokens.size() > maxPromptTokens && (_messages.size() - systemOffset) > 2) {
+        LOGi("Prompt tokens (%zu) exceed threshold (%zu). Sliding context window...", _promptTokens.size(), maxPromptTokens);
+        // Free and erase the oldest non-system message turn (user query)
+        free(const_cast<char*>(_messages[systemOffset].role));
+        free(const_cast<char*>(_messages[systemOffset].content));
+        _messages.erase(_messages.begin() + systemOffset);
+
+        // Also erase the following assistant turn if present
+        if ((_messages.size() - systemOffset) > 0 && strcmp(_messages[systemOffset].role, "assistant") == 0) {
+            free(const_cast<char*>(_messages[systemOffset].role));
+            free(const_cast<char*>(_messages[systemOffset].content));
+            _messages.erase(_messages.begin() + systemOffset);
+        }
+
+        auto [newPrompt, newJinja] = applyTemplate(_messages);
+        prompt = newPrompt;
+        usedJinja = newJinja;
+        _promptTokens = common_tokenize(llama_model_get_vocab(_model), prompt, true, true);
+    }
 
     _promptPrefilledThink = false;
     size_t lastThink = prompt.rfind("<think>");
@@ -206,7 +273,12 @@ LLMInference::completionLoop() {
     uint32_t contextSize = llama_n_ctx(_ctx);
     _nCtxUsed = llama_memory_seq_pos_max(llama_get_memory(_ctx), 0) + 1;
     if (_nCtxUsed + _batch->n_tokens > contextSize) {
-        throw std::runtime_error("context size reached");
+        LOGi("Context size capacity reached (%d / %u). Concluding response gracefully.", _nCtxUsed, contextSize);
+        if (_storeChats && !_response.empty()) {
+            addChatMessage(_response.c_str(), "assistant");
+        }
+        _response.clear();
+        return "[EOG]";
     }
 
     auto start = ggml_time_us();
@@ -225,13 +297,28 @@ LLMInference::completionLoop() {
         _responseNumTokens += 1;
     }
 
-    if (llama_vocab_is_eog(llama_model_get_vocab(_model), _currToken)) {
-        addChatMessage(strdup(_response.data()), "assistant");
+    const struct llama_vocab *vocab = llama_model_get_vocab(_model);
+    if (llama_vocab_is_eog(vocab, _currToken) ||
+        _currToken == llama_vocab_eos(vocab) ||
+        _currToken == llama_vocab_eot(vocab)) {
+        if (_storeChats && !_response.empty()) {
+            addChatMessage(_response.c_str(), "assistant");
+        }
         _response.clear();
         return "[EOG]";
     }
 
     std::string piece = common_token_to_piece(_ctx, _currToken, true);
+
+    // Stop token cleanup: don't emit raw end tokens to the user
+    if (piece == "<|eot_id|>" || piece == "<|end_of_text|>" || piece == "<|im_end|>" || piece == "<end_of_turn>") {
+        if (_storeChats && !_response.empty()) {
+            addChatMessage(_response.c_str(), "assistant");
+        }
+        _response.clear();
+        return "[EOG]";
+    }
+
     _cacheResponseTokens += piece;
 
     delete _batch;
