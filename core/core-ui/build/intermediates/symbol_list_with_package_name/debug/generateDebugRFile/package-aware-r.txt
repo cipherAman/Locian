@@ -1,1 +1,2 @@
 io.locian.core.ui
+drawable ic_locian_logo

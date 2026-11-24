@@ -72,6 +72,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.locian.core.common.Formatters
 import io.locian.core.model.DownloadStatus
 import io.locian.core.model.ModelInfo
+import io.locian.core.ui.components.LocianAvatar
 import io.locian.core.ui.theme.CyanNeon
 import io.locian.core.ui.theme.SuccessGreen
 import io.locian.core.ui.theme.WarningAmber
@@ -106,7 +107,16 @@ fun ModelsScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text("Model Manager", fontWeight = FontWeight.Bold) },
+                title = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        LocianAvatar(
+                            size = 28.dp,
+                            backgroundColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Text("Model Manager", fontWeight = FontWeight.Bold)
+                    }
+                },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")

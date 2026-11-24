@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.locian.core.common.Formatters
 import io.locian.core.model.Conversation
+import io.locian.core.ui.components.LocianAvatar
 import io.locian.core.ui.theme.CyanNeon
 
 @Composable
@@ -79,21 +80,27 @@ fun ConversationsDrawerContent(
             // App Branding Header
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(bottom = 12.dp, top = 8.dp)
+                modifier = Modifier.padding(bottom = 14.dp, top = 8.dp)
             ) {
-                Text(
-                    text = "LOCIAN",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Black,
-                    color = CyanNeon,
-                    letterSpacing = 2.sp
+                LocianAvatar(
+                    size = 36.dp,
+                    backgroundColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
                 )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    text = "Local AI",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Spacer(modifier = Modifier.width(10.dp))
+                Column {
+                    Text(
+                        text = "LOCIAN",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Black,
+                        color = CyanNeon,
+                        letterSpacing = 2.sp
+                    )
+                    Text(
+                        text = "100% Offline Local AI",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
 
             // New Chat Button

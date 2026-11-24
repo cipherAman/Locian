@@ -81,6 +81,8 @@ import io.locian.core.common.Formatters
 import io.locian.core.common.MessageContentParser
 import io.locian.core.model.ChatMessage
 import io.locian.core.model.ChatRole
+import io.locian.core.ui.components.LocianAvatar
+import io.locian.core.ui.components.LocianLogo
 import io.locian.core.ui.components.MarkdownContent
 import io.locian.core.ui.components.TelemetryPill
 import io.locian.core.ui.components.ThinkingProcessCard
@@ -124,31 +126,38 @@ fun ChatScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Column {
-                        Text(
-                            text = uiState.conversationTitle,
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            maxLines = 1
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        LocianAvatar(
+                            size = 32.dp,
+                            backgroundColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
                         )
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(4.dp))
-                                .clickable { onNavigateToModels() }
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(7.dp)
-                                    .clip(CircleShape)
-                                    .background(if (uiState.isModelLoaded) CyanNeon else Color.Gray)
-                            )
-                            Spacer(modifier = Modifier.width(5.dp))
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column {
                             Text(
-                                text = uiState.activeModelName ?: "No model loaded (tap to select)",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = if (uiState.isModelLoaded) CyanNeon else MaterialTheme.colorScheme.onSurfaceVariant
+                                text = uiState.conversationTitle,
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 1
                             )
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .clickable { onNavigateToModels() }
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(7.dp)
+                                        .clip(CircleShape)
+                                        .background(if (uiState.isModelLoaded) CyanNeon else Color.Gray)
+                                )
+                                Spacer(modifier = Modifier.width(5.dp))
+                                Text(
+                                    text = uiState.activeModelName ?: "No model loaded (tap to select)",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = if (uiState.isModelLoaded) CyanNeon else MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
                         }
                     }
                 },
@@ -247,20 +256,7 @@ fun MessageBubble(
         horizontalArrangement = if (isUser) Arrangement.End else Arrangement.Start
     ) {
         if (!isUser) {
-            Box(
-                modifier = Modifier
-                    .size(32.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primaryContainer),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.SmartToy,
-                    contentDescription = null,
-                    tint = CyanNeon,
-                    modifier = Modifier.size(18.dp)
-                )
-            }
+            LocianAvatar(size = 32.dp)
             Spacer(modifier = Modifier.width(8.dp))
         }
 
@@ -396,20 +392,7 @@ fun AssistantStreamingBubble(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Start
     ) {
-        Box(
-            modifier = Modifier
-                .size(32.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primaryContainer),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.SmartToy,
-                contentDescription = null,
-                tint = CyanNeon,
-                modifier = Modifier.size(18.dp)
-            )
-        }
+        LocianAvatar(size = 32.dp)
         Spacer(modifier = Modifier.width(8.dp))
 
         Box(
@@ -480,20 +463,10 @@ fun EmptyChatState(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Box(
-            modifier = Modifier
-                .size(64.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primaryContainer),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.SmartToy,
-                contentDescription = null,
-                tint = CyanNeon,
-                modifier = Modifier.size(36.dp)
-            )
-        }
+        LocianAvatar(
+            size = 72.dp,
+            backgroundColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+        )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = "Welcome to Locian",
