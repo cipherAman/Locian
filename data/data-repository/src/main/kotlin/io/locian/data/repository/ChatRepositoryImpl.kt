@@ -65,16 +65,25 @@ class ChatRepositoryImpl @Inject constructor(
 
     override suspend fun saveMessage(message: ChatMessage) {
         withContext(Dispatchers.IO) {
-            messageDao.insertMessage(MessageEntity.fromDomain(message))
-            conversationDao.updateTitle(
-                id = message.conversationId,
-                title = if (message.role.name == "USER" && message.content.length <= 40) {
-                    message.content.take(40)
-                } else {
-                    conversationDao.getConversationById(message.conversationId)?.title ?: "Conversation"
-                },
-                updatedAt = System.currentTimeMillis()
-            )
+            val conv = conversationDao.getConversationById(message.conversationId)
+            if (conv == null) {
+                // Conversation does not exist or was deleted; ignore to avoid foreign key failure
+                return@withContext
+            }
+            try {
+                messageDao.insertMessage(MessageEntity.fromDomain(message))
+                conversationDao.updateTitle(
+                    id = message.conversationId,
+                    title = if (message.role.name == "USER" && message.content.length <= 40) {
+                        message.content.take(40)
+                    } else {
+                        conv.title
+                    },
+                    updatedAt = System.currentTimeMillis()
+                )
+            } catch (e: Exception) {
+                android.util.Log.e("ChatRepository", "Failed to save message: ${e.localizedMessage}", e)
+            }
         }
     }
 

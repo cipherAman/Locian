@@ -9,12 +9,11 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import io.locian.core.common.AppResult
 import io.locian.core.model.DeviceHardwareInfo
 import io.locian.core.model.DownloadProgress
-import io.locian.core.model.DownloadStatus
 import io.locian.core.model.ModelInfo
 import io.locian.data.datastore.AppPreferences
 import io.locian.domain.inference.repository.ModelRepository
-import io.locian.domain.inference.usecases.DownloadModelUseCase
 import io.locian.domain.inference.usecases.LoadModelUseCase
+import io.locian.feature.models.download.ModelDownloadManager
 import io.locian.inference.DeviceMemoryHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -46,7 +45,7 @@ class ModelsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val modelRepository: ModelRepository,
     private val loadModelUseCase: LoadModelUseCase,
-    private val downloadModelUseCase: DownloadModelUseCase,
+    private val downloadManager: ModelDownloadManager,
     private val appPreferences: AppPreferences
 ) : ViewModel() {
 
@@ -75,25 +74,43 @@ class ModelsViewModel @Inject constructor(
         modelRepository.getDownloadedModels().onEach { downloaded ->
             _uiState.update { it.copy(downloadedModels = downloaded) }
         }.launchIn(viewModelScope)
+
+        // Observe background downloads managed by Foreground Service
+        downloadManager.downloadProgressMap.onEach { progressMap ->
+            _uiState.update { it.copy(downloadProgressMap = progressMap) }
+        }.launchIn(viewModelScope)
     }
 
     fun downloadModel(model: ModelInfo) {
-        val modelsDir = File(context.filesDir, "models")
-        if (!modelsDir.exists()) modelsDir.mkdirs()
-
-        downloadModelUseCase(model, modelsDir)
-            .onEach { progress ->
-                _uiState.update { state ->
-                    val map = state.downloadProgressMap.toMutableMap()
-                    map[model.id] = progress
-                    state.copy(downloadProgressMap = map)
-                }
-                if (progress.status == DownloadStatus.COMPLETED) {
-                    val localFile = File(modelsDir, model.filename)
-                    loadModel(model.copy(localPath = localFile.absolutePath, isDownloaded = true))
-                }
+        // Critical: Unload any currently loaded model (e.g. 9B holding 4.2GB RAM)
+        // to immediately release system memory so Android OS LMK doesn't kill the app in the background.
+        if (loadModelUseCase.isModelLoaded()) {
+            loadModelUseCase.unloadModel()
+            _uiState.update {
+                it.copy(userMessage = "Unloaded active model to free RAM for background download.")
             }
-            .launchIn(viewModelScope)
+        }
+
+        // Delegate to Foreground Service for background execution & persistent notification
+        downloadManager.startDownload(model)
+    }
+
+    fun cancelDownload(modelId: String) {
+        downloadManager.cancelDownload(modelId)
+    }
+
+    fun unloadActiveModel() {
+        loadModelUseCase.unloadModel()
+        viewModelScope.launch {
+            appPreferences.clearActiveModel()
+            _uiState.update {
+                it.copy(
+                    activeModelId = null,
+                    activeModelPath = null,
+                    userMessage = "Model unloaded. Memory released."
+                )
+            }
+        }
     }
 
     fun loadModel(model: ModelInfo) {
@@ -129,6 +146,7 @@ class ModelsViewModel @Inject constructor(
     fun deleteModel(model: ModelInfo) {
         val candidatePath = model.localPath ?: File(context.filesDir, "models/${model.filename}").absolutePath
         viewModelScope.launch {
+            downloadManager.cancelDownload(model.id)
             if (_uiState.value.activeModelId == model.id) {
                 loadModelUseCase.unloadModel()
                 appPreferences.clearActiveModel()
