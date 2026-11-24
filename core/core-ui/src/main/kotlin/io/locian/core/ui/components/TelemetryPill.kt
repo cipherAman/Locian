@@ -60,7 +60,7 @@ fun TelemetryPill(
             timeToFirstTokenMs?.let { ttft ->
                 if (ttft > 0) {
                     Text(
-                        text = "⏱ ${ttft}ms",
+                        text = "⏱ ${Formatters.formatDurationMs(ttft)}",
                         style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

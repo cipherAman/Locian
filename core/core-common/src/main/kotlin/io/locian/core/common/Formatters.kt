@@ -22,6 +22,25 @@ object Formatters {
         return String.format(Locale.US, "%.1f tok/s", tokPerSec)
     }
 
+    fun formatDurationMs(ms: Long): String {
+        if (ms < 1000L) {
+            return "${ms}ms"
+        }
+        val sec = ms / 1000.0
+        return if (sec >= 10.0) {
+            String.format(Locale.US, "%.1fs", sec)
+        } else {
+            val formatted = String.format(Locale.US, "%.2fs", sec)
+            if (formatted.endsWith(".00s")) {
+                formatted.replace(".00s", ".0s")
+            } else if (formatted.endsWith("0s")) {
+                formatted.replace("0s", "s")
+            } else {
+                formatted
+            }
+        }
+    }
+
     fun formatTimestamp(timestamp: Long): String {
         val sdf = SimpleDateFormat("MMM d, HH:mm", Locale.getDefault())
         return sdf.format(Date(timestamp))
