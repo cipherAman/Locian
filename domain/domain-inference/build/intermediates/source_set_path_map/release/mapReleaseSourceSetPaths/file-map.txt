@@ -1,9 +1,0 @@
-io.locian.domain.inference.domain-inference-release-0 /mnt/devzone/Locian/core/core-common/build/intermediates/packaged_res/release/packageReleaseResources
-io.locian.domain.inference.domain-inference-release-1 /mnt/devzone/Locian/core/core-model/build/intermediates/packaged_res/release/packageReleaseResources
-io.locian.domain.inference.domain-inference-pngs-2 /mnt/devzone/Locian/domain/domain-inference/build/generated/res/pngs/release
-io.locian.domain.inference.domain-inference-resValues-3 /mnt/devzone/Locian/domain/domain-inference/build/generated/res/resValues/release
-io.locian.domain.inference.domain-inference-mergeReleaseResources-4 /mnt/devzone/Locian/domain/domain-inference/build/intermediates/incremental/release/mergeReleaseResources/merged.dir
-io.locian.domain.inference.domain-inference-mergeReleaseResources-5 /mnt/devzone/Locian/domain/domain-inference/build/intermediates/incremental/release/mergeReleaseResources/stripped.dir
-io.locian.domain.inference.domain-inference-release-6 /mnt/devzone/Locian/domain/domain-inference/build/intermediates/merged_res/release/mergeReleaseResources
-io.locian.domain.inference.domain-inference-main-7 /mnt/devzone/Locian/domain/domain-inference/src/main/res
-io.locian.domain.inference.domain-inference-release-8 /mnt/devzone/Locian/domain/domain-inference/src/release/res

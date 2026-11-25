@@ -51,6 +51,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.locian.core.common.Formatters
 import io.locian.core.model.Conversation
 import io.locian.core.ui.components.LocianAvatar
+import io.locian.core.ui.components.LocianFullLogo
 import io.locian.core.ui.theme.CyanNeon
 
 @Composable
@@ -80,25 +81,30 @@ fun ConversationsDrawerContent(
             // App Branding Header
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(bottom = 14.dp, top = 8.dp)
+                modifier = Modifier.padding(bottom = 16.dp, top = 8.dp)
             ) {
                 LocianAvatar(
-                    size = 36.dp,
-                    backgroundColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                    size = 46.dp
                 )
                 Spacer(modifier = Modifier.width(10.dp))
-                Column {
-                    Text(
-                        text = "LOCIAN",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Black,
-                        color = CyanNeon,
-                        letterSpacing = 2.sp
+                Column(
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    LocianFullLogo(
+                        height = 22.dp
                     )
+                    Spacer(modifier = Modifier.height(1.dp))
                     Text(
                         text = "100% Offline Local AI",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        fontSize = 9.sp,
+                        fontWeight = FontWeight.Medium,
+                        letterSpacing = 0.4.sp,
+                        style = androidx.compose.ui.text.TextStyle(
+                            platformStyle = androidx.compose.ui.text.PlatformTextStyle(
+                                includeFontPadding = false
+                            )
+                        ),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                     )
                 }
             }
@@ -244,7 +250,7 @@ fun ConversationsDrawerContent(
             ) {
                 Icon(Icons.Default.Settings, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(20.dp))
                 Spacer(modifier = Modifier.width(12.dp))
-                Text("Inference Settings", style = MaterialTheme.typography.bodyMedium)
+                Text("Settings", style = MaterialTheme.typography.bodyMedium)
             }
         }
     }

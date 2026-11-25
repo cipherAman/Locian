@@ -450,7 +450,7 @@ fun CuratedModelCard(
                             Button(
                                 onClick = onLoad,
                                 shape = RoundedCornerShape(8.dp),
-                                colors = ButtonDefaults.buttonColors(containerColor = CyanNeon, contentColor = Color.Black)
+                                colors = ButtonDefaults.buttonColors(containerColor = CyanNeon, contentColor = Color.White)
                             ) {
                                 Icon(Icons.Default.PlayArrow, contentDescription = null, modifier = Modifier.size(16.dp))
                                 Spacer(modifier = Modifier.width(4.dp))

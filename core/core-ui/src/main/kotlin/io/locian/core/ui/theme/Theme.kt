@@ -11,12 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = CyanNeon,
-    onPrimary = DeepIndigo,
-    primaryContainer = DeepIndigo,
-    onPrimaryContainer = CyanGlow,
-    secondary = CyanGlow,
-    onSecondary = DeepIndigo,
+    primary = LocianRed,
+    onPrimary = androidx.compose.ui.graphics.Color.White,
+    primaryContainer = LocianRedContainerDark,
+    onPrimaryContainer = LocianRedGlow,
+    secondary = LocianRedLight,
+    onSecondary = androidx.compose.ui.graphics.Color.White,
     background = MidnightDark,
     onBackground = TextPrimaryDark,
     surface = SurfaceDark,
@@ -27,12 +27,12 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = CyanPrimaryLight,
-    onPrimary = SurfaceLight,
-    primaryContainer = CyanContainerLight,
-    onPrimaryContainer = DeepIndigo,
-    secondary = CyanPrimaryLight,
-    onSecondary = SurfaceLight,
+    primary = LocianRed,
+    onPrimary = androidx.compose.ui.graphics.Color.White,
+    primaryContainer = LocianRedContainerLight,
+    onPrimaryContainer = LocianRedDark,
+    secondary = LocianRed,
+    onSecondary = androidx.compose.ui.graphics.Color.White,
     background = SurfaceLight,
     onBackground = TextPrimaryLight,
     surface = SurfaceLight,
@@ -45,7 +45,7 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun LocianTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

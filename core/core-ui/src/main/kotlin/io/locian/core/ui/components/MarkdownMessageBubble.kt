@@ -37,8 +37,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import io.locian.core.ui.syntax.CodeSyntaxHighlighter
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -270,6 +273,7 @@ fun MarkdownContent(
 ) {
     val elements = remember(content) { parseMarkdownDocument(content) }
     val context = LocalContext.current
+    val codeBgColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.75f)
 
     Column(
         modifier = modifier,
@@ -286,7 +290,7 @@ fun MarkdownContent(
                     }
                     Column(modifier = Modifier.padding(top = topPadding)) {
                         Text(
-                            text = buildMarkdownInlineAnnotatedString(element.text, textColor),
+                            text = buildMarkdownInlineAnnotatedString(element.text, textColor, codeBgColor = codeBgColor),
                             fontSize = fontSize,
                             fontWeight = fontWeight,
                             color = if (element.level == 1) CyanNeon else textColor,
@@ -306,7 +310,7 @@ fun MarkdownContent(
 
                 is MarkdownElement.Paragraph -> {
                     Text(
-                        text = buildMarkdownInlineAnnotatedString(element.text, textColor),
+                        text = buildMarkdownInlineAnnotatedString(element.text, textColor, codeBgColor = codeBgColor),
                         style = MaterialTheme.typography.bodyLarge,
                         color = textColor,
                         lineHeight = 22.sp
@@ -328,7 +332,7 @@ fun MarkdownContent(
                             modifier = Modifier.padding(end = 8.dp, top = 1.dp)
                         )
                         Text(
-                            text = buildMarkdownInlineAnnotatedString(element.text, textColor),
+                            text = buildMarkdownInlineAnnotatedString(element.text, textColor, codeBgColor = codeBgColor),
                             style = MaterialTheme.typography.bodyMedium,
                             color = textColor,
                             lineHeight = 21.sp,
@@ -350,7 +354,7 @@ fun MarkdownContent(
                             modifier = Modifier.padding(end = 8.dp, top = 2.dp)
                         )
                         Text(
-                            text = buildMarkdownInlineAnnotatedString(element.text, textColor),
+                            text = buildMarkdownInlineAnnotatedString(element.text, textColor, codeBgColor = codeBgColor),
                             style = MaterialTheme.typography.bodyMedium,
                             color = textColor,
                             lineHeight = 21.sp,
@@ -376,7 +380,7 @@ fun MarkdownContent(
                         )
                         Spacer(modifier = Modifier.width(10.dp))
                         Text(
-                            text = buildMarkdownInlineAnnotatedString(element.text, textColor),
+                            text = buildMarkdownInlineAnnotatedString(element.text, textColor, codeBgColor = codeBgColor),
                             style = MaterialTheme.typography.bodyMedium.copy(fontStyle = FontStyle.Italic),
                             color = textColor.copy(alpha = 0.9f),
                             lineHeight = 20.sp
@@ -424,6 +428,10 @@ fun CodeBlockView(
     val scope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
 
+    val highlightedCode = remember(code, language) {
+        CodeSyntaxHighlighter.highlight(code, language)
+    }
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -431,27 +439,26 @@ fun CodeBlockView(
             .background(CodeBlockBackgroundDark)
             .border(
                 0.5.dp,
-                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
+                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f),
                 RoundedCornerShape(10.dp)
             )
     ) {
-        // Code block header
+        // Code block header (Window titlebar style)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color(0xFF161B22))
-                .padding(horizontal = 12.dp, vertical = 6.dp),
+                .padding(horizontal = 12.dp, vertical = 7.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier = Modifier
-                        .size(8.dp)
-                        .clip(CircleShape)
-                        .background(CyanNeon)
-                )
-                Spacer(modifier = Modifier.width(6.dp))
+                Box(modifier = Modifier.size(9.dp).clip(CircleShape).background(Color(0xFFFF5F56).copy(alpha = 0.85f)))
+                Spacer(modifier = Modifier.width(5.dp))
+                Box(modifier = Modifier.size(9.dp).clip(CircleShape).background(Color(0xFFFFBD2E).copy(alpha = 0.85f)))
+                Spacer(modifier = Modifier.width(5.dp))
+                Box(modifier = Modifier.size(9.dp).clip(CircleShape).background(Color(0xFF27C93F).copy(alpha = 0.85f)))
+                Spacer(modifier = Modifier.width(10.dp))
                 Text(
                     text = displayLanguage,
                     style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
@@ -480,21 +487,22 @@ fun CodeBlockView(
             }
         }
 
+        HorizontalDivider(thickness = 0.5.dp, color = Color(0xFF21262D))
+
         // Code content with horizontal scrolling for long lines
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .horizontalScroll(scrollState)
-                .padding(12.dp)
+                .padding(horizontal = 14.dp, vertical = 12.dp)
         ) {
             Text(
-                text = code,
+                text = highlightedCode,
                 style = MaterialTheme.typography.bodyMedium.copy(
                     fontFamily = FontFamily.Monospace,
-                    fontSize = 13.sp,
+                    fontSize = 12.5.sp,
                     lineHeight = 19.sp
-                ),
-                color = Color(0xFFE2E8F0)
+                )
             )
         }
     }

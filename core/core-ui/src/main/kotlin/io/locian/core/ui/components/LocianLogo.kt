@@ -3,6 +3,7 @@ package io.locian.core.ui.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
@@ -11,10 +12,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.locian.core.ui.R
+
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
+import androidx.compose.ui.layout.ContentScale
 
 /**
  * Renders the official Locian ribbon logo.
@@ -28,6 +34,7 @@ fun LocianLogo(
     Image(
         painter = painterResource(id = R.drawable.ic_locian_logo),
         contentDescription = contentDescription,
+        contentScale = ContentScale.Fit,
         modifier = modifier.size(size)
     )
 }
@@ -39,19 +46,43 @@ fun LocianLogo(
 fun LocianAvatar(
     modifier: Modifier = Modifier,
     size: Dp = 32.dp,
-    backgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant
+    backgroundColor: Color = Color(0xFFCDD5DE),
+    border: BorderStroke? = BorderStroke(0.5.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f))
 ) {
     Box(
         modifier = modifier
             .size(size)
             .clip(CircleShape)
-            .background(backgroundColor),
+            .background(backgroundColor)
+            .then(if (border != null) Modifier.border(border, CircleShape) else Modifier),
         contentAlignment = Alignment.Center
     ) {
         Image(
             painter = painterResource(id = R.drawable.ic_locian_logo),
             contentDescription = "Locian",
-            modifier = Modifier.size(size * 0.78f)
+            contentScale = ContentScale.Fit,
+            modifier = Modifier.size(size * 0.72f)
         )
     }
+}
+
+/**
+ * Renders the official Locian full wordmark logo ("LOCIAn").
+ * Automatically displays the dark or light variant based on the theme background luminance.
+ */
+@Composable
+fun LocianFullLogo(
+    modifier: Modifier = Modifier,
+    height: Dp = 32.dp,
+    contentDescription: String? = "Locian"
+) {
+    val isLight = MaterialTheme.colorScheme.background.luminance() > 0.5f
+    val logoRes = if (isLight) R.drawable.ic_locian_full_logo_light else R.drawable.ic_locian_full_logo_dark
+
+    Image(
+        painter = painterResource(id = logoRes),
+        contentDescription = contentDescription,
+        contentScale = ContentScale.Fit,
+        modifier = modifier.height(height)
+    )
 }

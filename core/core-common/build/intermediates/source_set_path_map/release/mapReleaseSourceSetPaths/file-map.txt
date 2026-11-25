@@ -1,7 +1,0 @@
-io.locian.core.common.core-common-pngs-0 /mnt/devzone/Locian/core/core-common/build/generated/res/pngs/release
-io.locian.core.common.core-common-resValues-1 /mnt/devzone/Locian/core/core-common/build/generated/res/resValues/release
-io.locian.core.common.core-common-mergeReleaseResources-2 /mnt/devzone/Locian/core/core-common/build/intermediates/incremental/release/mergeReleaseResources/merged.dir
-io.locian.core.common.core-common-mergeReleaseResources-3 /mnt/devzone/Locian/core/core-common/build/intermediates/incremental/release/mergeReleaseResources/stripped.dir
-io.locian.core.common.core-common-release-4 /mnt/devzone/Locian/core/core-common/build/intermediates/merged_res/release/mergeReleaseResources
-io.locian.core.common.core-common-main-5 /mnt/devzone/Locian/core/core-common/src/main/res
-io.locian.core.common.core-common-release-6 /mnt/devzone/Locian/core/core-common/src/release/res
