@@ -1,0 +1,7 @@
+[submodule "external/cpu_features"]
+	path = external/cpu_features
+	url = https://github.com/google/cpu_features.git
+
+[submodule "external/llama.cpp"]
+	path = external/llama.cpp
+	url = https://github.com/ggerganov/llama.cpp.git
