@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Locian — 100% On-Device Offline AI for Android</title>
+  <meta name="description" content="Locian is a privacy-first, 100% offline local LLM Android application built with Jetpack Compose, Clean Architecture, and llama.cpp via high-performance Android NDK C++ bindings.">
+  <meta name="keywords" content="Locian, On-Device AI, Local LLM, Android, llama.cpp, GGUF, Jetpack Compose, Kotlin, Offline AI">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Locian — 100% On-Device Offline AI for Android">
+  <meta property="og:description" content="Run quantized GGUF models directly on Android with native llama.cpp acceleration. Zero internet, zero data collection.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/full-logo-dark.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/logo.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Ambient Glow -->
+  <div class="ambient-glow"></div>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container">
+      <a href="#" class="nav-brand">
+        <img src="assets/logo.png" alt="Locian Logo" class="nav-logo-icon">
+        <img src="assets/full-logo-dark.png" alt="Locian" class="nav-logo-text logo-dark">
+        <img src="assets/full-logo-light.png" alt="Locian" class="nav-logo-text logo-light" style="display:none;">
+      </a>
+
+      <nav>
+        <ul class="nav-menu">
+          <li><a href="#features" class="nav-link">Features</a></li>
+          <li><a href="#simulator" class="nav-link">Live Demo</a></li>
+          <li><a href="#models" class="nav-link">Model Catalog</a></li>
+          <li><a href="#architecture" class="nav-link">Architecture</a></li>
+          <li><a href="#quickstart" class="nav-link">Quickstart</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <button id="themeToggleBtn" class="theme-toggle-btn" title="Toggle theme (Light/Dark)" aria-label="Toggle theme">
+          <span id="themeIcon">☀️</span>
+        </button>
+        <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-badge-wrap">
+        <span class="hero-badge-dot"></span>
+        <span class="hero-badge-text">100% Offline · Zero Cloud · Hardware Accelerated</span>
+      </div>
+
+      <h1 class="hero-title">
+        Private AI in Your Pocket.<br>
+        <span class="highlight">100% On-Device.</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        Run quantized GGUF language models directly on your Android phone using <strong>llama.cpp</strong> native NDK bindings and <strong>Jetpack Compose</strong>. Zero network requests, zero accounts, zero subscriptions.
+      </p>
+
+      <div class="hero-cta-group">
+        <a href="#quickstart" class="btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          Get Started
+        </a>
+        <a href="#simulator" class="btn-secondary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          Try Live Demo
+        </a>
+        <a href="#models" class="btn-secondary">
+          Explore Models
+        </a>
+      </div>
+
+      <!-- App Showcase & Phone Mockup -->
+      <div class="hero-showcase">
+        <div class="showcase-visual">
+          <div class="phone-frame">
+            <div class="phone-screen">
+              <img id="phoneMockupImg" src="assets/screenshot-chat.png" alt="Locian Android App Running On-Device Chat">
+            </div>
+          </div>
+        </div>
+
+        <div class="showcase-tabs-card">
+          <div class="showcase-tabs-nav">
+            <button class="showcase-tab-btn active" data-tab="chat">💬 Chat & Code</button>
+            <button class="showcase-tab-btn" data-tab="settingsDark">🌙 Dark Theme</button>
+            <button class="showcase-tab-btn" data-tab="settingsLight">☀️ Light Theme</button>
+          </div>
+
+          <!-- Tab Content 1: Chat -->
+          <div class="tab-pane active" id="tab-chat">
+            <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 12px;">Real-Time Token Streaming</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 16px;">
+              Powered by native C++ JNI bridge directly interacting with <code>llama.cpp</code>. Experience fluid character streaming with custom markdown rendering, VS Code syntax-highlighted code blocks, and instant code copying.
+            </p>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <span class="badge-tag badge-q4">⚡ ARM NEON & FP16</span>
+              <span class="badge-tag badge-ram">📊 Live Telemetry Pill</span>
+              <span class="badge-tag badge-q4">✨ Syntax Highlighting</span>
+            </div>
+          </div>
+
+          <!-- Tab Content 2: Dark Settings -->
+          <div class="tab-pane" id="tab-settingsDark">
+            <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 12px;">Settings & Tri-State Theme</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 16px;">
+              Seamlessly switch between <strong>System Default</strong>, <strong>Light Mode</strong>, and Locian's signature <strong>Dark Mode</strong> with live animated state transitions. Adjust Temperature, Top-P, Min-P, Context Window, and Inference Threads on the fly.
+            </p>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <span class="badge-tag badge-q4">🎨 Tri-State Theme Switcher</span>
+              <span class="badge-tag badge-ram">⚙️ Hardware RAM Profiler</span>
+            </div>
+          </div>
+
+          <!-- Tab Content 3: Light Settings -->
+          <div class="tab-pane" id="tab-settingsLight">
+            <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 12px;">Pristine Light Theme</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 16px;">
+              Designed with precision contrast and warm slate surfaces. In light mode, Locian automatically swaps wordmark graphics, adjusts transparent input bar borders, and tints accent controls with Locian brand red.
+            </p>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <span class="badge-tag badge-q4">☀️ High Contrast Daytime</span>
+              <span class="badge-tag badge-ram">📱 Edge-to-Edge Navigation</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Features Section -->
+  <section class="section" id="features">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">Core Capabilities</div>
+        <h2 class="section-title">Engineered for Sovereign Privacy & Raw Performance</h2>
+        <p class="section-desc">Locian combines cutting-edge mobile LLM quantization with native Android runtime optimizations.</p>
+      </div>
+
+      <div class="grid-3">
+        <!-- Feature 1 -->
+        <div class="feature-card">
+          <div class="feature-icon-box">🔒</div>
+          <h3 class="feature-title">100% Offline Privacy</h3>
+          <p class="feature-text">
+            Zero telemetry sent to the cloud. Your prompts, reasoning, and responses never leave your device's memory. Works completely in airplane mode.
+          </p>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="feature-card">
+          <div class="feature-icon-box">⚡</div>
+          <h3 class="feature-title">Hardware Acceleration</h3>
+          <p class="feature-text">
+            Automatic CPU feature detection selectively loads native binaries compiled for ARM NEON, ARMv8.2 FP16, Dot-Product, and ARMv8.4 i8mm for maximum decode tok/s.
+          </p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="feature-card">
+          <div class="feature-icon-box">🎨</div>
+          <h3 class="feature-title">Adaptive Theming</h3>
+          <p class="feature-text">
+            Integrated tri-state theme switcher (System, Light, Dark) with Locian's signature red neon accents, transparent edge-to-edge system bars, and no bottom scrim.
+          </p>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="feature-card">
+          <div class="feature-icon-box">🧠</div>
+          <h3 class="feature-title">Reasoning & Thought Folding</h3>
+          <p class="feature-text">
+            Dedicated support for reasoning models like DeepSeek R1 and Qwen. Watch internal chain-of-thought streams in collapsible, interactive thought cards.
+          </p>
+        </div>
+
+        <!-- Feature 5 -->
+        <div class="feature-card">
+          <div class="feature-icon-box">📊</div>
+          <h3 class="feature-title">Live Telemetry Pill</h3>
+          <p class="feature-text">
+            Precise generation metrics: Decode speed (tok/s), Time to First Token (TTFT in ms), and total tokens rendered cleanly after response completion.
+          </p>
+        </div>
+
+        <!-- Feature 6 -->
+        <div class="feature-card">
+          <div class="feature-icon-box">📂</div>
+          <h3 class="feature-title">Curated Catalog & Custom GGUF</h3>
+          <p class="feature-text">
+            One-tap downloads with HTTP Range resumability and SHA-256 verification. Or import any <code>.gguf</code> model directly from your SD card or internal storage.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Simulator Demo -->
+  <section class="section" id="simulator" style="background: var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">Interactive Preview</div>
+        <h2 class="section-title">Experience the Locian Streaming Engine</h2>
+        <p class="section-desc">Simulate live on-device token streaming, syntax highlighting, and telemetry stats right in your browser.</p>
+      </div>
+
+      <div class="simulator-box">
+        <div class="sim-header">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <label for="simPromptSelect" style="font-weight: 600; font-size: 0.9rem;">Select Demo Prompt:</label>
+            <select id="simPromptSelect" style="background: var(--bg-primary); color: var(--text-primary); border: 1px solid var(--border-color); padding: 8px 14px; border-radius: var(--radius-sm); font-family: var(--font-sans); font-size: 0.9rem;">
+              <option value="python">Write an async Python task queue</option>
+              <option value="quantum">Explain quantum computing simply</option>
+              <option value="flow">Write a Kotlin Coroutine Flow</option>
+            </select>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span class="sim-model-badge">
+              <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span>
+              Qwen 2.5 1.5B Instruct (Q4_K_M)
+            </span>
+            <button id="simStartBtn" class="btn-primary" style="padding: 8px 18px; font-size: 0.9rem;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              Stream Response
+            </button>
+            <button id="simStopBtn" class="btn-secondary" style="padding: 8px 18px; font-size: 0.9rem; display: none; background: #ef4444; color: #fff; border-color: #ef4444;">
+              Stop
+            </button>
+          </div>
+        </div>
+
+        <div class="sim-chat-window">
+          <!-- User Prompt -->
+          <div class="chat-bubble user-bubble">
+            Write a clean Python script demonstrating asynchronous task queues.
+          </div>
+
+          <!-- Assistant Response -->
+          <div class="chat-bubble assistant-bubble" id="simAssistantBubble">
+            <p>Sure, here is a clean Python script using asyncio to implement an in-memory asynchronous task queue:</p>
+            <div class="code-container">
+              <div class="code-titlebar">
+                <div class="window-dots">
+                  <span class="window-dot dot-red"></span>
+                  <span class="window-dot dot-yellow"></span>
+                  <span class="window-dot dot-green"></span>
+                </div>
+                <span class="code-lang">PYTHON</span>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <div class="code-body">
+                <pre><code><span class="syn-kw">import</span> asyncio
+<span class="syn-kw">from</span> typing <span class="syn-kw">import</span> <span class="syn-type">Any</span>
+
+<span class="syn-kw">class</span> <span class="syn-type">TaskQueue</span>:
+    <span class="syn-kw">def</span> <span class="syn-fn">__init__</span>(<span class="syn-var">self</span>, max_concurrency: <span class="syn-type">int</span> = <span class="syn-num">3</span>):
+        <span class="syn-var">self</span>.queue = asyncio.<span class="syn-type">Queue</span>()
+        <span class="syn-var">self</span>.semaphore = asyncio.<span class="syn-type">Semaphore</span>(max_concurrency)
+
+    <span class="syn-kw">async def</span> <span class="syn-fn">enqueue</span>(<span class="syn-var">self</span>, task_name: <span class="syn-type">str</span>, payload: <span class="syn-type">Any</span>):
+        <span class="syn-kw">await</span> <span class="syn-var">self</span>.queue.put((task_name, payload))
+        print(<span class="syn-str">f"📦 [Queued] {task_name}"</span>)
+
+    <span class="syn-kw">async def</span> <span class="syn-fn">worker</span>(<span class="syn-var">self</span>, worker_id: <span class="syn-type">int</span>):
+        <span class="syn-kw">while True</span>:
+            task_name, payload = <span class="syn-kw">await</span> <span class="syn-var">self</span>.queue.get()
+            <span class="syn-kw">async with</span> <span class="syn-var">self</span>.semaphore:
+                print(<span class="syn-str">f"⚡ [Worker {worker_id}] Executing: {task_name}"</span>)
+                <span class="syn-kw">await</span> asyncio.sleep(<span class="syn-num">0.5</span>)
+            <span class="syn-var">self</span>.queue.task_done()</code></pre>
+              </div>
+            </div>
+            <!-- Telemetry Pill -->
+            <div>
+              <div class="telemetry-pill" id="simTelemetryPill">
+                <span class="telemetry-bolt">⚡</span>
+                <strong id="simTokSpeed" style="color: var(--text-primary);">18.2 tok/s</strong>
+                <span style="opacity: 0.5;">·</span>
+                <span id="simTtft">385 ms</span>
+                <span style="opacity: 0.5;">·</span>
+                <span id="simTotalTokens">142 tok</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: var(--text-secondary);">
+          <span>Engine Status: <strong id="simStatusIndicator" style="color: #10b981;">Ready (Idle)</strong></span>
+          <span>Quantization: <strong>Q4_K_M (4-bit Medium)</strong></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Curated Model Matrix -->
+  <section class="section" id="models">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">Model Library</div>
+        <h2 class="section-title">Tested & Verified Mobile GGUF Models</h2>
+        <p class="section-desc">Hand-tested on physical devices ranging from 4 GB budget phones to 12 GB+ flagships.</p>
+      </div>
+
+      <div class="matrix-filters">
+        <button class="filter-btn active" data-filter="all">All Models</button>
+        <button class="filter-btn" data-filter="low">≤ 3 GB RAM (Compact)</button>
+        <button class="filter-btn" data-filter="balanced">4–6 GB RAM (Balanced)</button>
+        <button class="filter-btn" data-filter="flagship">8 GB+ RAM (Flagship)</button>
+      </div>
+
+      <div class="matrix-table-wrap">
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th>Model Name</th>
+              <th>Params</th>
+              <th>Quantization</th>
+              <th>Min RAM</th>
+              <th>Context</th>
+              <th>Best For</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-ram="2">
+              <td><strong>Qwen 2.5 0.5B Instruct</strong></td>
+              <td>0.5B</td>
+              <td><span class="badge-tag badge-q4">Q4_K_M (~380 MB)</span></td>
+              <td><span class="badge-tag badge-ram">2 GB RAM</span></td>
+              <td>2048</td>
+              <td>Ultra-fast responses on low-end hardware & quick Q&A</td>
+            </tr>
+            <tr data-ram="3">
+              <td><strong>Llama 3.2 1B Instruct</strong></td>
+              <td>1.2B</td>
+              <td><span class="badge-tag badge-q4">Q4_K_M (~770 MB)</span></td>
+              <td><span class="badge-tag badge-ram">3 GB RAM</span></td>
+              <td>2048</td>
+              <td>Balanced instruction following and natural conversation</td>
+            </tr>
+            <tr data-ram="4">
+              <td><strong>Qwen 2.5 1.5B Instruct</strong></td>
+              <td>1.5B</td>
+              <td><span class="badge-tag badge-q4">Q4_K_M (~940 MB)</span></td>
+              <td><span class="badge-tag badge-ram">4 GB RAM</span></td>
+              <td>4096</td>
+              <td>Strong general chat, Python coding, and reasoning</td>
+            </tr>
+            <tr data-ram="4">
+              <td><strong>DeepSeek R1 Distill Qwen 1.5B</strong></td>
+              <td>1.5B</td>
+              <td><span class="badge-tag badge-q4">Q4_K_M (~1.0 GB)</span></td>
+              <td><span class="badge-tag badge-ram">4 GB RAM</span></td>
+              <td>4096</td>
+              <td>Chain-of-thought math, logic puzzles, and reasoning</td>
+            </tr>
+            <tr data-ram="4">
+              <td><strong>SmolLM2 1.7B Instruct</strong></td>
+              <td>1.7B</td>
+              <td><span class="badge-tag badge-q4">Q4_K_M (~1.0 GB)</span></td>
+              <td><span class="badge-tag badge-ram">4 GB RAM</span></td>
+              <td>4096</td>
+              <td>High-quality compact synthetic training reasoning</td>
+            </tr>
+            <tr data-ram="4">
+              <td><strong>Qwen 3 Preview 1.7B</strong></td>
+              <td>1.7B</td>
+              <td><span class="badge-tag badge-q4">Q4_K_M (~940 MB)</span></td>
+              <td><span class="badge-tag badge-ram">4 GB RAM</span></td>
+              <td>4096</td>
+              <td>Next-gen mobile architecture preset with deep quality</td>
+            </tr>
+            <tr data-ram="6">
+              <td><strong>Llama 3.2 3B Instruct</strong></td>
+              <td>3.2B</td>
+              <td><span class="badge-tag badge-q4">Q4_K_M (~1.9 GB)</span></td>
+              <td><span class="badge-tag badge-ram">6 GB RAM</span></td>
+              <td>8192</td>
+              <td>Superior instruction following, writing, and logic</td>
+            </tr>
+            <tr data-ram="8">
+              <td><strong>Qwen 3.5 9B Turbo (Flagship)</strong></td>
+              <td>9.0B</td>
+              <td><span class="badge-tag badge-q4">IQ2_M (~2.8 GB)</span></td>
+              <td><span class="badge-tag badge-ram">8 GB+ RAM</span></td>
+              <td>8192</td>
+              <td>Next-gen flagship extreme reasoning capability</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Multi-Module Architecture -->
+  <section class="section" id="architecture" style="background: var(--bg-secondary);">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">System Design</div>
+        <h2 class="section-title">Clean Architecture & Native NDK Pipeline</h2>
+        <p class="section-desc">Strict separation of concerns ensures crash-free memory management and high maintainability.</p>
+      </div>
+
+      <div class="arch-card">
+        <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 8px;">Multi-Module Architecture Hierarchy</h3>
+        <p style="color: var(--text-secondary); font-size: 0.95rem;">
+          Each layer communicates via Kotlin Coroutines <code>Flow</code>, reactive StateFlows, and Hilt dependency injection.
+        </p>
+
+        <div class="arch-flow-diagram">
+          <div class="arch-layer">
+            <span class="arch-layer-badge">:feature-*</span>
+            <div class="arch-layer-desc"><strong>UI Layer:</strong> <code>feature-chat</code>, <code>feature-models</code>, <code>feature-settings</code>, <code>feature-conversations</code> built with Jetpack Compose Material 3.</div>
+          </div>
+          <div class="arch-layer">
+            <span class="arch-layer-badge">:domain-inference</span>
+            <div class="arch-layer-desc"><strong>Domain Layer:</strong> Clean Use Cases (<code>StreamChatResponse</code>, <code>LoadModel</code>, <code>ManageConversation</code>) independent of Android frameworks.</div>
+          </div>
+          <div class="arch-layer">
+            <span class="arch-layer-badge">:data-*</span>
+            <div class="arch-layer-desc"><strong>Data Layer:</strong> Room SQLite DB (message history), DataStore (inference sampling prefs), OkHttp (resumable range downloads).</div>
+          </div>
+          <div class="arch-layer">
+            <span class="arch-layer-badge">:inference</span>
+            <div class="arch-layer-desc"><strong>Native Bridge:</strong> C++ JNI bridge, CPU feature dispatcher, dynamic <code>llama.cpp</code> cross-compilation target selection.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CPU Dispatcher Table -->
+      <div class="arch-card">
+        <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 8px;">Dynamic CPU Binary Dispatching</h3>
+        <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 16px;">
+          At startup, Locian detects hardware flags via <code>liblocian_cpu_features.so</code> and dynamically links the most accelerated engine binary:
+        </p>
+        <div class="matrix-table-wrap">
+          <table class="matrix-table">
+            <thead>
+              <tr>
+                <th>Native Library</th>
+                <th>Target Architecture</th>
+                <th>Hardware Instructions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>liblocian_inference_v8_4_fp16_dotprod_i8mm.so</code></td>
+                <td>ARMv8.4-A+</td>
+                <td>NEON + FP16 + DotProd + Int8 Matrix Multiplication (i8mm)</td>
+              </tr>
+              <tr>
+                <td><code>liblocian_inference_v8_4_fp16_dotprod.so</code></td>
+                <td>ARMv8.4-A</td>
+                <td>NEON + FP16 + Dot-Product instructions</td>
+              </tr>
+              <tr>
+                <td><code>liblocian_inference_v8_2_fp16_dotprod.so</code></td>
+                <td>ARMv8.2-A</td>
+                <td>NEON + Half-Precision FP16 + DotProd</td>
+              </tr>
+              <tr>
+                <td><code>liblocian_inference_v8.so</code></td>
+                <td>ARMv8-A Baseline</td>
+                <td>Universal 64-bit ARM NEON execution</td>
+              </tr>
+              <tr>
+                <td><code>liblocian_inference.so</code></td>
+                <td>x86_64 Emulator</td>
+                <td>Desktop development and emulator testing support</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quickstart & Installation -->
+  <section class="section" id="quickstart">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">Getting Started</div>
+        <h2 class="section-title">Build & Run in Minutes</h2>
+        <p class="section-desc">Compile Locian locally using Android Studio or the command line.</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
+        <!-- Step 1 -->
+        <div class="feature-card">
+          <h3 class="feature-title">1. Prerequisites</h3>
+          <ul style="color: var(--text-secondary); margin-left: 20px; font-size: 0.95rem; line-height: 1.8;">
+            <li>Android Studio Ladybug or newer</li>
+            <li>JDK 17 or JDK 21</li>
+            <li>Android NDK r27+ and CMake 3.22.1</li>
+            <li>Physical device with Android 8.0+ (API 26+) and 4 GB+ RAM</li>
+          </ul>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="feature-card">
+          <h3 class="feature-title">2. Clone & Build Debug APK</h3>
+          <p class="feature-text">Assemble the debug APK with multi-target NDK binaries:</p>
+          <div class="code-block-display">
+            <button class="copy-icon-btn">Copy</button>
+            <code>./gradlew assembleDebug</code>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="feature-card">
+          <h3 class="feature-title">3. Install onto Device</h3>
+          <p class="feature-text">Connect device via USB with ADB debugging enabled:</p>
+          <div class="code-block-display">
+            <button class="copy-icon-btn">Copy</button>
+            <code>adb install -r app/build/outputs/apk/debug/app-debug.apk</code>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="assets/logo.png" alt="Locian Logo" style="width: 32px; height: 32px;">
+            <strong style="font-size: 1.2rem; letter-spacing: -0.5px;">LOCIAN</strong>
+          </div>
+          <p class="footer-desc">
+            100% on-device private AI engine for Android. Built with Jetpack Compose, Kotlin, and llama.cpp.
+          </p>
+        </div>
+
+        <div class="footer-links-group">
+          <div>
+            <div class="footer-col-title">Navigation</div>
+            <ul class="footer-links">
+              <li><a href="#features" class="footer-link">Features</a></li>
+              <li><a href="#simulator" class="footer-link">Live Demo</a></li>
+              <li><a href="#models" class="footer-link">Model Catalog</a></li>
+              <li><a href="#architecture" class="footer-link">Architecture</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <div class="footer-col-title">Documentation</div>
+            <ul class="footer-links">
+              <li><a href="#quickstart" class="footer-link">Quickstart Guide</a></li>
+              <li><a href="https://github.com/ggerganov/llama.cpp" target="_blank" rel="noopener noreferrer" class="footer-link">llama.cpp Engine</a></li>
+              <li><a href="https://github.com" target="_blank" rel="noopener noreferrer" class="footer-link">GitHub Repository</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2026 Locian. Licensed under Apache License 2.0. Inference engine powered by llama.cpp (MIT License).</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Main JavaScript -->
+  <script src="js/main.js"></script>
+</body>
+</html>
