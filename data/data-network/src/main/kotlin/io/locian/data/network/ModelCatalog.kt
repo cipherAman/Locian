@@ -35,9 +35,22 @@ object ModelCatalog {
         ),
 
         ModelInfo(
+            id = "qwen3-0.6b",
+            name = "Qwen3 0.6B Instruct",
+            description = "484 MB model from Alibaba's Qwen3 generation. Supports hybrid thinking/non-thinking mode. Best reasoning quality in the sub-500 MB class with multilingual capability.",
+            repoId = "bartowski/Qwen_Qwen3-0.6B-GGUF",
+            filename = "Qwen3-0.6B-Q4_K_M.gguf",
+            downloadUrl = "https://huggingface.co/bartowski/Qwen_Qwen3-0.6B-GGUF/resolve/main/Qwen3-0.6B-Q4_K_M.gguf",
+            sizeBytes = 507510784L,     // 484 MB
+            quantization = "Q4_K_M",
+            parameterCount = "0.6B",
+            minRamGb = 2
+        ),
+
+        ModelInfo(
             id = "qwen2.5-0.5b",
             name = "Qwen 2.5 0.5B Instruct",
-            description = "380 MB model from Alibaba. Highest benchmark scores among sub-500 MB models. Multilingual support with strong instruction adherence relative to its size.",
+            description = "380 MB model from Alibaba. Strong benchmark scores for its size. Multilingual support with good instruction adherence. Fallback choice for 2 GB devices.",
             repoId = "Qwen/Qwen2.5-0.5B-Instruct-GGUF",
             filename = "qwen2.5-0.5b-instruct-q4_k_m.gguf",
             downloadUrl = "https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/resolve/main/qwen2.5-0.5b-instruct-q4_k_m.gguf",
@@ -143,6 +156,33 @@ object ModelCatalog {
         ),
 
         // ── Upper-mid  (3B+, 6 GB RAM) ───────────────────────────────────────────
+        // Latest 2025 releases shown first
+
+        ModelInfo(
+            id = "smollm3-3b",
+            name = "SmolLM3 3B Instruct",
+            description = "1.92 GB model by HuggingFace — the latest generation of the SmolLM series. Trained with long-context alignment and improved reasoning. Best-in-class quality for a 3B model at this file size.",
+            repoId = "bartowski/HuggingFaceTB_SmolLM3-3B-GGUF",
+            filename = "SmolLM3-3B-Q4_K_M.gguf",
+            downloadUrl = "https://huggingface.co/bartowski/HuggingFaceTB_SmolLM3-3B-GGUF/resolve/main/SmolLM3-3B-Q4_K_M.gguf",
+            sizeBytes = 2061500416L,    // 1.92 GB
+            quantization = "Q4_K_M",
+            parameterCount = "3.0B",
+            minRamGb = 6
+        ),
+
+        ModelInfo(
+            id = "qwen3-4b",
+            name = "Qwen3 4B Instruct",
+            description = "2.50 GB model from Alibaba's Qwen3 generation. Hybrid thinking/non-thinking mode. Top reasoning accuracy in the 4B class, outperforming many 7B models on benchmarks. Requires 6 GB device RAM.",
+            repoId = "bartowski/Qwen_Qwen3-4B-GGUF",
+            filename = "Qwen_Qwen3-4B-Q4_K_M.gguf",
+            downloadUrl = "https://huggingface.co/bartowski/Qwen_Qwen3-4B-GGUF/resolve/main/Qwen_Qwen3-4B-Q4_K_M.gguf",
+            sizeBytes = 2684354560L,    // 2.50 GB
+            quantization = "Q4_K_M",
+            parameterCount = "4.0B",
+            minRamGb = 6
+        ),
 
         ModelInfo(
             id = "qwen2.5-3b",
