@@ -44,7 +44,7 @@ object MessageContentParser {
                 // <think> opened but not closed yet
                 val thinking = content.substring(thinkStart).trimStart()
                 return ParsedMessage(
-                    thinking = thinking.ifEmpty { null },
+                    thinking = thinking,
                     response = "",
                     isStillThinking = isStreaming
                 )
@@ -78,7 +78,7 @@ object MessageContentParser {
             } else {
                 val thinking = content.substring(thinkStart).trimStart()
                 return ParsedMessage(
-                    thinking = thinking.ifEmpty { null },
+                    thinking = thinking,
                     response = "",
                     isStillThinking = isStreaming
                 )

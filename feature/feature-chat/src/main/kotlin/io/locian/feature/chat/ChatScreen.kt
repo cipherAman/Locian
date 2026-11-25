@@ -625,9 +625,9 @@ fun AssistantStreamingBubble(
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
                 val thinkingText = parsed.thinking
-                if (showThinking && thinkingText != null) {
+                if (showThinking && (thinkingText != null || parsed.isStillThinking)) {
                     ThinkingProcessCard(
-                        thinking = thinkingText,
+                        thinking = thinkingText ?: "",
                         isStillThinking = parsed.isStillThinking,
                         modifier = Modifier.padding(bottom = if (parsed.response.isNotEmpty()) 10.dp else 0.dp)
                     )
