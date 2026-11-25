@@ -24,6 +24,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -135,17 +136,53 @@ fun ChatScreen(
         }
     }
 
-    LaunchedEffect(uiState.messages.size, uiState.streamingText) {
-        if (uiState.messages.isNotEmpty() || uiState.streamingText.isNotEmpty()) {
-            listState.animateScrollToItem(
-                index = uiState.messages.size + (if (uiState.streamingText.isNotEmpty()) 1 else 0)
-            )
+    val isDragged by listState.interactionSource.collectIsDraggedAsState()
+    var userScrolledUp by remember { mutableStateOf(false) }
+
+    val isAtBottom by remember {
+        derivedStateOf {
+            val layoutInfo = listState.layoutInfo
+            val visibleItems = layoutInfo.visibleItemsInfo
+            if (visibleItems.isEmpty()) return@derivedStateOf true
+            val lastVisible = visibleItems.last()
+            lastVisible.index >= layoutInfo.totalItemsCount - 1 && !listState.canScrollForward
+        }
+    }
+
+    // When the user drags and moves away from the bottom, mark as scrolled up
+    LaunchedEffect(isDragged, listState.canScrollForward) {
+        if (isDragged && listState.canScrollForward) {
+            userScrolledUp = true
+        }
+    }
+
+    // Reset userScrolledUp when user reaches the bottom and releases their drag
+    LaunchedEffect(isAtBottom, isDragged) {
+        if (isAtBottom && !isDragged) {
+            userScrolledUp = false
+        }
+    }
+
+    // Auto-scroll when new messages are added
+    LaunchedEffect(uiState.messages.size) {
+        if (uiState.messages.isNotEmpty()) {
+            userScrolledUp = false
+            val totalCount = uiState.messages.size + (if (uiState.streamingText.isNotEmpty()) 1 else 0)
+            listState.animateScrollToItem((totalCount - 1).coerceAtLeast(0))
+        }
+    }
+
+    // Auto-scroll on incoming stream tokens ONLY if the user has not scrolled up and is not actively dragging
+    LaunchedEffect(uiState.streamingText) {
+        if (!userScrolledUp && !isDragged && uiState.streamingText.isNotEmpty()) {
+            val totalCount = uiState.messages.size + 1
+            listState.scrollToItem((totalCount - 1).coerceAtLeast(0))
         }
     }
 
     val showScrollToBottom by remember {
         derivedStateOf {
-            listState.firstVisibleItemIndex > 1
+            !isAtBottom && (uiState.messages.isNotEmpty() || uiState.streamingText.isNotEmpty())
         }
     }
 
@@ -264,6 +301,7 @@ fun ChatScreen(
                                 isModelLoaded = uiState.isModelLoaded,
                                 onSelectModel = onNavigateToModels,
                                 onPromptClick = { prompt ->
+                                    userScrolledUp = false
                                     viewModel.sendMessage(prompt)
                                 }
                             )
@@ -292,10 +330,10 @@ fun ChatScreen(
                 ) {
                     SmallFloatingActionButton(
                         onClick = {
+                            userScrolledUp = false
                             coroutineScope.launch {
-                                listState.animateScrollToItem(
-                                    index = uiState.messages.size + (if (uiState.streamingText.isNotEmpty()) 1 else 0)
-                                )
+                                val totalCount = uiState.messages.size + (if (uiState.streamingText.isNotEmpty()) 1 else 0)
+                                listState.animateScrollToItem((totalCount - 1).coerceAtLeast(0))
                             }
                         },
                         containerColor = MaterialTheme.colorScheme.surfaceVariant,
@@ -317,6 +355,7 @@ fun ChatScreen(
                 text = inputText,
                 onTextChange = { inputText = it },
                 onSend = {
+                    userScrolledUp = false
                     viewModel.sendMessage(inputText)
                     inputText = ""
                     keyboardController?.hide()
