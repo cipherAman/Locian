@@ -79,6 +79,8 @@ The built-in catalog provides tested, mobile-optimized models hosted on Hugging 
 | **Llama 3.2 1B** | 1.23B | Q4_K_M | ~770 MB | 3 GB | General dialogue, summarization, instructions |
 | **Qwen 2.5 1.5B** | 1.54B | Q4_K_M | ~940 MB | 4 GB | Coding, technical assistance, multilingual reasoning |
 | **SmolLM2 1.7B** | 1.71B | Q4_K_M | ~1.02 GB | 4 GB | Compact synthetic reasoning benchmark model |
+| **Gemma 2 2B IT** | 2.6B | Q4_K_M | ~1.71 GB | 4 GB | Google DeepMind sliding-window instruction clarity |
+| **Gemma 4 E2B IT** | E2B | Q4_K_M | ~3.42 GB | 6 GB | Google DeepMind next-generation dense reasoning |
 | **Llama 3.2 3B** | 3.21B | Q4_K_M | ~1.95 GB | 6 GB | Complex logical reasoning, structured generation |
 
 **Catalog Features:**

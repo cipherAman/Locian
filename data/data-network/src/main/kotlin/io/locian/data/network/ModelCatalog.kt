@@ -155,13 +155,25 @@ object ModelCatalog {
         ),
         // Google Gemma & Meta Llama
         ModelInfo(
+            id = "gemma-4-e2b",
+            name = "Gemma 4 E2B IT",
+            description = "Google DeepMind's next-gen multimodal-ready architecture. High reasoning density with efficient sliding-window attention.",
+            repoId = "prithivMLmods/gemma-4-E2B-it-GGUF",
+            filename = "gemma-4-E2B-it.Q4_K_M.gguf",
+            downloadUrl = "https://huggingface.co/prithivMLmods/gemma-4-E2B-it-GGUF/resolve/main/gemma-4-E2B-it.Q4_K_M.gguf",
+            sizeBytes = 3427879136L, // ~3.4 GB
+            quantization = "Q4_K_M",
+            parameterCount = "E2B",
+            minRamGb = 6
+        ),
+        ModelInfo(
             id = "gemma-2-2b",
             name = "Gemma 2 2B IT",
             description = "Google DeepMind's compact model with sliding window attention. Remarkable accuracy and instruction clarity.",
             repoId = "bartowski/gemma-2-2b-it-GGUF",
             filename = "gemma-2-2b-it-Q4_K_M.gguf",
             downloadUrl = "https://huggingface.co/bartowski/gemma-2-2b-it-GGUF/resolve/main/gemma-2-2b-it-Q4_K_M.gguf",
-            sizeBytes = 1630000000L, // ~1.6 GB
+            sizeBytes = 1708582752L, // ~1.7 GB
             quantization = "Q4_K_M",
             parameterCount = "2.6B",
             minRamGb = 4

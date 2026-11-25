@@ -64,6 +64,8 @@ Locian/
 | **Llama 3.2 1B** | 1.2B | Q4_K_M (~770 MB) | 3 GB | 2048 | Balanced instruction following & chat |
 | **Qwen 2.5 1.5B** | 1.5B | Q4_K_M (~940 MB) | 4 GB | 4096 | General chat, coding, reasoning |
 | **SmolLM2 1.7B** | 1.7B | Q4_K_M (~1.0 GB) | 4 GB | 4096 | High-quality compact synthetic reasoning |
+| **Gemma 2 2B IT** | 2.6B | Q4_K_M (~1.7 GB) | 4 GB | 4096 | Google sliding-window high-accuracy instruction following |
+| **Gemma 4 E2B IT** | E2B | Q4_K_M (~3.4 GB) | 6 GB | 8192 | Google DeepMind next-gen dense reasoning architecture |
 | **Llama 3.2 3B** | 3.2B | Q4_K_M (~1.9 GB) | 6 GB | 8192 | Flagship reasoning and creative tasks |
 
 ---
