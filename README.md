@@ -1,12 +1,16 @@
 # Locian — On-Device LLM Android Application
 
-[![Docs](https://img.shields.io/badge/Docs-GitHub%20Pages-FA010E?style=flat-square&logo=github)](docs/index.html)
+[![Documentation](https://img.shields.io/badge/Documentation-User%20Guide-FA010E?style=flat-square&logo=github)](docs/guide.html)
+[![Showcase](https://img.shields.io/badge/Showcase-Live%20Demo-21262d?style=flat-square&logo=github)](docs/index.html)
 [![Android](https://img.shields.io/badge/Platform-Android%208.0%2B-3DDC84?style=flat-square&logo=android)](app/)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?style=flat-square)](LICENSE)
 
 **Locian** is a privacy-first, 100% offline local LLM Android application built with **Jetpack Compose**, **Clean Architecture**, and **llama.cpp** via high-performance Android NDK C++ JNI bindings. It allows running quantized GGUF language models directly on mobile hardware without requiring cloud connectivity or accounts.
 
-> 🌐 **Interactive Documentation & Live Showcase**: Check out our [GitHub Pages Documentation](docs/index.html) for an interactive streaming simulator, curated model matrix, architecture diagrams, and quickstart guide!
+> 📖 **Official Documentation**:
+> - [**Online Documentation & User Guide**](docs/guide.html) (Setup, Sideloading GGUF, Inference Tuning, FAQs)
+> - [**Raw Markdown Guide**](docs/USER_GUIDE.md)
+> - [**Interactive Showcase & Simulator**](docs/index.html)
 
 ---
 

@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentation & User Guide — Locian</title>
+  <meta name="description" content="Official documentation and user guide for Locian on-device LLM Android application. Setup, model management, parameter tuning, and troubleshooting.">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/logo.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Ambient Glow -->
+  <div class="ambient-glow"></div>
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="container">
+      <a href="index.html" class="nav-brand">
+        <img src="assets/logo.png" alt="Locian Logo" class="nav-logo-icon">
+        <img src="assets/full-logo-dark.png" alt="Locian" class="nav-logo-text logo-dark">
+        <img src="assets/full-logo-light.png" alt="Locian" class="nav-logo-text logo-light" style="display:none;">
+      </a>
+
+      <nav>
+        <ul class="nav-menu">
+          <li><a href="index.html" class="nav-link">Home</a></li>
+          <li><a href="guide.html" class="nav-link active">Documentation</a></li>
+          <li><a href="index.html#simulator" class="nav-link">Live Demo</a></li>
+          <li><a href="index.html#models" class="nav-link">Models</a></li>
+          <li><a href="index.html#architecture" class="nav-link">Architecture</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <button id="themeToggleBtn" class="theme-toggle-btn" title="Toggle theme (Light/Dark)" aria-label="Toggle theme">
+          <span id="themeIcon">☀️</span>
+        </button>
+        <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Documentation Layout -->
+  <div class="docs-wrapper">
+    <div class="container docs-layout">
+
+      <!-- Sticky Sidebar -->
+      <aside class="docs-sidebar">
+        <div class="docs-sidebar-section">
+          <div class="docs-sidebar-title">Getting Started</div>
+          <ul class="docs-nav-list">
+            <li><a href="#requirements" class="docs-nav-link active">Hardware Requirements</a></li>
+            <li><a href="#installation" class="docs-nav-link">Installation</a></li>
+            <li><a href="#quickstart" class="docs-nav-link">Quickstart Flow</a></li>
+          </ul>
+        </div>
+
+        <div class="docs-sidebar-section">
+          <div class="docs-sidebar-title">Model Management</div>
+          <ul class="docs-nav-list">
+            <li><a href="#model-catalog" class="docs-nav-link">In-App Model Catalog</a></li>
+            <li><a href="#sideloading" class="docs-nav-link">Sideloading Custom GGUF</a></li>
+            <li><a href="#quantization" class="docs-nav-link">Quantization Guidelines</a></li>
+          </ul>
+        </div>
+
+        <div class="docs-sidebar-section">
+          <div class="docs-sidebar-title">Using the App</div>
+          <ul class="docs-nav-list">
+            <li><a href="#chat-interface" class="docs-nav-link">Chat & Code Formatting</a></li>
+            <li><a href="#telemetry" class="docs-nav-link">Live Telemetry Pill</a></li>
+            <li><a href="#conversations" class="docs-nav-link">Managing Conversations</a></li>
+          </ul>
+        </div>
+
+        <div class="docs-sidebar-section">
+          <div class="docs-sidebar-title">Configuration</div>
+          <ul class="docs-nav-list">
+            <li><a href="#inference-tuning" class="docs-nav-link">Inference Parameters</a></li>
+            <li><a href="#theming" class="docs-nav-link">Theme & Appearance</a></li>
+            <li><a href="#thermal" class="docs-nav-link">Thermal & Battery Tuning</a></li>
+          </ul>
+        </div>
+
+        <div class="docs-sidebar-section">
+          <div class="docs-sidebar-title">Support</div>
+          <ul class="docs-nav-list">
+            <li><a href="#troubleshooting" class="docs-nav-link">Troubleshooting & FAQ</a></li>
+          </ul>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="docs-content">
+
+        <!-- Header -->
+        <div class="docs-header">
+          <h1 class="docs-title">Locian User Guide & Technical Documentation</h1>
+          <p class="docs-lead">
+            Everything you need to set up, operate, and optimize on-device language models using Locian on Android.
+          </p>
+        </div>
+
+        <!-- 1. Requirements -->
+        <section class="docs-section" id="requirements">
+          <h2 class="docs-h2">1. Hardware & System Requirements</h2>
+          <p class="docs-p">
+            Locian runs quantized GGUF models directly within the device's CPU and RAM. Because no remote servers are contacted, performance and maximum model size depend entirely on your phone's hardware specifications.
+          </p>
+
+          <div class="docs-table-wrap">
+            <table class="docs-table">
+              <thead>
+                <tr>
+                  <th>Component</th>
+                  <th>Minimum Specification</th>
+                  <th>Recommended Specification</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Operating System</strong></td>
+                  <td>Android 8.0 (API level 26)</td>
+                  <td>Android 13.0+ (API level 33+)</td>
+                </tr>
+                <tr>
+                  <td><strong>CPU Architecture</strong></td>
+                  <td>ARM64-v8a (64-bit ARM)</td>
+                  <td>ARMv8.2-A or ARMv8.4-A (with DotProd / FP16 / i8mm)</td>
+                </tr>
+                <tr>
+                  <td><strong>System Memory (RAM)</strong></td>
+                  <td>4 GB RAM (supports 0.5B – 1B models)</td>
+                  <td>8 GB – 12 GB RAM (supports 1.5B – 3B models)</td>
+                </tr>
+                <tr>
+                  <td><strong>Available Storage</strong></td>
+                  <td>1.5 GB free internal flash storage</td>
+                  <td>5 GB+ free UFS 3.1 / 4.0 storage</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="callout callout-warning">
+            <div class="callout-title">Memory Allocation Notice</div>
+            Android's Low-Memory Killer (LMK) terminates apps that exceed process memory caps. On a 4 GB RAM device, models larger than 1.5B parameters or context windows beyond 2048 tokens may trigger an abrupt OS shutdown.
+          </div>
+        </section>
+
+        <!-- 2. Installation -->
+        <section class="docs-section" id="installation">
+          <h2 class="docs-h2">2. Installation</h2>
+          <p class="docs-p">Locian can be installed via pre-built debug APK or built directly from source using Android Studio.</p>
+
+          <h3 class="docs-h3">Method A: Installing via ADB</h3>
+          <p class="docs-p">Enable USB Debugging on your Android device (Settings → Developer Options → USB Debugging) and run:</p>
+
+          <div class="docs-code-card">
+            <div class="docs-code-header">
+              <span>Terminal</span>
+              <button class="copy-icon-btn">Copy</button>
+            </div>
+            <div class="docs-code-body">
+              <code>adb install -r app/build/outputs/apk/debug/app-debug.apk</code>
+            </div>
+          </div>
+
+          <h3 class="docs-h3">Method B: Direct APK Sideload</h3>
+          <p class="docs-p">
+            Transfer <code>app-debug.apk</code> to your device's internal storage via USB or browser download, tap the file in your file manager, and allow "Install from unknown sources" when prompted.
+          </p>
+
+          <h3 class="docs-h3">Method C: Building from Source</h3>
+          <div class="docs-code-card">
+            <div class="docs-code-header">
+              <span>Terminal</span>
+              <button class="copy-icon-btn">Copy</button>
+            </div>
+            <div class="docs-code-body">
+              <code>git clone https://github.com/Kiphra/locian.git<br>cd locian<br>./gradlew assembleDebug</code>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. Quickstart Flow -->
+        <section class="docs-section" id="quickstart">
+          <h2 class="docs-h2">3. Quickstart Workflow</h2>
+          <p class="docs-p">Follow these three steps to begin your first offline chat session:</p>
+
+          <ol class="docs-list">
+            <li><strong>Launch Locian:</strong> Open the application. On first boot, the hardware detection module profiles your CPU features (NEON, FP16, DotProd, i8mm) and initializes available memory ceilings.</li>
+            <li><strong>Acquire a Model:</strong> Navigate to the <strong>Models</strong> screen. Download <code>Qwen 2.5 0.5B</code> (ideal for fast first test) or import an existing <code>.gguf</code> file from storage.</li>
+            <li><strong>Activate & Chat:</strong> Tap the model card to set it as active. Return to the <strong>Chat</strong> screen, enter a prompt, and observe live streaming output with real-time decode metrics.</li>
+          </ol>
+        </section>
+
+        <!-- 4. Model Catalog -->
+        <section class="docs-section" id="model-catalog">
+          <h2 class="docs-h2">4. In-App Model Catalog</h2>
+          <p class="docs-p">
+            Locian includes a curated list of mobile-optimized GGUF models hosted on Hugging Face. The built-in download engine includes:
+          </p>
+
+          <ul class="docs-list">
+            <li><strong>HTTP Range Resumability:</strong> If your network drops or is interrupted, resuming the download will pick up at the exact downloaded byte rather than restarting from zero.</li>
+            <li><strong>SHA-256 Integrity Verification:</strong> Downloaded weights are checksum-validated to guarantee no corrupted weights reach the native engine.</li>
+            <li><strong>Progress Telemetry:</strong> Live download speed (MB/s), elapsed percentage, and remaining file size.</li>
+          </ul>
+
+          <div class="docs-table-wrap">
+            <table class="docs-table">
+              <thead>
+                <tr>
+                  <th>Model</th>
+                  <th>Parameters</th>
+                  <th>Disk Size</th>
+                  <th>Recommended RAM</th>
+                  <th>Characteristics</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Qwen 2.5 0.5B</strong></td>
+                  <td>0.49B</td>
+                  <td>~380 MB</td>
+                  <td>2 GB+</td>
+                  <td>Ultra-fast token output (35–50 tok/s), lowest memory footprint.</td>
+                </tr>
+                <tr>
+                  <td><strong>Llama 3.2 1B</strong></td>
+                  <td>1.23B</td>
+                  <td>~770 MB</td>
+                  <td>3 GB+</td>
+                  <td>Strong general instruction following and conversational coherence.</td>
+                </tr>
+                <tr>
+                  <td><strong>Qwen 2.5 1.5B</strong></td>
+                  <td>1.54B</td>
+                  <td>~940 MB</td>
+                  <td>4 GB+</td>
+                  <td>High-accuracy code generation, mathematics, and multilingual support.</td>
+                </tr>
+                <tr>
+                  <td><strong>SmolLM2 1.7B</strong></td>
+                  <td>1.71B</td>
+                  <td>~1.02 GB</td>
+                  <td>4 GB+</td>
+                  <td>Compact synthetic reasoning trained by Hugging Face.</td>
+                </tr>
+                <tr>
+                  <td><strong>Llama 3.2 3B</strong></td>
+                  <td>3.21B</td>
+                  <td>~1.95 GB</td>
+                  <td>6 GB – 8 GB</td>
+                  <td>Flagship on-device reasoning and complex structured output.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 5. Sideloading Custom GGUF -->
+        <section class="docs-section" id="sideloading">
+          <h2 class="docs-h2">5. Sideloading Custom GGUF Models</h2>
+          <p class="docs-p">
+            You can load any compatible GGUF format model file (such as custom fine-tunes, DeepSeek R1 distillations, or specialized domain models) without using the in-app catalog.
+          </p>
+
+          <h3 class="docs-h3">Step 1: Download GGUF Weights</h3>
+          <p class="docs-p">
+            Obtain a GGUF quantized model file from Hugging Face (e.g. from communities like <code>bartowski</code>, <code>unsloth</code>, or <code>Qwen</code>).
+          </p>
+
+          <h3 class="docs-h3">Step 2: Transfer to Device</h3>
+          <p class="docs-p">Push the file to your device's <code>Download</code> folder via ADB:</p>
+          <div class="docs-code-card">
+            <div class="docs-code-header">
+              <span>Terminal</span>
+              <button class="copy-icon-btn">Copy</button>
+            </div>
+            <div class="docs-code-body">
+              <code>adb push DeepSeek-R1-Distill-Qwen-1.5B-Q4_K_M.gguf /sdcard/Download/</code>
+            </div>
+          </div>
+
+          <h3 class="docs-h3">Step 3: Import via File Picker</h3>
+          <ol class="docs-list">
+            <li>In Locian, navigate to the <strong>Models</strong> screen.</li>
+            <li>Tap the <strong>Import Custom Model</strong> button at the top right.</li>
+            <li>Use the Android System Document Picker to select your <code>.gguf</code> file.</li>
+            <li>Locian registers the model into its local SQLite catalog and prepares it for immediate loading.</li>
+          </ol>
+        </section>
+
+        <!-- 6. Quantization Guidelines -->
+        <section class="docs-section" id="quantization">
+          <h2 class="docs-h2">6. Quantization Format Guidelines</h2>
+          <p class="docs-p">
+            When sourcing custom GGUF models, choose the quantization type that matches your device's memory bandwidth and RAM:
+          </p>
+
+          <div class="docs-table-wrap">
+            <table class="docs-table">
+              <thead>
+                <tr>
+                  <th>Quantization</th>
+                  <th>Bit Depth</th>
+                  <th>Quality / Perplexity</th>
+                  <th>Recommendation for Mobile</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>Q4_K_M</code></td>
+                  <td>4.5 bits/weight</td>
+                  <td>Very High (Near FP16)</td>
+                  <td><strong>Recommended sweet spot.</strong> Best balance of accuracy, memory, and speed.</td>
+                </tr>
+                <tr>
+                  <td><code>Q4_0</code></td>
+                  <td>4.0 bits/weight</td>
+                  <td>Standard</td>
+                  <td>Fastest inference on older ARMv8 cores with limited memory bandwidth.</td>
+                </tr>
+                <tr>
+                  <td><code>Q5_K_M</code></td>
+                  <td>5.5 bits/weight</td>
+                  <td>Maximum 5-bit Fidelity</td>
+                  <td>Recommended only for 1B/1.5B models on devices with 6 GB+ RAM.</td>
+                </tr>
+                <tr>
+                  <td><code>Q8_0</code></td>
+                  <td>8.0 bits/weight</td>
+                  <td>Virtually Identical to FP16</td>
+                  <td>Not recommended on mobile due to heavy memory footprint and heat.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 7. Chat Interface & Code Formatting -->
+        <section class="docs-section" id="chat-interface">
+          <h2 class="docs-h2">7. Chat Interface & Code Formatting</h2>
+          <p class="docs-p">
+            The chat screen supports full Markdown parsing and multi-language syntax highlighting.
+          </p>
+
+          <h3 class="docs-h3">Code Blocks</h3>
+          <p class="docs-p">
+            When the assistant generates code (e.g. Python, Kotlin, JavaScript, Rust, C++), the output is automatically enclosed in a dark-mode styled code container featuring:
+          </p>
+          <ul class="docs-list">
+            <li>Language badge header.</li>
+            <li>One-tap <strong>Copy</strong> button that copies the clean code snippet to the clipboard without metadata.</li>
+            <li>Horizontal scrolling for long lines without wrapping distortions.</li>
+          </ul>
+
+          <h3 class="docs-h3">Stop Generation</h3>
+          <p class="docs-p">
+            During response generation, the Send button transforms into an active <strong>Stop</strong> square. Tapping Stop instantly cancels the native inference loop and returns context control to the user.
+          </p>
+        </section>
+
+        <!-- 8. Telemetry Pill -->
+        <section class="docs-section" id="telemetry">
+          <h2 class="docs-h2">8. Live Telemetry Pill</h2>
+          <p class="docs-p">
+            Beneath each assistant response, Locian renders a compact telemetry badge detailing the raw inference performance of that generation:
+          </p>
+
+          <div class="docs-table-wrap">
+            <table class="docs-table">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Unit</th>
+                  <th>Technical Meaning</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Decode Speed</strong></td>
+                  <td><code>tok/s</code></td>
+                  <td>
+                    The token output rate during the autoregressive decoding phase: <code>(total_tokens - 1) / decode_time_seconds</code>.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>TTFT</strong></td>
+                  <td><code>ms</code></td>
+                  <td>
+                    <strong>Time to First Token:</strong> The total duration spent processing the prompt context before the very first token was emitted.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Total Tokens</strong></td>
+                  <td><code>tokens</code></td>
+                  <td>
+                    The exact count of generated tokens in the assistant's reply.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 9. Managing Conversations -->
+        <section class="docs-section" id="conversations">
+          <h2 class="docs-h2">9. Managing Conversations</h2>
+          <p class="docs-p">
+            Locian stores all conversations and message histories locally in an encrypted Room SQLite database:
+          </p>
+          <ul class="docs-list">
+            <li><strong>Sidebar Drawer:</strong> Tap the hamburger menu (top left) to open your conversation history.</li>
+            <li><strong>New Chat:</strong> Tap <strong>+ New Chat</strong> to clear current context and begin a fresh thread.</li>
+            <li><strong>Renaming:</strong> Tap the edit pencil icon next to any thread to provide a custom title.</li>
+            <li><strong>Deleting:</strong> Tap the trash icon to purge a thread and its messages from local storage.</li>
+          </ul>
+        </section>
+
+        <!-- 10. Inference Parameter Tuning -->
+        <section class="docs-section" id="inference-tuning">
+          <h2 class="docs-h2">10. Inference Configuration Reference</h2>
+          <p class="docs-p">
+            Open the <strong>Settings</strong> screen to adjust inference hyper-parameters. Changes take effect on the very next token generation:
+          </p>
+
+          <div class="docs-table-wrap">
+            <table class="docs-table">
+              <thead>
+                <tr>
+                  <th>Parameter</th>
+                  <th>Range</th>
+                  <th>Default</th>
+                  <th>Recommended</th>
+                  <th>Function & Effect</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Temperature</strong></td>
+                  <td>0.0 – 2.0</td>
+                  <td>0.70</td>
+                  <td>0.2 for Code / 0.7 for Chat</td>
+                  <td>Controls sampling randomness. 0.0 is greedy/deterministic. Higher values increase vocabulary diversity.</td>
+                </tr>
+                <tr>
+                  <td><strong>Top-P (Nucleus)</strong></td>
+                  <td>0.0 – 1.0</td>
+                  <td>0.90</td>
+                  <td>0.85 – 0.95</td>
+                  <td>Restricts sampling to the smallest set of tokens whose cumulative probability reaches P.</td>
+                </tr>
+                <tr>
+                  <td><strong>Min-P</strong></td>
+                  <td>0.0 – 1.0</td>
+                  <td>0.05</td>
+                  <td>0.05</td>
+                  <td>Filters out tokens with probability below (Min-P * highest_token_probability). Improves coherence.</td>
+                </tr>
+                <tr>
+                  <td><strong>CPU Threads</strong></td>
+                  <td>1 – Max Cores</td>
+                  <td>Auto</td>
+                  <td><code>Performance Cores - 1</code></td>
+                  <td>Thread allocation for matrix math. Using all cores causes rapid thermal throttling. Set to 3 or 4 on 8-core CPUs.</td>
+                </tr>
+                <tr>
+                  <td><strong>Context Size</strong></td>
+                  <td>512 – 8192</td>
+                  <td>2048 / 4096</td>
+                  <td>2048 (4GB RAM) / 4096 (8GB+ RAM)</td>
+                  <td>Maximum token context window. Larger context allocates bigger KV cache in RAM.</td>
+                </tr>
+                <tr>
+                  <td><strong>Memory Map (mmap)</strong></td>
+                  <td>On / Off</td>
+                  <td>On</td>
+                  <td>On</td>
+                  <td>Allows the OS to page model weights directly from storage rather than copying entire weights into RAM.</td>
+                </tr>
+                <tr>
+                  <td><strong>System Prompt</strong></td>
+                  <td>String</td>
+                  <td>Helpful Assistant</td>
+                  <td>Task-Specific</td>
+                  <td>Injected system instruction defining role, formatting rules, or operational boundaries.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 11. Theme & Appearance -->
+        <section class="docs-section" id="theming">
+          <h2 class="docs-h2">11. Theme & Appearance</h2>
+          <p class="docs-p">
+            Locian features an edge-to-edge transparent system UI matching Material 3 guidelines. In <strong>Settings → Appearance</strong>, you can select:
+          </p>
+          <ul class="docs-list">
+            <li><strong>System Default:</strong> Dynamically aligns with your Android system dark/light schedule.</li>
+            <li><strong>Dark Theme:</strong> Deep OLED black (#080C14) background with signature red (#FA010E) neon accents.</li>
+            <li><strong>Light Theme:</strong> Clean slate grey (#F8FAFC) canvas with dark message typography and high contrast.</li>
+          </ul>
+        </section>
+
+        <!-- 12. Thermal & Battery Optimization -->
+        <section class="docs-section" id="thermal">
+          <h2 class="docs-h2">12. Thermal & Battery Optimization</h2>
+          <p class="docs-p">
+            Sustained LLM inference heavily taxes mobile CPU silicon. Follow these recommendations for optimal performance:
+          </p>
+
+          <div class="callout callout-info">
+            <div class="callout-title">The "Performance Cores - 1" Rule</div>
+            Most modern mobile SoCs (Snapdragon, Dimensity, Tensor) use a big.LITTLE core topology (e.g. 1 Prime + 3 Performance + 4 Efficiency cores). Setting thread count to <strong>3 or 4</strong> targets only the high-speed cores and leaves efficiency cores free for Android system services. This produces higher sustained tok/s and drastically delays thermal throttling.
+          </div>
+
+          <ul class="docs-list">
+            <li><strong>Avoid Charging While Generating:</strong> Fast charging generates battery heat which triggers CPU throttling earlier.</li>
+            <li><strong>Select Q4_K_M over Q8:</strong> Lower bit depth reduces memory bus traffic, conserving both battery and thermal budget.</li>
+          </ul>
+        </section>
+
+        <!-- 13. Troubleshooting & FAQ -->
+        <section class="docs-section" id="troubleshooting">
+          <h2 class="docs-h2">13. Troubleshooting & FAQ</h2>
+
+          <h3 class="docs-h3">Q: The app crashes immediately when I tap a model to load it.</h3>
+          <p class="docs-p">
+            <strong>Cause:</strong> Out of Memory (OOM). Your device does not have enough free contiguous RAM to allocate the model weights plus KV cache.<br>
+            <strong>Solution:</strong>
+          </p>
+          <ul class="docs-list">
+            <li>Switch to a smaller model (e.g. <code>Qwen 2.5 0.5B</code> or <code>Llama 3.2 1B</code>).</li>
+            <li>Reduce <strong>Context Window</strong> in Settings from 4096 down to 2048 or 1024.</li>
+            <li>Close background applications to free physical RAM.</li>
+          </ul>
+
+          <h3 class="docs-h3">Q: Generation speed starts fast, then slows down after 20 seconds.</h3>
+          <p class="docs-p">
+            <strong>Cause:</strong> Thermal throttling. The SoC is reducing clock frequencies to prevent overheating.<br>
+            <strong>Solution:</strong> Lower the <strong>CPU Threads</strong> slider in Settings by 1 or 2 threads.
+          </p>
+
+          <h3 class="docs-h3">Q: My custom GGUF file isn't visible in the file picker.</h3>
+          <p class="docs-p">
+            <strong>Cause:</strong> The file does not have a valid lowercase <code>.gguf</code> extension, or Android Storage Access Framework does not have read permissions for that directory.<br>
+            <strong>Solution:</strong> Ensure the file ends with <code>.gguf</code> and is placed in your primary <code>/sdcard/Download/</code> folder.
+          </p>
+
+          <h3 class="docs-h3">Q: The model repeats itself in loops or generates gibberish.</h3>
+          <p class="docs-p">
+            <strong>Cause:</strong> Temperature is either set too high (> 1.2) or repetition penalty is needed.<br>
+            <strong>Solution:</strong> Reset <strong>Temperature</strong> to <code>0.7</code> and <strong>Top-P</strong> to <code>0.9</code> in Settings.
+          </p>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="assets/logo.png" alt="Locian Logo" style="width: 32px; height: 32px;">
+            <strong style="font-size: 1.2rem; letter-spacing: -0.5px;">LOCIAN</strong>
+          </div>
+          <p class="footer-desc">
+            100% on-device private AI engine for Android. Built with Jetpack Compose, Kotlin, and llama.cpp.
+          </p>
+        </div>
+
+        <div class="footer-links-group">
+          <div>
+            <div class="footer-col-title">Navigation</div>
+            <ul class="footer-links">
+              <li><a href="index.html" class="footer-link">Home</a></li>
+              <li><a href="guide.html" class="footer-link">Documentation</a></li>
+              <li><a href="index.html#simulator" class="footer-link">Live Demo</a></li>
+              <li><a href="index.html#models" class="footer-link">Model Catalog</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <div class="footer-col-title">Resources</div>
+            <ul class="footer-links">
+              <li><a href="USER_GUIDE.md" class="footer-link">Raw Markdown Guide</a></li>
+              <li><a href="https://github.com/ggerganov/llama.cpp" target="_blank" rel="noopener noreferrer" class="footer-link">llama.cpp Engine</a></li>
+              <li><a href="https://github.com" target="_blank" rel="noopener noreferrer" class="footer-link">GitHub Repository</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2026 Locian. Licensed under Apache License 2.0. Clean Architecture & llama.cpp native bindings.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Main JavaScript -->
+  <script src="js/main.js"></script>
+</body>
+</html>

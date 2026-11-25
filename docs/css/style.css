@@ -901,3 +901,300 @@ body {
     font-size: 2rem;
   }
 }
+
+/* ==========================================================================
+   Documentation Portal Layout & Typography
+   ========================================================================== */
+
+.docs-wrapper {
+  padding-top: calc(var(--nav-height) + 32px);
+  padding-bottom: 80px;
+}
+
+.docs-layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 48px;
+  align-items: start;
+}
+
+/* Sticky Documentation Sidebar */
+.docs-sidebar {
+  position: sticky;
+  top: calc(var(--nav-height) + 24px);
+  max-height: calc(100vh - var(--nav-height) - 48px);
+  overflow-y: auto;
+  padding-right: 12px;
+}
+
+.docs-sidebar-section {
+  margin-bottom: 24px;
+}
+
+.docs-sidebar-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  padding-left: 12px;
+}
+
+.docs-nav-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.docs-nav-link {
+  display: block;
+  padding: 8px 12px;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  border-left: 2px solid transparent;
+  transition: all var(--transition-fast);
+}
+
+.docs-nav-link:hover {
+  color: var(--text-primary);
+  background: var(--bg-card);
+}
+
+.docs-nav-link.active {
+  color: var(--accent-red);
+  font-weight: 600;
+  background: var(--accent-red-subtle);
+  border-left-color: var(--accent-red);
+}
+
+/* Main Documentation Content Area */
+.docs-content {
+  min-width: 0;
+  max-width: 860px;
+}
+
+.docs-header {
+  margin-bottom: 40px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.docs-title {
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+
+.docs-lead {
+  font-size: 1.15rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.docs-section {
+  margin-bottom: 56px;
+  scroll-margin-top: calc(var(--nav-height) + 24px);
+}
+
+.docs-h2 {
+  font-size: 1.65rem;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.docs-h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 28px;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+
+.docs-p {
+  color: var(--text-secondary);
+  font-size: 0.98rem;
+  line-height: 1.75;
+  margin-bottom: 16px;
+}
+
+.docs-p strong {
+  color: var(--text-primary);
+}
+
+.docs-list {
+  margin-left: 20px;
+  margin-bottom: 20px;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.8;
+}
+
+.docs-list li strong {
+  color: var(--text-primary);
+}
+
+/* Callouts */
+.callout {
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  margin: 20px 0;
+  border-left: 4px solid;
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.callout-info {
+  background: rgba(0, 229, 255, 0.06);
+  border-left-color: var(--accent-cyan);
+  color: var(--text-primary);
+}
+
+.callout-warning {
+  background: rgba(245, 158, 11, 0.08);
+  border-left-color: var(--accent-amber);
+  color: var(--text-primary);
+}
+
+.callout-danger {
+  background: rgba(250, 1, 14, 0.08);
+  border-left-color: var(--accent-red);
+  color: var(--text-primary);
+}
+
+.callout-title {
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.callout-info .callout-title { color: var(--accent-cyan); }
+.callout-warning .callout-title { color: var(--accent-amber); }
+.callout-danger .callout-title { color: var(--accent-red); }
+
+/* Inline Code & Code Block */
+code:not([class*="language-"]) {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.docs-code-card {
+  background: var(--code-bg);
+  border: 1px solid var(--code-border);
+  border-radius: var(--radius-md);
+  margin: 16px 0 24px 0;
+  overflow: hidden;
+}
+
+.docs-code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid var(--code-border);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.docs-code-body {
+  padding: 16px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: #e2e8f0;
+}
+
+/* Specs Table */
+.docs-table-wrap {
+  overflow-x: auto;
+  margin: 20px 0 28px 0;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+}
+
+.docs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+  text-align: left;
+}
+
+.docs-table th {
+  padding: 12px 16px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.85rem;
+  border-bottom: 1px solid var(--border-color);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.docs-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  vertical-align: top;
+}
+
+.docs-table tr:last-child td {
+  border-bottom: none;
+}
+
+.docs-table tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+[data-theme="light"] .docs-table tr:hover td {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+/* Responsive Docs */
+@media (max-width: 992px) {
+  .docs-layout {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .docs-sidebar {
+    position: static;
+    max-height: none;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 20px;
+  }
+  .docs-nav-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .docs-nav-link {
+    border-left: none;
+    border-bottom: 2px solid transparent;
+    padding: 6px 12px;
+  }
+  .docs-nav-link.active {
+    border-bottom-color: var(--accent-red);
+  }
+}
+

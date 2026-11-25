@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initSimulator();
   initModelFilter();
   initCopyButtons();
+  initDocsSidebar();
 });
 
 /* --------------------------------------------------------------------------
@@ -283,3 +284,37 @@ function initCopyButtons() {
     });
   });
 }
+
+/* --------------------------------------------------------------------------
+   6. Documentation Sidebar Active Link Spy
+   -------------------------------------------------------------------------- */
+function initDocsSidebar() {
+  const sidebarLinks = document.querySelectorAll('.docs-nav-link');
+  if (!sidebarLinks.length) return;
+
+  const sections = document.querySelectorAll('.docs-section');
+  if (!sections.length) return;
+
+  window.addEventListener('scroll', () => {
+    let currentId = '';
+    const scrollPos = window.scrollY + 120;
+
+    sections.forEach(sec => {
+      const top = sec.offsetTop;
+      const height = sec.offsetHeight;
+      if (scrollPos >= top && scrollPos < top + height) {
+        currentId = sec.getAttribute('id');
+      }
+    });
+
+    if (currentId) {
+      sidebarLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${currentId}`) {
+          link.classList.add('active');
+        }
+      });
+    }
+  });
+}
+
