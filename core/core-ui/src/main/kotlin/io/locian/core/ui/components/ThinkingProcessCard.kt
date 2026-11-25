@@ -26,7 +26,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Psychology
@@ -43,8 +42,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontStyle
@@ -55,16 +52,13 @@ import io.locian.core.ui.theme.CyanNeon
 import kotlinx.coroutines.delay
 
 /**
- * A clean, compact, and minimalist thinking component that seamlessly integrates
- * into the assistant message bubble without bulky nested cards or excessive spacing.
+ * A clean, completely borderless, inline collapsible thinking disclosure.
  *
- * Features:
- * - Ultra-compact inline disclosure (no heavy nested cards, frames, or dividers)
- * - Fluid chevron rotation animation (0° to 180°)
- * - Real-time thinking duration counter (e.g. "Thinking (3s)..." -> "Thought for 4s")
- * - 3-dot sequential wave animation while reasoning
- * - Minimal left quote line with tight padding for expanded reasoning
- * - Auto-expands while thinking, smoothly collapses when final response begins
+ * - No box, card frames, or border outlines
+ * - Collapsed by default (click to expand)
+ * - Fluid 180° chevron rotation animation
+ * - Live elapsed thinking duration counter
+ * - Subtle 3-dot thinking wave pulse while active
  */
 @Composable
 fun ThinkingProcessCard(
@@ -73,20 +67,8 @@ fun ThinkingProcessCard(
     modifier: Modifier = Modifier,
     initialExpanded: Boolean = false
 ) {
-    var userToggled by remember { mutableStateOf(false) }
+    // Collapsed by default
     var isExpanded by remember { mutableStateOf(initialExpanded) }
-
-    // Auto-expand during live thought generation, auto-collapse when answer begins
-    LaunchedEffect(isStillThinking) {
-        if (!userToggled) {
-            if (isStillThinking) {
-                isExpanded = true
-            } else {
-                delay(250)
-                isExpanded = false
-            }
-        }
-    }
 
     // Live duration counter
     var elapsedSeconds by remember { mutableIntStateOf(0) }
@@ -100,7 +82,7 @@ fun ThinkingProcessCard(
         }
     }
 
-    // Smooth arrow rotation (0° to 180°)
+    // Smooth chevron rotation (0° to 180°)
     val arrowRotation by animateFloatAsState(
         targetValue = if (isExpanded) 180f else 0f,
         animationSpec = tween(durationMillis = 240, easing = FastOutSlowInEasing),
@@ -126,8 +108,6 @@ fun ThinkingProcessCard(
         else -> "Thought process"
     }
 
-    val outlineColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)
-
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -135,24 +115,22 @@ fun ThinkingProcessCard(
                 animationSpec = tween(durationMillis = 220, easing = FastOutSlowInEasing)
             )
     ) {
-        // Compact Inline Header
+        // Pure inline clickable header row (no box, no card frame)
         Row(
             modifier = Modifier
-                .clip(RoundedCornerShape(6.dp))
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null
                 ) {
-                    userToggled = true
                     isExpanded = !isExpanded
                 }
-                .padding(vertical = 3.dp, horizontal = 2.dp),
+                .padding(vertical = 3.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 imageVector = Icons.Default.Psychology,
                 contentDescription = null,
-                tint = if (isStillThinking) CyanNeon else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                tint = if (isStillThinking) CyanNeon else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.65f),
                 modifier = Modifier
                     .size(15.dp)
                     .graphicsLayer {
@@ -166,7 +144,7 @@ fun ThinkingProcessCard(
                 text = headerTitle,
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = if (isStillThinking) FontWeight.SemiBold else FontWeight.Medium,
-                color = if (isStillThinking) CyanNeon else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
+                color = if (isStillThinking) CyanNeon else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f),
                 fontSize = 12.sp
             )
 
@@ -182,37 +160,27 @@ fun ThinkingProcessCard(
             Icon(
                 imageVector = Icons.Default.KeyboardArrowDown,
                 contentDescription = if (isExpanded) "Collapse" else "Expand",
-                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.55f),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
                 modifier = Modifier
-                    .size(16.dp)
+                    .size(15.dp)
                     .graphicsLayer { rotationZ = arrowRotation }
             )
         }
 
-        // Compact Expanded Content (Clean left quote border)
+        // Expanded Reasoning Content (completely clean, no box, no lines)
         AnimatedVisibility(
             visible = isExpanded,
             enter = fadeIn(tween(180)) + expandVertically(tween(220, easing = FastOutSlowInEasing)),
             exit = fadeOut(tween(140)) + shrinkVertically(tween(180, easing = FastOutSlowInEasing))
         ) {
-            Box(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 4.dp, bottom = 4.dp)
-                    .drawBehind {
-                        val strokePx = 1.5.dp.toPx()
-                        drawLine(
-                            color = if (isStillThinking) CyanNeon.copy(alpha = 0.45f) else outlineColor,
-                            start = Offset(strokePx / 2f, 0f),
-                            end = Offset(strokePx / 2f, size.height),
-                            strokeWidth = strokePx
-                        )
-                    }
-                    .padding(start = 10.dp)
             ) {
                 if (thinking.isBlank() && isStillThinking) {
                     Text(
-                        text = "Formulating reasoning chain...",
+                        text = "Thinking...",
                         style = MaterialTheme.typography.bodySmall,
                         fontStyle = FontStyle.Italic,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
@@ -221,7 +189,7 @@ fun ThinkingProcessCard(
                 } else {
                     MarkdownContent(
                         content = thinking,
-                        textColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.78f)
+                        textColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f)
                     )
                 }
             }
