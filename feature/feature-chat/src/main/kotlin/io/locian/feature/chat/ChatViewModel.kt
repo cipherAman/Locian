@@ -27,6 +27,7 @@ data class ChatUiState(
     val conversationId: Long? = null,
     val conversationTitle: String = "New Chat",
     val messages: List<ChatMessage> = emptyList(),
+    val isLoadingConversation: Boolean = false,
     val isGenerating: Boolean = false,
     val streamingText: String = "",
     val activeModelName: String? = null,
@@ -82,6 +83,7 @@ class ChatViewModel @Inject constructor(
                 it.copy(
                     conversationId = id,
                     conversationTitle = title,
+                    isLoadingConversation = true,
                     messages = emptyList(),
                     streamingText = "",
                     isGenerating = false,
@@ -90,7 +92,12 @@ class ChatViewModel @Inject constructor(
             }
 
             messagesJob = manageConversationUseCase.getMessages(id).onEach { msgs ->
-                _uiState.update { it.copy(messages = msgs) }
+                _uiState.update {
+                    it.copy(
+                        messages = msgs,
+                        isLoadingConversation = false
+                    )
+                }
             }.launchIn(viewModelScope)
         }
     }
@@ -111,6 +118,7 @@ class ChatViewModel @Inject constructor(
             it.copy(
                 conversationId = null,
                 conversationTitle = "New Chat",
+                isLoadingConversation = false,
                 messages = emptyList(),
                 streamingText = "",
                 isGenerating = false,

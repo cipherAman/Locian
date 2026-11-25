@@ -64,6 +64,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -124,7 +125,7 @@ fun ChatScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
-    var inputText by remember { mutableStateOf("") }
+    var inputText by remember(uiState.conversationId) { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
@@ -262,7 +263,10 @@ fun ChatScreen(
                         }
                     },
                     navigationIcon = {
-                        IconButton(onClick = onOpenDrawer) {
+                        IconButton(onClick = {
+                            keyboardController?.hide()
+                            onOpenDrawer()
+                        }) {
                             Icon(Icons.Default.Menu, contentDescription = "Conversations")
                         }
                     },
@@ -295,7 +299,7 @@ fun ChatScreen(
                     contentPadding = PaddingValues(horizontal = 14.dp, vertical = 12.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    if (uiState.messages.isEmpty() && uiState.streamingText.isEmpty()) {
+                    if (uiState.conversationId == null && uiState.messages.isEmpty() && uiState.streamingText.isEmpty()) {
                         item {
                             EmptyChatState(
                                 isModelLoaded = uiState.isModelLoaded,
@@ -305,6 +309,21 @@ fun ChatScreen(
                                     viewModel.sendMessage(prompt)
                                 }
                             )
+                        }
+                    } else if (uiState.isLoadingConversation) {
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 48.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(24.dp),
+                                    color = CyanNeon.copy(alpha = 0.6f),
+                                    strokeWidth = 2.dp
+                                )
+                            }
                         }
                     }
 
