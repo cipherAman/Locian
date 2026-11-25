@@ -35,6 +35,19 @@ object ModelCatalog {
         ),
 
         ModelInfo(
+            id = "qwen3.5-0.8b",
+            name = "Qwen3.5 0.8B Instruct",
+            description = "507 MB model from Alibaba's 2026 Qwen3.5 generation. Next-gen hybrid architecture with state-of-the-art efficiency, low memory footprint, and enhanced multilingual reasoning for 2 GB devices.",
+            repoId = "unsloth/Qwen3.5-0.8B-GGUF",
+            filename = "Qwen3.5-0.8B-Q4_K_M.gguf",
+            downloadUrl = "https://huggingface.co/unsloth/Qwen3.5-0.8B-GGUF/resolve/main/Qwen3.5-0.8B-Q4_K_M.gguf",
+            sizeBytes = 532517120L,     // 507 MB
+            quantization = "Q4_K_M",
+            parameterCount = "0.8B",
+            minRamGb = 2
+        ),
+
+        ModelInfo(
             id = "qwen3-0.6b",
             name = "Qwen3 0.6B Instruct",
             description = "484 MB model from Alibaba's Qwen3 generation. Supports hybrid thinking/non-thinking mode. Best reasoning quality in the sub-500 MB class with multilingual capability.",
@@ -63,6 +76,19 @@ object ModelCatalog {
         // ── Compact  (1–1.2B, 3 GB RAM) ─────────────────────────────────────────
 
         ModelInfo(
+            id = "gemma-3-1b",
+            name = "Gemma 3 1B IT",
+            description = "768 MB instruction-tuned model from Google DeepMind's 2026 Gemma 3 family. Compact, highly capable on-device model with industry-leading safety and instruction adherence.",
+            repoId = "ggml-org/gemma-3-1b-it-GGUF",
+            filename = "gemma-3-1b-it-Q4_K_M.gguf",
+            downloadUrl = "https://huggingface.co/ggml-org/gemma-3-1b-it-GGUF/resolve/main/gemma-3-1b-it-Q4_K_M.gguf",
+            sizeBytes = 806058240L,     // 768 MB
+            quantization = "Q4_K_M",
+            parameterCount = "1.0B",
+            minRamGb = 3
+        ),
+
+        ModelInfo(
             id = "llama-3.2-1b",
             name = "Llama 3.2 1B Instruct",
             description = "770 MB model from Meta. Well-balanced instruction model with consistent dialogue quality. Runs on 3 GB devices across reasoning and chat tasks.",
@@ -76,7 +102,20 @@ object ModelCatalog {
         ),
 
         // ── Mid-range  (1.5–2B, 4 GB RAM) ───────────────────────────────────────
-        // High-efficiency mobile architectures & latest releases
+        // High-efficiency mobile architectures & latest 2026 releases
+
+        ModelInfo(
+            id = "qwen3.5-2b",
+            name = "Qwen3.5 2B Instruct",
+            description = "1.19 GB model from Alibaba's 2026 Qwen3.5 generation. Powerful reasoning, logic, and coding capabilities in a lite mobile package. Excellent performance-per-watt on 4 GB devices.",
+            repoId = "unsloth/Qwen3.5-2B-GGUF",
+            filename = "Qwen3.5-2B-Q4_K_M.gguf",
+            downloadUrl = "https://huggingface.co/unsloth/Qwen3.5-2B-GGUF/resolve/main/Qwen3.5-2B-Q4_K_M.gguf",
+            sizeBytes = 1280835840L,    // 1.19 GB
+            quantization = "Q4_K_M",
+            parameterCount = "2.0B",
+            minRamGb = 4
+        ),
 
         ModelInfo(
             id = "lfm3-1.7b",
@@ -196,7 +235,20 @@ object ModelCatalog {
         ),
 
         // ── Upper-mid  (3B+, 6 GB RAM) ───────────────────────────────────────────
-        // Latest 2025 releases shown first
+        // Latest 2025/2026 releases shown first
+
+        ModelInfo(
+            id = "gemma-3-4b",
+            name = "Gemma 3 4B IT",
+            description = "2.32 GB instruction-tuned model from Google DeepMind's 2026 Gemma 3 generation. Delivers near-7B benchmark performance with high reasoning density on 6 GB devices.",
+            repoId = "ggml-org/gemma-3-4b-it-GGUF",
+            filename = "gemma-3-4b-it-Q4_K_M.gguf",
+            downloadUrl = "https://huggingface.co/ggml-org/gemma-3-4b-it-GGUF/resolve/main/gemma-3-4b-it-Q4_K_M.gguf",
+            sizeBytes = 2489757856L,    // 2.32 GB
+            quantization = "Q4_K_M",
+            parameterCount = "4.0B",
+            minRamGb = 6
+        ),
 
         ModelInfo(
             id = "smollm3-3b",
