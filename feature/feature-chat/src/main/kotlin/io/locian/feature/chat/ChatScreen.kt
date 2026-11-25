@@ -474,42 +474,41 @@ fun MessageBubble(
                 )
             }
 
-            val bubbleShape = RoundedCornerShape(16.dp)
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(bubbleShape)
-                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f))
-                    .border(
-                        0.5.dp,
-                        MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
-                        bubbleShape
-                    )
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
-            ) {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    val thinkingText = parsed.thinking
-                    if (showThinking && thinkingText != null) {
-                        ThinkingProcessCard(
-                            thinking = thinkingText,
-                            isStillThinking = false,
-                            modifier = Modifier.padding(bottom = if (parsed.response.isNotEmpty()) 10.dp else 0.dp)
-                        )
-                    }
+            val thinkingText = parsed.thinking
+            if (showThinking && thinkingText != null) {
+                ThinkingProcessCard(
+                    thinking = thinkingText,
+                    isStillThinking = false,
+                    modifier = Modifier.padding(start = 2.dp, bottom = 6.dp)
+                )
+            } else if (thinkingText != null && !showThinking) {
+                Text(
+                    text = "(Thinking hidden)",
+                    style = MaterialTheme.typography.bodySmall,
+                    fontStyle = FontStyle.Italic,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(start = 2.dp, bottom = 4.dp)
+                )
+            }
 
-                    if (parsed.response.isNotEmpty()) {
-                        MarkdownContent(
-                            content = parsed.response,
-                            textColor = MaterialTheme.colorScheme.onSurface
+            if (parsed.response.isNotEmpty()) {
+                val bubbleShape = RoundedCornerShape(16.dp)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(bubbleShape)
+                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f))
+                        .border(
+                            0.5.dp,
+                            MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
+                            bubbleShape
                         )
-                    } else if (thinkingText != null && !showThinking) {
-                        Text(
-                            text = "(Thinking hidden)",
-                            style = MaterialTheme.typography.bodySmall,
-                            fontStyle = FontStyle.Italic,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                ) {
+                    MarkdownContent(
+                        content = parsed.response,
+                        textColor = MaterialTheme.colorScheme.onSurface
+                    )
                 }
             }
 
@@ -609,31 +608,30 @@ fun AssistantStreamingBubble(
             )
         }
 
-        val streamShape = RoundedCornerShape(16.dp)
+        val thinkingText = parsed.thinking
+        if (showThinking && (thinkingText != null || parsed.isStillThinking)) {
+            ThinkingProcessCard(
+                thinking = thinkingText ?: "",
+                isStillThinking = parsed.isStillThinking,
+                modifier = Modifier.padding(start = 2.dp, bottom = 6.dp)
+            )
+        }
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(streamShape)
-                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f))
-                .border(
-                    0.75.dp,
-                    CyanNeon.copy(alpha = borderGlow),
-                    streamShape
-                )
-                .padding(horizontal = 16.dp, vertical = 12.dp)
-        ) {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                val thinkingText = parsed.thinking
-                if (showThinking && (thinkingText != null || parsed.isStillThinking)) {
-                    ThinkingProcessCard(
-                        thinking = thinkingText ?: "",
-                        isStillThinking = parsed.isStillThinking,
-                        modifier = Modifier.padding(bottom = if (parsed.response.isNotEmpty()) 10.dp else 0.dp)
+        if (parsed.response.isNotEmpty()) {
+            val streamShape = RoundedCornerShape(16.dp)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(streamShape)
+                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f))
+                    .border(
+                        0.75.dp,
+                        CyanNeon.copy(alpha = borderGlow),
+                        streamShape
                     )
-                }
-
-                if (parsed.response.isNotEmpty()) {
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+            ) {
+                Column(modifier = Modifier.fillMaxWidth()) {
                     MarkdownContent(
                         content = parsed.response,
                         textColor = MaterialTheme.colorScheme.onSurface
@@ -645,27 +643,27 @@ fun AssistantStreamingBubble(
                             .clip(CircleShape)
                             .background(CyanNeon.copy(alpha = cursorAlpha))
                     )
-                } else if (!parsed.isStillThinking) {
-                    // Pulsing typing indicator dot while waiting for initial tokens
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        modifier = Modifier.padding(vertical = 4.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(6.dp)
-                                .clip(CircleShape)
-                                .background(CyanNeon.copy(alpha = cursorAlpha))
-                        )
-                        Text(
-                            text = "Locian is generating...",
-                            style = MaterialTheme.typography.bodySmall,
-                            fontStyle = FontStyle.Italic,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
-                        )
-                    }
                 }
+            }
+        } else if (!parsed.isStillThinking && thinkingText == null) {
+            // Pulsing typing indicator dot while waiting for initial tokens
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier.padding(start = 4.dp, top = 2.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(6.dp)
+                        .clip(CircleShape)
+                        .background(CyanNeon.copy(alpha = cursorAlpha))
+                )
+                Text(
+                    text = "Locian is generating...",
+                    style = MaterialTheme.typography.bodySmall,
+                    fontStyle = FontStyle.Italic,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                )
             }
         }
     }
