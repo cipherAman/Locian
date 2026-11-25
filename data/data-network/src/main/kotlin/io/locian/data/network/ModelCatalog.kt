@@ -25,9 +25,9 @@ object ModelCatalog {
             id = "smollm2-360m",
             name = "SmolLM2 360M Instruct",
             description = "230 MB model from HuggingFace. Better instruction-following than the 135M variant with minimal memory overhead. Good entry-level option for 2 GB devices.",
-            repoId = "HuggingFaceTB/SmolLM2-360M-Instruct-GGUF",
-            filename = "smollm2-360m-instruct-q4_k_m.gguf",
-            downloadUrl = "https://huggingface.co/HuggingFaceTB/SmolLM2-360M-Instruct-GGUF/resolve/main/smollm2-360m-instruct-q4_k_m.gguf",
+            repoId = "bartowski/SmolLM2-360M-Instruct-GGUF",
+            filename = "SmolLM2-360M-Instruct-Q4_K_M.gguf",
+            downloadUrl = "https://huggingface.co/bartowski/SmolLM2-360M-Instruct-GGUF/resolve/main/SmolLM2-360M-Instruct-Q4_K_M.gguf",
             sizeBytes = 241000000L,     // 230 MB
             quantization = "Q4_K_M",
             parameterCount = "360M",
@@ -39,8 +39,8 @@ object ModelCatalog {
             name = "Qwen3 0.6B Instruct",
             description = "484 MB model from Alibaba's Qwen3 generation. Supports hybrid thinking/non-thinking mode. Best reasoning quality in the sub-500 MB class with multilingual capability.",
             repoId = "bartowski/Qwen_Qwen3-0.6B-GGUF",
-            filename = "Qwen3-0.6B-Q4_K_M.gguf",
-            downloadUrl = "https://huggingface.co/bartowski/Qwen_Qwen3-0.6B-GGUF/resolve/main/Qwen3-0.6B-Q4_K_M.gguf",
+            filename = "Qwen_Qwen3-0.6B-Q4_K_M.gguf",
+            downloadUrl = "https://huggingface.co/bartowski/Qwen_Qwen3-0.6B-GGUF/resolve/main/Qwen_Qwen3-0.6B-Q4_K_M.gguf",
             sizeBytes = 507510784L,     // 484 MB
             quantization = "Q4_K_M",
             parameterCount = "0.6B",
@@ -76,6 +76,46 @@ object ModelCatalog {
         ),
 
         // ── Mid-range  (1.5–2B, 4 GB RAM) ───────────────────────────────────────
+        // High-efficiency mobile architectures & latest releases
+
+        ModelInfo(
+            id = "lfm3-1.7b",
+            name = "LFM3 1.7B Instruct",
+            description = "1.02 GB Liquid Foundation Model from Liquid AI. Combines neural state-space and transformer dynamics for ultra-low latency and minimal memory bandwidth on mobile devices.",
+            repoId = "LiquidAI/LFM3-1.7B-GGUF",
+            filename = "LFM3-1.7B-Q4_K_M.gguf",
+            downloadUrl = "https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF/resolve/main/LFM3-1.7B-Q4_K_M.gguf",
+            sizeBytes = 1099627808L,    // ~1.02 GB
+            quantization = "Q4_K_M",
+            parameterCount = "1.7B",
+            minRamGb = 4
+        ),
+
+        ModelInfo(
+            id = "bonsai-8b",
+            name = "Bonsai 8B (1-Bit)",
+            description = "1.08 GB extreme-efficiency model by Prism ML. Uses 1-bit / ternary weight compression to deliver 8B-scale reasoning and knowledge on standard 4 GB mobile hardware.",
+            repoId = "prism-ml/Bonsai-8B-gguf",
+            filename = "Bonsai-8B.gguf",
+            downloadUrl = "https://huggingface.co/prism-ml/Bonsai-8B-gguf/resolve/main/Bonsai-8B.gguf",
+            sizeBytes = 1158654496L,    // 1.08 GB
+            quantization = "1-Bit Ternary",
+            parameterCount = "8.0B",
+            minRamGb = 4
+        ),
+
+        ModelInfo(
+            id = "bonsai-2-4b",
+            name = "Bonsai 2 Ternary 4B",
+            description = "1.13 GB ternary-quantized model from Prism ML based on Qwen 3.5. Combines hybrid attention with extreme weight efficiency for mobile edge devices.",
+            repoId = "prism-ml/Ternary-Bonsai-2-4B-gguf",
+            filename = "Ternary-Bonsai-2-4B-Q2_0.gguf",
+            downloadUrl = "https://huggingface.co/prism-ml/Ternary-Bonsai-2-4B-gguf/resolve/main/Ternary-Bonsai-2-4B-Q2_0.gguf",
+            sizeBytes = 1212103520L,    // 1.13 GB
+            quantization = "Q2_0 Ternary",
+            parameterCount = "4.0B",
+            minRamGb = 4
+        ),
 
         ModelInfo(
             id = "smollm2-1.7b",
@@ -95,8 +135,8 @@ object ModelCatalog {
             name = "Qwen3 1.7B Instruct",
             description = "1.28 GB model from Alibaba's Qwen3 generation. Improved reasoning and instruction-following over Qwen2.5 at the same size class. Good all-round choice for 4 GB devices.",
             repoId = "bartowski/Qwen_Qwen3-1.7B-GGUF",
-            filename = "Qwen3-1.7B-Q4_K_M.gguf",
-            downloadUrl = "https://huggingface.co/bartowski/Qwen_Qwen3-1.7B-GGUF/resolve/main/Qwen3-1.7B-Q4_K_M.gguf",
+            filename = "Qwen_Qwen3-1.7B-Q4_K_M.gguf",
+            downloadUrl = "https://huggingface.co/bartowski/Qwen_Qwen3-1.7B-GGUF/resolve/main/Qwen_Qwen3-1.7B-Q4_K_M.gguf",
             sizeBytes = 1374389248L,    // ~1.28 GB
             quantization = "Q4_K_M",
             parameterCount = "1.7B",
@@ -163,8 +203,8 @@ object ModelCatalog {
             name = "SmolLM3 3B Instruct",
             description = "1.92 GB model by HuggingFace — the latest generation of the SmolLM series. Trained with long-context alignment and improved reasoning. Best-in-class quality for a 3B model at this file size.",
             repoId = "bartowski/HuggingFaceTB_SmolLM3-3B-GGUF",
-            filename = "SmolLM3-3B-Q4_K_M.gguf",
-            downloadUrl = "https://huggingface.co/bartowski/HuggingFaceTB_SmolLM3-3B-GGUF/resolve/main/SmolLM3-3B-Q4_K_M.gguf",
+            filename = "HuggingFaceTB_SmolLM3-3B-Q4_K_M.gguf",
+            downloadUrl = "https://huggingface.co/bartowski/HuggingFaceTB_SmolLM3-3B-GGUF/resolve/main/HuggingFaceTB_SmolLM3-3B-Q4_K_M.gguf",
             sizeBytes = 2061500416L,    // 1.92 GB
             quantization = "Q4_K_M",
             parameterCount = "3.0B",
@@ -228,8 +268,8 @@ object ModelCatalog {
             name = "Phi-4 Mini Instruct",
             description = "2.49 GB reasoning model from Microsoft. Architecture optimised for STEM, logical deduction, and structured output. Outperforms larger models on reasoning benchmarks. Requires 6 GB device RAM.",
             repoId = "bartowski/microsoft_Phi-4-mini-instruct-GGUF",
-            filename = "Phi-4-mini-instruct-Q4_K_M.gguf",
-            downloadUrl = "https://huggingface.co/bartowski/microsoft_Phi-4-mini-instruct-GGUF/resolve/main/Phi-4-mini-instruct-Q4_K_M.gguf",
+            filename = "microsoft_Phi-4-mini-instruct-Q4_K_M.gguf",
+            downloadUrl = "https://huggingface.co/bartowski/microsoft_Phi-4-mini-instruct-GGUF/resolve/main/microsoft_Phi-4-mini-instruct-Q4_K_M.gguf",
             sizeBytes = 2672000000L,    // ~2.49 GB
             quantization = "Q4_K_M",
             parameterCount = "3.8B",
