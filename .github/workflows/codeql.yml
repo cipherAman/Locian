@@ -30,11 +30,6 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          packages: 'ndk;27.0.12077973'
-          accept-android-sdk-licenses: true
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
@@ -55,10 +50,24 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      # Build only Kotlin/Java — skip NDK by injecting x86_64 ABI which is a no-op
-      # for our arm64-only native lib config, so the C++ compile step is skipped.
-      - name: Build debug APK (Kotlin trace for CodeQL)
-        run: ./gradlew assembleDebug -Pandroid.injected.build.abi=x86_64
+      # Compile Kotlin sources for all modules directly — this gives CodeQL a full
+      # Kotlin compilation trace without invoking CMake or NDK at all.
+      - name: Compile Kotlin sources (all modules, no NDK)
+        run: |
+          ./gradlew \
+            :app:compileDebugKotlin \
+            :core:core-ui:compileDebugKotlin \
+            :core:core-common:compileDebugKotlin \
+            :core:core-model:compileDebugKotlin \
+            :data:data-database:compileDebugKotlin \
+            :data:data-datastore:compileDebugKotlin \
+            :data:data-network:compileDebugKotlin \
+            :data:data-repository:compileDebugKotlin \
+            :domain:domain-inference:compileDebugKotlin \
+            :feature:feature-chat:compileDebugKotlin \
+            :feature:feature-models:compileDebugKotlin \
+            :feature:feature-settings:compileDebugKotlin \
+            :feature:feature-conversations:compileDebugKotlin
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
