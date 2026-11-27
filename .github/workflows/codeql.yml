@@ -49,7 +49,6 @@ jobs:
           # Manual build mode required for NDK projects (CodeQL cannot autobuild NDK)
           build-mode: manual
 
-      - name: Build (manual trace for CodeQL)
       - name: Make gradlew executable
         run: chmod +x gradlew
 
