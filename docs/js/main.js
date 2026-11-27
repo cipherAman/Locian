@@ -1,11 +1,14 @@
 /**
- * Locian Interactive Documentation & Showcase Engine
+ * Locian Interactive Showcase & Documentation Engine
+ * Version 2.0.0
  */
 
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
+  initMobileNav();
   initShowcaseTabs();
   initSimulator();
+  initRamCalculator();
   initModelFilter();
   initCopyButtons();
   initDocsSidebar();
@@ -16,11 +19,9 @@ document.addEventListener('DOMContentLoaded', () => {
    -------------------------------------------------------------------------- */
 function initTheme() {
   const themeToggleBtn = document.getElementById('themeToggleBtn');
-  const themeIcon = document.getElementById('themeIcon');
   const fullLogoDark = document.querySelectorAll('.logo-dark');
   const fullLogoLight = document.querySelectorAll('.logo-light');
 
-  // Check saved theme or system preference
   const savedTheme = localStorage.getItem('locian_docs_theme');
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
@@ -41,7 +42,7 @@ function initTheme() {
     if (themeToggleBtn) {
       if (theme === 'dark') {
         themeToggleBtn.innerHTML = `
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="5"></circle>
             <line x1="12" y1="1" x2="12" y2="3"></line>
             <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -55,18 +56,16 @@ function initTheme() {
         themeToggleBtn.title = 'Switch to light mode';
       } else {
         themeToggleBtn.innerHTML = `
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
           </svg>`;
         themeToggleBtn.title = 'Switch to dark mode';
       }
     }
-    // Toggle dark/light logos
     fullLogoDark.forEach(el => el.style.display = theme === 'dark' ? 'inline-block' : 'none');
     fullLogoLight.forEach(el => el.style.display = theme === 'light' ? 'inline-block' : 'none');
   }
 
-  // Listen to OS theme changes if user hasn't explicitly set a preference
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
     if (!localStorage.getItem('locian_docs_theme')) {
       applyTheme(e.matches ? 'dark' : 'light');
@@ -75,7 +74,27 @@ function initTheme() {
 }
 
 /* --------------------------------------------------------------------------
-   2. Phone Showcase Screenshot Tabs
+   2. Mobile Navigation Drawer
+   -------------------------------------------------------------------------- */
+function initMobileNav() {
+  const toggleBtn = document.getElementById('mobileNavToggle');
+  const drawer = document.getElementById('mobileDrawer');
+
+  if (toggleBtn && drawer) {
+    toggleBtn.addEventListener('click', () => {
+      drawer.classList.toggle('active');
+    });
+
+    drawer.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        drawer.classList.remove('active');
+      });
+    });
+  }
+}
+
+/* --------------------------------------------------------------------------
+   3. Phone Showcase Screenshot Tabs
    -------------------------------------------------------------------------- */
 function initShowcaseTabs() {
   const tabButtons = document.querySelectorAll('.showcase-tab-btn');
@@ -94,16 +113,14 @@ function initShowcaseTabs() {
       tabButtons.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
 
-      // Update phone screenshot
       if (phoneImg && screenshots[tab]) {
-        phoneImg.style.opacity = '0.5';
+        phoneImg.style.opacity = '0.3';
         setTimeout(() => {
           phoneImg.src = screenshots[tab];
           phoneImg.style.opacity = '1';
-        }, 120);
+        }, 140);
       }
 
-      // Update info cards
       document.querySelectorAll('.tab-pane').forEach(pane => {
         pane.classList.remove('active');
         if (pane.id === `tab-${tab}`) {
@@ -115,7 +132,7 @@ function initShowcaseTabs() {
 }
 
 /* --------------------------------------------------------------------------
-   3. Live Inference Simulator
+   4. Live Inference Simulator
    -------------------------------------------------------------------------- */
 function initSimulator() {
   const thread = document.getElementById('simThread');
@@ -125,30 +142,31 @@ function initSimulator() {
   const resetBtn = document.getElementById('simResetBtn');
   const chips = document.querySelectorAll('.sim-chip');
   const modelSelector = document.getElementById('simModelSelector');
+  const modelNameEl = document.getElementById('simSelectedModelName');
 
   // Dashboard elements
   const dashSpeed = document.getElementById('dashSpeed');
   const dashTtft = document.getElementById('dashTtft');
   const dashBudget = document.getElementById('dashBudget');
+  const dashRam = document.getElementById('dashRam');
   const dashSpeedMeter = document.getElementById('dashSpeedMeter');
   const dashBudgetMeter = document.getElementById('dashBudgetMeter');
 
   let streamTimer = null;
   let isGenerating = false;
+  let currentModel = 'qwen05';
+
+  const modelsConfig = {
+    qwen05: { name: 'Qwen 2.5 0.5B', speed: 38.4, ttft: 180, ram: '~380 MB', speedMeter: 92 },
+    llama1b: { name: 'Llama 3.2 1B', speed: 24.2, ttft: 240, ram: '~770 MB', speedMeter: 75 },
+    deepseek: { name: 'DeepSeek R1 1.5B', speed: 18.6, ttft: 310, ram: '~1.0 GB', speedMeter: 62 },
+    qwen15: { name: 'Qwen 2.5 1.5B Coder', speed: 19.8, ttft: 290, ram: '~940 MB', speedMeter: 65 }
+  };
 
   const presets = {
-    delhi: {
-      user: "Who is the Chief Minister of Delhi?",
-      think: "The user is inquiring about the current Chief Minister of Delhi. Fact check: Arvind Kejriwal served until September 2024. Following his resignation, Atishi Marlena was selected by the legislature party and sworn in as the 8th Chief Minister of Delhi. Safe reasoning budget maintained. Outputting clear direct answer.",
-      answer: "The Chief Minister of Delhi is **Atishi Marlena**.\n\nShe assumed office on **September 21, 2024**, following the resignation of Arvind Kejriwal, becoming the third woman to serve as Chief Minister of Delhi.",
-      speed: 18.6,
-      ttft: 310,
-      tokens: 64,
-      thinkTokens: 38
-    },
     python: {
       user: "Write a clean Python script demonstrating asynchronous task queues.",
-      think: "Need an idiomatic asyncio queue implementation with bounded concurrency using asyncio.Semaphore. Construct clear worker and producer functions.",
+      think: "Need an idiomatic asyncio queue implementation with bounded concurrency using asyncio.Semaphore. Construct clear worker and producer functions with descriptive logging.",
       answer: "Here is a clean Python script using `asyncio` to implement an in-memory asynchronous task queue with bounded worker concurrency:",
       code: `import asyncio
 from typing import Any
@@ -169,49 +187,60 @@ class TaskQueue:
                 print(f"⚡ [Worker {worker_id}] Executing: {task_name}")
                 await asyncio.sleep(0.4)
             self.queue.task_done()`,
-      speed: 18.4,
-      ttft: 340,
+      speed: 21.4,
+      ttft: 280,
       tokens: 142,
       thinkTokens: 26
     },
+    deepseek: {
+      user: "How do transformer attention mechanisms scale with context length?",
+      think: "Question: Transformer attention scaling.\n1. Standard multi-head self-attention computes Q * K^T with shape (N, d) x (d, N) -> (N, N) attention matrix.\n2. Both memory footprint and FLOPs scale as O(N^2) where N is token sequence length.\n3. Solutions for mobile on-device LLMs: FlashAttention, Sliding Window Attention (Gemma 2), grouped-query attention (GQA), and KV cache quantization (Q4/Q8).",
+      answer: "Standard Scaled Dot-Product Attention scales **quadratically O(N²)** in both compute and memory with respect to context sequence length $N$:\n\n• **Compute Complexity**: Calculating the attention score matrix $Q K^T$ requires $O(N^2 \\cdot d)$ FLOPs.\n• **KV Cache Footprint**: Memory scales as $2 \\times L \\times H \\times N \\times d_h$, demanding several gigabytes on mobile devices at $N=8192$.\n• **On-Device Optimizations**: Locian utilizes **GQA (Grouped-Query Attention)** and aggressive KV cache quantization to run 4k–8k context comfortably within 4–6 GB RAM.",
+      speed: 18.2,
+      ttft: 310,
+      tokens: 168,
+      thinkTokens: 74
+    },
+    delhi: {
+      user: "Who is the Chief Minister of Delhi?",
+      think: "The user is inquiring about the current Chief Minister of Delhi. Fact check: Arvind Kejriwal resigned in September 2024. Following his resignation, Atishi Marlena was sworn in as the 8th Chief Minister of Delhi on September 21, 2024. Safe reasoning budget maintained.",
+      answer: "The Chief Minister of Delhi is **Atishi Marlena**.\n\nShe assumed office on **September 21, 2024**, following the resignation of Arvind Kejriwal, becoming the third woman to serve as Chief Minister of Delhi after Sushma Swaraj and Sheila Dikshit.",
+      speed: 36.8,
+      ttft: 190,
+      tokens: 64,
+      thinkTokens: 38
+    },
     quantum: {
       user: "Explain quantum computing simply.",
-      think: "Target audience needs a high-level conceptual explanation focusing on qubits, superposition, and entanglement without heavy mathematics.",
-      answer: "Quantum computing leverages the fundamental principles of quantum mechanics to solve problems that are intractable for classical computers:\n\n1. **Superposition**: Unlike classical bits that must be 0 or 1, a **qubit** can exist in a linear combination of both states simultaneously.\n2. **Entanglement**: Qubits can become correlated so that measuring one instantly dictates the state of another.\n3. **Exponential Parallelism**: Enables quadratic or exponential speedups for specialized problems like cryptographic factoring and molecular chemistry simulation.",
-      speed: 21.2,
-      ttft: 280,
-      tokens: 88,
-      thinkTokens: 22
+      think: "Target audience needs a high-level conceptual explanation focusing on qubits, superposition, and entanglement without heavy mathematical formalisms.",
+      answer: "Quantum computing leverages the principles of quantum mechanics to solve problems that classical supercomputers cannot practically compute:\n\n1. **Superposition**: Unlike classical bits (0 or 1), a **qubit** can exist in a superposition of both states simultaneously.\n2. **Entanglement**: Qubits become linked such that measuring one instantly determines the state of the other.\n3. **Exponential Parallelism**: Enables quadratic or exponential speedups for specialized domains like molecular chemistry, materials science, and cryptography.",
+      speed: 28.4,
+      ttft: 220,
+      tokens: 96,
+      thinkTokens: 24
     },
     ideas: {
       user: "Give me 5 creative ideas for on-device local LLM apps.",
-      think: "Brainstorm private offline-first use cases that uniquely benefit from zero cloud latency, no subscription API costs, and total data privacy.",
-      answer: "Here are 5 high-impact on-device AI applications enabled by local inference:\n\n• **Private Health & Journaling Companion**: Analyzes personal thoughts and health metrics with zero risk of cloud leaks.\n• **Offline Code & Terminal Co-Pilot**: Autocompletes bash commands, regexes, and code snippets completely on airplanes or remote sites.\n• **Local Document Search & Summarizer**: Queries PDFs and notes directly on device without uploading sensitive documents.\n• **Real-Time Voice Translator**: Instant bilingual conversations with on-device Whisper STT and compact quantized LLMs.\n• **Smart Photo Organizer**: Synthesizes natural-language search queries across local image metadata.",
-      speed: 19.8,
-      ttft: 320,
-      tokens: 116,
-      thinkTokens: 24
+      think: "Brainstorm private offline-first use cases that uniquely benefit from zero cloud latency, zero API costs, and total data privacy.",
+      answer: "Here are 5 high-impact on-device AI applications enabled by local inference:\n\n• **Confidential Journal & Therapist**: Analyzes private thoughts, biometric mood data, and medical notes with zero data leakage.\n• **Offline Airfield / Maritime Co-Pilot**: Answers technical manuals, diagnostics, and regex/bash commands with zero cellular connectivity.\n• **Encrypted Document Search**: Summarizes and queries scanned tax returns and bank PDFs entirely in device memory.\n• **Ultra-Low Latency Voice Assistant**: Instant bilingual translation with local Whisper STT paired with quantized GGUF.\n• **Smart Photo Album Synthesizer**: Generates natural language descriptions and semantic search for local photos.",
+      speed: 26.5,
+      ttft: 240,
+      tokens: 132,
+      thinkTokens: 28
     }
   };
 
   function escapeHtml(text) {
-    return text
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
+    return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
   function formatText(text) {
     let html = escapeHtml(text);
-    // Bold
     html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    // Inline code
     html = html.replace(/`([^`]+)`/g, '<code class="sim-inline-code">$1</code>');
-    // Bullet points
     html = html.replace(/^• (.*)$/gm, '<li class="sim-bullet">$1</li>');
     html = html.replace(/(<li class="sim-bullet">.*<\/li>)/s, '<ul class="sim-ul">$1</ul>');
-    // Line breaks
-    html = html.replace(/\n\n/g, '<div class="sim-para-gap"></div>');
+    html = html.replace(/\n\n/g, '<div style="height: 10px;"></div>');
     html = html.replace(/\n/g, '<br>');
     return html;
   }
@@ -221,11 +250,11 @@ class TaskQueue:
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
-      .replace(/\b(import|from|class|def|async|await|while|with|as|for|in|return|True|False)\b/g, '<span class="syn-kw">$1</span>')
-      .replace(/\b(TaskQueue|Queue|Semaphore|Any|int|str)\b/g, '<span class="syn-type">$1</span>')
-      .replace(/("(?:[^"\\]|\\.)*")/g, '<span class="syn-str">$1</span>')
-      .replace(/\b(\d+)\b/g, '<span class="syn-num">$1</span>')
-      .replace(/(#.*)$/gm, '<span class="syn-com">$1</span>');
+      .replace(/\b(import|from|class|def|async|await|while|with|as|for|in|return|True|False)\b/g, '<span style="color: #f43f5e; font-weight: 600;">$1</span>')
+      .replace(/\b(TaskQueue|Queue|Semaphore|Any|int|str)\b/g, '<span style="color: #38bdf8;">$1</span>')
+      .replace(/("(?:[^"\\]|\\.)*")/g, '<span style="color: #a3e635;">$1</span>')
+      .replace(/\b(\d+)\b/g, '<span style="color: #fb923c;">$1</span>')
+      .replace(/(#.*)$/gm, '<span style="color: #64748b; font-style: italic;">$1</span>');
   }
 
   function scrollScreenToBottom() {
@@ -245,227 +274,125 @@ class TaskQueue:
     if (stopBtn) stopBtn.style.display = 'none';
   }
 
+  function updateDashboard(speed, ttft, budget, ram, meter) {
+    if (dashSpeed) dashSpeed.innerHTML = `${speed} <span class="unit">tok/s</span>`;
+    if (dashTtft) dashTtft.innerHTML = `${ttft} <span class="unit">ms</span>`;
+    if (dashBudget) dashBudget.innerHTML = `${budget} <span class="unit">/ 384 max</span>`;
+    if (dashRam) dashRam.innerHTML = `${ram}`;
+    if (dashSpeedMeter) dashSpeedMeter.style.width = `${meter || 75}%`;
+    if (dashBudgetMeter) dashBudgetMeter.style.width = `${Math.min(100, Math.round((budget / 384) * 100))}%`;
+  }
+
   function runPreset(key) {
     if (isGenerating) stopGeneration();
     const data = presets[key] || presets.python;
 
-    // Reset thread
-    if (!thread) return;
-    thread.innerHTML = '';
+    if (thread) {
+      thread.innerHTML = `
+        <div class="sim-bubble-user">${escapeHtml(data.user)}</div>
+        <div class="sim-bubble-ai" id="activeAiBubble">
+          ${data.think ? `
+            <div class="sim-think-box" id="activeThinkBox">
+              <div class="sim-think-header" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'">
+                <span>🧠 Chain-of-Thought Reasoning (${data.thinkTokens} tokens)</span>
+                <span style="font-size: 0.75rem;">▼</span>
+              </div>
+              <div class="sim-think-content">${escapeHtml(data.think)}</div>
+            </div>` : ''}
+          <div id="activeStreamText"></div>
+          ${data.code ? `
+            <div style="background: #090d16; border: 1px solid #1e293b; border-radius: 8px; padding: 12px; margin-top: 10px; font-family: var(--font-mono); font-size: 0.8rem; overflow-x: auto;">
+              <pre><code>${highlightSyntax(data.code)}</code></pre>
+            </div>` : ''}
+          <div style="margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
+            <span class="badge-tag badge-ram">⚡ ${data.speed} tok/s</span>
+            <span class="badge-tag badge-q4">TTFT ${data.ttft} ms</span>
+            <span class="badge-tag badge-purple">${data.tokens} tokens</span>
+          </div>
+        </div>
+      `;
+    }
 
-    // Render User Bubble
-    const userWrap = document.createElement('div');
-    userWrap.className = 'sim-msg sim-msg-user';
-    userWrap.innerHTML = `<div class="sim-bubble sim-bubble-user">${escapeHtml(data.user)}</div>`;
-    thread.appendChild(userWrap);
+    const streamEl = document.getElementById('activeStreamText');
+    if (!streamEl) return;
 
-    // Prepare Bot Container
-    const botWrap = document.createElement('div');
-    botWrap.className = 'sim-msg sim-msg-bot';
-
-    const botAvatar = document.createElement('img');
-    botAvatar.src = 'assets/logo.png';
-    botAvatar.alt = 'Locian';
-    botAvatar.className = 'sim-avatar';
-    botWrap.appendChild(botAvatar);
-
-    const botContent = document.createElement('div');
-    botContent.className = 'sim-bot-body';
-    botWrap.appendChild(botContent);
-    thread.appendChild(botWrap);
-
-    // Update Telemetry Panel
-    if (dashSpeed) dashSpeed.innerHTML = `${data.speed.toFixed(1)} <span class="unit">tok/s</span>`;
-    if (dashTtft) dashTtft.innerHTML = `${data.ttft} <span class="unit">ms</span>`;
-    if (dashBudget) dashBudget.innerHTML = `${data.thinkTokens} <span class="unit">/ 384 max</span>`;
-    if (dashSpeedMeter) dashSpeedMeter.style.width = `${Math.min(100, (data.speed / 25) * 100)}%`;
-    if (dashBudgetMeter) dashBudgetMeter.style.width = `${Math.min(100, (data.thinkTokens / 384) * 100)}%`;
-
-    // Mode: Generating
     isGenerating = true;
     if (sendBtn) sendBtn.style.display = 'none';
     if (stopBtn) stopBtn.style.display = 'inline-flex';
 
-    // Step 1: Thinking block (collapsible)
-    let thinkBlock = null;
-    let thinkTextSpan = null;
-    if (data.think) {
-      thinkBlock = document.createElement('div');
-      thinkBlock.className = 'sim-think-block';
+    updateDashboard(data.speed, data.ttft, data.thinkTokens, modelsConfig[currentModel].ram, modelsConfig[currentModel].speedMeter);
 
-      const thinkHeader = document.createElement('div');
-      thinkHeader.className = 'sim-think-header';
-      thinkHeader.innerHTML = `
-        <div class="sim-think-title">
-          <span class="sim-think-sparkle">✨</span>
-          <span class="sim-think-label">Thinking...</span>
-        </div>
-        <span class="sim-think-chevron">▾</span>
-      `;
+    const fullText = data.answer;
+    let charIndex = 0;
+    streamEl.innerHTML = '<span class="sim-cursor" style="display:inline-block; width:6px; height:14px; background:var(--accent-red); vertical-align:middle; animation: pulseDot 0.8s infinite;"></span>';
 
-      const thinkBody = document.createElement('div');
-      thinkBody.className = 'sim-think-body';
-      thinkTextSpan = document.createElement('span');
-      thinkBody.appendChild(thinkTextSpan);
-
-      thinkBlock.appendChild(thinkHeader);
-      thinkBlock.appendChild(thinkBody);
-      botContent.appendChild(thinkBlock);
-
-      // Accordion click toggle
-      thinkHeader.addEventListener('click', () => {
-        thinkBlock.classList.toggle('collapsed');
-      });
-    }
-
-    const answerDiv = document.createElement('div');
-    answerDiv.className = 'sim-bubble-bot';
-    botContent.appendChild(answerDiv);
-
-    // Stream tokens
-    const thinkWords = (data.think || '').split(' ');
-    const answerWords = data.answer.split(' ');
-    let thinkIdx = 0;
-    let answerIdx = 0;
-
-    scrollScreenToBottom();
+    const intervalMs = Math.max(8, Math.round(1000 / (data.speed * 4)));
 
     streamTimer = setInterval(() => {
-      // Stream thinking first
-      if (thinkBlock && thinkIdx < thinkWords.length) {
-        thinkTextSpan.textContent += (thinkIdx > 0 ? ' ' : '') + thinkWords[thinkIdx];
-        thinkIdx++;
+      charIndex += 4;
+      if (charIndex >= fullText.length) {
+        streamEl.innerHTML = formatText(fullText);
+        stopGeneration();
         scrollScreenToBottom();
-        return;
-      }
-
-      // Finish thinking -> collapse and update label
-      if (thinkBlock && thinkIdx >= thinkWords.length && !thinkBlock.dataset.done) {
-        thinkBlock.dataset.done = 'true';
-        const label = thinkBlock.querySelector('.sim-think-label');
-        if (label) label.textContent = `Thought for ${(data.thinkTokens * 0.045).toFixed(1)}s`;
-        thinkBlock.classList.add('collapsed');
-      }
-
-      // Stream answer words
-      if (answerIdx < answerWords.length) {
-        answerIdx += 2; // Stream 2 words per tick for snappy local speed
-        const currentSlice = answerWords.slice(0, answerIdx).join(' ');
-        answerDiv.innerHTML = formatText(currentSlice);
+      } else {
+        const partial = fullText.substring(0, charIndex);
+        streamEl.innerHTML = formatText(partial) + '<span class="sim-cursor" style="display:inline-block; width:6px; height:14px; background:var(--accent-red); margin-left:2px; vertical-align:middle;"></span>';
         scrollScreenToBottom();
-        return;
       }
-
-      // Streaming complete: Add code block if present
-      stopGeneration();
-
-      if (data.code) {
-        const codeCard = document.createElement('div');
-        codeCard.className = 'sim-code-card';
-        codeCard.innerHTML = `
-          <div class="sim-code-header">
-            <div class="sim-code-dots">
-              <span class="sim-code-dot" style="background: #ef4444;"></span>
-              <span class="sim-code-dot" style="background: #f59e0b;"></span>
-              <span class="sim-code-dot" style="background: #10b981;"></span>
-              <span class="sim-code-lang">PYTHON</span>
-            </div>
-            <button class="sim-code-copy-btn" title="Copy code">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-              <span>Copy</span>
-            </button>
-          </div>
-          <pre class="sim-code-pre"><code>${highlightSyntax(data.code)}</code></pre>
-        `;
-
-        const copyBtn = codeCard.querySelector('.sim-code-copy-btn');
-        if (copyBtn) {
-          copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(data.code).then(() => {
-              copyBtn.querySelector('span').textContent = 'Copied!';
-              setTimeout(() => {
-                copyBtn.querySelector('span').textContent = 'Copy';
-              }, 2000);
-            });
-          });
-        }
-        botContent.appendChild(codeCard);
-      }
-
-      // Append Telemetry pill
-      const pill = document.createElement('div');
-      pill.className = 'sim-telemetry-pill';
-      pill.innerHTML = `
-        <span>⚡ ${data.speed.toFixed(1)} t/s</span>
-        <span>⏱️ ${data.ttft}ms TTFT</span>
-        <span>🧠 ${data.thinkTokens} think tok</span>
-        <span>📊 ${data.tokens} total tok</span>
-      `;
-      botContent.appendChild(pill);
-      scrollScreenToBottom();
-
-    }, 38);
+    }, intervalMs);
   }
 
-  function handleCustomQuery(rawQuery) {
-    const q = rawQuery.trim();
-    if (!q) return;
-
-    if (inputEl) inputEl.value = '';
-
-    // Check presets
-    const lower = q.toLowerCase();
-    if (lower.includes('delhi') || lower.includes('chief minister') || lower.includes('cm')) {
-      runPreset('delhi');
-      return;
-    }
-    if (lower.includes('python') || lower.includes('async') || lower.includes('queue') || lower.includes('code')) {
-      runPreset('python');
-      return;
-    }
-    if (lower.includes('quantum') || lower.includes('qubit')) {
-      runPreset('quantum');
-      return;
-    }
-    if (lower.includes('idea') || lower.includes('offline') || lower.includes('creative')) {
-      runPreset('ideas');
-      return;
-    }
-
-    // Dynamic response for arbitrary prompt
-    const dynamicData = {
-      user: q,
-      think: `Analyzing the prompt: "${q}". The user is requesting on-device processing. Accessing quantized weights in RAM and applying temperature sampling without cloud transmission.`,
-      answer: `Here is the response processed entirely on-device:\n\n**${escapeHtml(q)}** was analyzed locally using our ARM NEON-optimized llama.cpp backend. The model performed prompt evaluation with zero network latency or external API calls.`,
-      speed: 19.1,
-      ttft: 295,
-      tokens: 72,
-      thinkTokens: 28
-    };
-
-    presets._custom = dynamicData;
-    runPreset('_custom');
+  // Model Selector
+  if (modelSelector) {
+    const modelKeys = Object.keys(modelsConfig);
+    modelSelector.addEventListener('click', () => {
+      const curIdx = modelKeys.indexOf(currentModel);
+      const nextIdx = (curIdx + 1) % modelKeys.length;
+      currentModel = modelKeys[nextIdx];
+      const cfg = modelsConfig[currentModel];
+      if (modelNameEl) modelNameEl.textContent = cfg.name;
+      updateDashboard(cfg.speed, cfg.ttft, 32, cfg.ram, cfg.speedMeter);
+    });
   }
 
-  // Bind Chip clicks
+  // Chips click
   chips.forEach(chip => {
     chip.addEventListener('click', () => {
       chips.forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
       const promptKey = chip.dataset.prompt;
-      if (presets[promptKey]) {
-        runPreset(promptKey);
-      }
+      runPreset(promptKey);
     });
   });
 
-  // Bind Send & Stop & Reset
-  if (sendBtn && inputEl) {
-    sendBtn.addEventListener('click', () => handleCustomQuery(inputEl.value));
-    inputEl.addEventListener('keydown', (e) => {
+  // Send button
+  if (sendBtn) {
+    sendBtn.addEventListener('click', () => {
+      const q = inputEl.value.trim();
+      if (!q) return;
+      inputEl.value = '';
+      if (isGenerating) stopGeneration();
+
+      if (thread) {
+        thread.innerHTML += `
+          <div class="sim-bubble-user">${escapeHtml(q)}</div>
+          <div class="sim-bubble-ai">
+            <div>Locian is processing on-device using local CPU cores. Total data isolation guaranteed: 0 bytes sent over network.</div>
+            <div style="margin-top: 10px; display: flex; gap: 8px;">
+              <span class="badge-tag badge-ram">⚡ 28.4 tok/s</span>
+              <span class="badge-tag badge-q4">TTFT 220 ms</span>
+            </div>
+          </div>
+        `;
+        scrollScreenToBottom();
+      }
+    });
+  }
+
+  if (inputEl) {
+    inputEl.addEventListener('keydown', e => {
       if (e.key === 'Enter') {
-        e.preventDefault();
-        handleCustomQuery(inputEl.value);
+        sendBtn.click();
       }
     });
   }
@@ -477,124 +404,197 @@ class TaskQueue:
   if (resetBtn) {
     resetBtn.addEventListener('click', () => {
       stopGeneration();
-      runPreset('python');
+      if (thread) {
+        thread.innerHTML = `
+          <div class="sim-bubble-ai" style="text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 12px;">
+            Conversation cleared. Select a quick prompt chip or type below.
+          </div>
+        `;
+      }
     });
   }
 
-  // Model Selector interactive menu
-  if (modelSelector) {
-    const modelOptions = [
-      { name: "Qwen 3.5 0.8B", speed: 24.5, ram: "480 MB" },
-      { name: "LFM3 1.7B Instruct", speed: 18.4, ram: "532 MB" },
-      { name: "DeepSeek R1 1.5B", speed: 14.8, ram: "890 MB" },
-      { name: "Gemma 2 2B Instruct", speed: 12.2, ram: "1.2 GB" }
-    ];
-    let currentModelIdx = 0;
-    modelSelector.style.cursor = 'pointer';
-    modelSelector.addEventListener('click', () => {
-      currentModelIdx = (currentModelIdx + 1) % modelOptions.length;
-      const m = modelOptions[currentModelIdx];
-      const nameEl = document.getElementById('simSelectedModelName');
-      if (nameEl) nameEl.textContent = m.name;
-      const ramEl = document.getElementById('dashRam');
-      if (ramEl) ramEl.innerHTML = `~${m.ram.split(' ')[0]} <span class="unit">${m.ram.split(' ')[1]}</span>`;
-      // Run current active chip
-      const activeChip = document.querySelector('.sim-chip.active');
-      const activeKey = activeChip ? activeChip.dataset.prompt : 'python';
-      runPreset(activeKey);
-    });
-  }
-
-  // Auto-run python preset on initial load
-  setTimeout(() => {
-    runPreset('python');
-  }, 300);
+  // Initialize with python preset
+  runPreset('python');
 }
 
 /* --------------------------------------------------------------------------
-   4. Model Matrix Filtering
+   5. Interactive RAM Compatibility Calculator
+   -------------------------------------------------------------------------- */
+function initRamCalculator() {
+  const slider = document.getElementById('ramSlider');
+  const displayVal = document.getElementById('ramSliderVal');
+  const tierVal = document.getElementById('calcTierVal');
+  const ctxVal = document.getElementById('calcCtxVal');
+  const lmkVal = document.getElementById('calcLmkVal');
+
+  if (!slider) return;
+
+  function updateCalc(ram) {
+    if (displayVal) displayVal.textContent = `${ram} GB RAM`;
+
+    let tier = '';
+    let ctx = '';
+    let lmk = '';
+    let color = '#10b981';
+
+    if (ram <= 3) {
+      tier = 'Compact (0.5B – 1B)';
+      ctx = '2048 tokens';
+      lmk = 'Safe with 0.5B; tight with 1B';
+      color = '#f59e0b';
+    } else if (ram <= 4) {
+      tier = 'Standard (1B – 1.5B)';
+      ctx = '2048 – 4096 tokens';
+      lmk = 'Optimal; Low LMK risk';
+      color = '#10b981';
+    } else if (ram <= 6) {
+      tier = 'High Perf (1.5B – 3B)';
+      ctx = '4096 – 8192 tokens';
+      lmk = 'Zero LMK risk; Fast decode';
+      color = '#10b981';
+    } else if (ram <= 8) {
+      tier = 'Flagship (3B – 7B MoE)';
+      ctx = '8192 tokens';
+      lmk = 'Immune; High concurrency';
+      color = '#0ea5e9';
+    } else {
+      tier = 'Workstation (7B – 14B Q4)';
+      ctx = '16384 tokens';
+      lmk = 'Desktop grade execution';
+      color = '#a855f7';
+    }
+
+    if (tierVal) tierVal.textContent = tier;
+    if (ctxVal) ctxVal.textContent = ctx;
+    if (lmkVal) {
+      lmkVal.textContent = lmk;
+      lmkVal.style.color = color;
+    }
+
+    // Highlight matching table rows
+    document.querySelectorAll('.matrix-table tbody tr').forEach(row => {
+      const minRam = parseInt(row.getAttribute('data-ram') || '4', 10);
+      if (minRam <= ram) {
+        row.style.opacity = '1';
+        row.style.background = 'transparent';
+      } else {
+        row.style.opacity = '0.35';
+      }
+    });
+  }
+
+  slider.addEventListener('input', e => {
+    updateCalc(parseInt(e.target.value, 10));
+  });
+
+  updateCalc(parseInt(slider.value, 10));
+}
+
+/* --------------------------------------------------------------------------
+   6. Model Matrix Filtering & Search
    -------------------------------------------------------------------------- */
 function initModelFilter() {
-  const filterButtons = document.querySelectorAll('.filter-btn');
-  const tableRows = document.querySelectorAll('.matrix-table tbody tr');
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const searchInput = document.getElementById('modelSearchInput');
+  const rows = document.querySelectorAll('.matrix-table tbody tr');
 
-  filterButtons.forEach(btn => {
+  function applyFilters() {
+    const activeBtn = document.querySelector('.filter-btn.active');
+    const filter = activeBtn ? activeBtn.dataset.filter : 'all';
+    const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+    rows.forEach(row => {
+      const ram = parseInt(row.getAttribute('data-ram') || '4', 10);
+      const text = row.innerText.toLowerCase();
+
+      let matchFilter = true;
+      if (filter === 'low') matchFilter = ram <= 3;
+      else if (filter === 'balanced') matchFilter = ram >= 4 && ram <= 6;
+      else if (filter === 'flagship') matchFilter = ram >= 6;
+
+      const matchSearch = !query || text.includes(query);
+
+      row.style.display = matchFilter && matchSearch ? '' : 'none';
+    });
+  }
+
+  filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
-      filterButtons.forEach(b => b.classList.remove('active'));
+      filterBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
+      applyFilters();
+    });
+  });
 
-      const filter = btn.dataset.filter;
-      tableRows.forEach(row => {
-        const ram = parseInt(row.dataset.ram, 10);
-        if (filter === 'all') {
-          row.style.display = '';
-        } else if (filter === 'low' && ram <= 3) {
-          row.style.display = '';
-        } else if (filter === 'balanced' && ram >= 4 && ram <= 6) {
-          row.style.display = '';
-        } else if (filter === 'flagship' && ram >= 8) {
-          row.style.display = '';
-        } else {
-          row.style.display = 'none';
-        }
+  if (searchInput) {
+    searchInput.addEventListener('input', applyFilters);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   7. Copy to Clipboard with Toast Notification
+   -------------------------------------------------------------------------- */
+function initCopyButtons() {
+  let toast = document.querySelector('.toast-msg');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.className = 'toast-msg';
+    toast.textContent = 'Copied to clipboard!';
+    document.body.appendChild(toast);
+  }
+
+  function showToast(msg) {
+    toast.textContent = msg || 'Copied to clipboard!';
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 2200);
+  }
+
+  document.querySelectorAll('.copy-icon-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const parent = btn.closest('.code-block-display') || btn.parentElement;
+      const code = parent.querySelector('code');
+      const text = code ? code.innerText : parent.innerText;
+
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = 'Copied!';
+        showToast('Copied to clipboard!');
+        setTimeout(() => {
+          btn.textContent = 'Copy';
+        }, 2000);
       });
     });
   });
 }
 
 /* --------------------------------------------------------------------------
-   5. One-Click Copy for Terminal Commands
-   -------------------------------------------------------------------------- */
-function initCopyButtons() {
-  const copyButtons = document.querySelectorAll('.copy-icon-btn');
-  copyButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const code = btn.dataset.clipboard || btn.parentElement.querySelector('code')?.innerText;
-      if (code) {
-        navigator.clipboard.writeText(code.trim()).then(() => {
-          const original = btn.textContent;
-          btn.textContent = '✓ Copied';
-          btn.style.background = 'var(--accent-red)';
-          setTimeout(() => {
-            btn.textContent = original;
-            btn.style.background = '';
-          }, 1800);
-        });
-      }
-    });
-  });
-}
-
-/* --------------------------------------------------------------------------
-   6. Documentation Sidebar Active Link Spy
+   8. Docs Sidebar Scrollspy
    -------------------------------------------------------------------------- */
 function initDocsSidebar() {
-  const sidebarLinks = document.querySelectorAll('.docs-nav-link');
-  if (!sidebarLinks.length) return;
-
+  const links = document.querySelectorAll('.docs-nav-link');
   const sections = document.querySelectorAll('.docs-section');
-  if (!sections.length) return;
+
+  if (links.length === 0 || sections.length === 0) return;
 
   window.addEventListener('scroll', () => {
     let currentId = '';
     const scrollPos = window.scrollY + 120;
 
     sections.forEach(sec => {
-      const top = sec.offsetTop;
-      const height = sec.offsetHeight;
-      if (scrollPos >= top && scrollPos < top + height) {
+      if (sec.offsetTop <= scrollPos) {
         currentId = sec.getAttribute('id');
       }
     });
 
     if (currentId) {
-      sidebarLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === `#${currentId}`) {
-          link.classList.add('active');
+      links.forEach(l => {
+        l.classList.remove('active');
+        if (l.getAttribute('href') === `#${currentId}`) {
+          l.classList.add('active');
         }
       });
     }
   });
 }
-

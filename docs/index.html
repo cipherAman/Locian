@@ -7,26 +7,33 @@
   <meta name="description" content="Locian is a privacy-first, 100% offline local LLM Android application built with Jetpack Compose, Clean Architecture, and llama.cpp via high-performance Android NDK C++ bindings.">
   <meta name="keywords" content="Locian, On-Device AI, Local LLM, Android, llama.cpp, GGUF, Jetpack Compose, Kotlin, Offline AI">
 
-  <!-- Open Graph -->
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://cipheraman.github.io/Locian/">
   <meta property="og:title" content="Locian — 100% On-Device Offline AI for Android">
   <meta property="og:description" content="Run quantized GGUF models directly on Android with native llama.cpp acceleration. Zero internet, zero data collection.">
-  <meta property="og:type" content="website">
-  <meta property="og:image" content="assets/full-logo-dark.png">
+  <meta property="og:image" content="https://cipheraman.github.io/Locian/assets/full-logo-dark.png">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://cipheraman.github.io/Locian/">
+  <meta property="twitter:title" content="Locian — 100% On-Device Offline AI for Android">
+  <meta property="twitter:description" content="Run quantized GGUF models directly on Android with native llama.cpp acceleration. Zero internet, zero data collection.">
+  <meta property="twitter:image" content="https://cipheraman.github.io/Locian/assets/full-logo-dark.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="assets/logo.png">
 
-  <!-- Google Fonts -->
+  <!-- Google Fonts Preconnect -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Stylesheet -->
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-  <!-- Ambient Glow -->
+  <!-- Dynamic Ambient Glowing Mesh -->
   <div class="ambient-glow"></div>
 
   <!-- Navigation Bar -->
@@ -43,15 +50,21 @@
           <li><a href="guide.html" class="nav-link" style="color: var(--accent-red); font-weight: 600;">Documentation</a></li>
           <li><a href="#features" class="nav-link">Features</a></li>
           <li><a href="#simulator" class="nav-link">Live Demo</a></li>
+          <li><a href="#calculator" class="nav-link">RAM Calculator</a></li>
           <li><a href="#models" class="nav-link">Model Catalog</a></li>
+          <li><a href="#benchmarks" class="nav-link">Benchmarks</a></li>
           <li><a href="#architecture" class="nav-link">Architecture</a></li>
-          <li><a href="#quickstart" class="nav-link">Quickstart</a></li>
         </ul>
       </nav>
 
       <div class="nav-actions">
+        <a href="https://github.com/cipherAman/Locian/releases" target="_blank" rel="noopener noreferrer" class="status-pill" title="Latest stable release">
+          <span class="status-dot"></span>
+          <span>v1.0.0 Stable</span>
+        </a>
+
         <button id="themeToggleBtn" class="theme-toggle-btn" title="Toggle theme" aria-label="Toggle theme">
-          <svg id="themeIconSvg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="5"></circle>
             <line x1="12" y1="1" x2="12" y2="3"></line>
             <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -63,27 +76,52 @@
             <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
           </svg>
         </button>
-        <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+
+        <a href="https://github.com/cipherAman/Locian" target="_blank" rel="noopener noreferrer" class="btn-secondary" title="View Source on GitHub">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
           </svg>
-          GitHub
+          <span>GitHub</span>
         </a>
+
+        <a href="https://github.com/cipherAman/Locian/releases/latest" target="_blank" rel="noopener noreferrer" class="btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          <span>Get APK</span>
+        </a>
+
+        <button id="mobileNavToggle" class="mobile-nav-toggle" aria-label="Toggle navigation menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
       </div>
     </div>
   </header>
 
+  <!-- Mobile Drawer Menu -->
+  <div id="mobileDrawer" class="mobile-drawer">
+    <a href="guide.html" class="nav-link" style="color: var(--accent-red); font-weight: 700;">📖 Documentation & Guide</a>
+    <a href="#features" class="nav-link">⚡ Key Features</a>
+    <a href="#simulator" class="nav-link">🎮 Live Inference Demo</a>
+    <a href="#calculator" class="nav-link">📱 RAM Compatibility Tool</a>
+    <a href="#models" class="nav-link">📦 Model Matrix Catalog</a>
+    <a href="#benchmarks" class="nav-link">📊 Hardware Benchmarks</a>
+    <a href="#architecture" class="nav-link">🏗️ Clean Architecture</a>
+    <a href="https://github.com/cipherAman/Locian/releases/latest" target="_blank" rel="noopener noreferrer" class="btn-primary" style="margin-top: 10px;">
+      📥 Download APK (v1.0.0)
+    </a>
+  </div>
+
   <!-- Hero Section -->
   <section class="hero-section">
     <div class="container">
-      <div class="hero-badge-wrap">
-        <span class="hero-badge-dot"></span>
-        <span class="hero-badge-text">v1.0.0 · Android 8.0+ · ARM64 · Apache 2.0</span>
-      </div>
+      <a href="https://github.com/cipherAman/Locian/releases/latest" target="_blank" rel="noopener noreferrer" class="hero-pill-badge">
+        <span class="hero-pill-sparkle">✨</span>
+        <span>Locian v1.0.0 Released · Powered by llama.cpp b4000+</span>
+        <span class="hero-pill-arrow">→</span>
+      </a>
 
       <h1 class="hero-title">
-        On-Device Language Models<br>
-        <span class="highlight">for Android</span>
+        100% On-Device AI<br>
+        <span class="gradient-text">for Android</span>
       </h1>
 
       <p class="hero-subtitle">
@@ -91,83 +129,116 @@
       </p>
 
       <div class="hero-cta-group">
-        <a href="guide.html" class="btn-primary">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
-          Documentation & Guide
+        <a href="https://github.com/cipherAman/Locian/releases/latest" target="_blank" rel="noopener noreferrer" class="btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          Download APK (v1.0.0)
         </a>
         <a href="#simulator" class="btn-secondary">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-          Inference Simulator
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          Try Live Simulator
         </a>
-        <a href="#models" class="btn-secondary">
-          Model Catalog
+        <a href="guide.html" class="btn-secondary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+          User Guide & Setup
         </a>
+        <a href="https://github.com/cipherAman/Locian" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          Star on GitHub
+        </a>
+      </div>
+
+      <!-- Hero Key Stats Ribbon -->
+      <div class="hero-stats-ribbon">
+        <div class="stat-item">
+          <div class="stat-val">0 <span class="unit">ms</span></div>
+          <div class="stat-label">Cloud Latency (100% Offline)</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-val">ARMv8.4 <span class="unit">i8mm</span></div>
+          <div class="stat-label">FP16 & DotProd Acceleration</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-val">~380 <span class="unit">MB</span></div>
+          <div class="stat-label">Min Model Footprint (Qwen 0.5B)</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-val">0 <span class="unit">KB</span></div>
+          <div class="stat-label">Data Transmitted (Zero Telemetry)</div>
+        </div>
       </div>
 
       <!-- App Showcase & Phone Mockup -->
       <div class="hero-showcase">
         <div class="showcase-visual">
           <div class="phone-frame">
+            <div class="phone-notch">
+              <span class="phone-lens"></span>
+              <span class="phone-speaker"></span>
+            </div>
             <div class="phone-screen">
               <img id="phoneMockupImg" src="assets/screenshot-chat.png" alt="Locian Android App Running On-Device Chat">
             </div>
           </div>
         </div>
 
+        <div class="showcase-tabs-card">
           <div class="showcase-tabs-nav">
-            <button class="showcase-tab-btn active" data-tab="chat">Chat & Code</button>
-            <button class="showcase-tab-btn" data-tab="empty">Welcome & Prompts</button>
-            <button class="showcase-tab-btn" data-tab="settingsDark">Dark Interface</button>
-            <button class="showcase-tab-btn" data-tab="settingsLight">Light Interface</button>
+            <button class="showcase-tab-btn active" data-tab="chat">💬 Chat & Code</button>
+            <button class="showcase-tab-btn" data-tab="empty">✨ Welcome & Dock</button>
+            <button class="showcase-tab-btn" data-tab="settingsDark">🌙 Dark Settings</button>
+            <button class="showcase-tab-btn" data-tab="settingsLight">☀️ Light Settings</button>
           </div>
 
-          <!-- Tab Content 1: Chat -->
+          <!-- Tab 1: Chat -->
           <div class="tab-pane active" id="tab-chat">
-            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px;">Streaming Token Generation</h3>
-            <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 0.95rem;">
+            <h3 class="tab-pane-title">Real-Time Streaming Generation</h3>
+            <p class="tab-pane-desc">
               Direct JNI bridge to <code>llama.cpp</code> native runtime. Real-time character streaming with Markdown rendering, syntax-highlighted code blocks, and one-tap clipboard copy.
             </p>
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
               <span class="badge-tag badge-q4">ARMv8.2+ FP16</span>
               <span class="badge-tag badge-ram">Real-Time Telemetry</span>
-              <span class="badge-tag badge-q4">Syntax Highlighting</span>
+              <span class="badge-tag badge-purple">Syntax Highlighting</span>
+              <span class="badge-tag badge-red">Copy to Clipboard</span>
             </div>
           </div>
 
-          <!-- Tab Content 2: Empty / Welcome State -->
+          <!-- Tab 2: Empty / Welcome State -->
           <div class="tab-pane" id="tab-empty">
-            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px;">Minimalist Welcome & Starter Cards</h3>
-            <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 0.95rem;">
+            <h3 class="tab-pane-title">Minimalist Welcome & Starter Cards</h3>
+            <p class="tab-pane-desc">
               Clean hero branding with prompt starter suggestions and integrated pill dock input bar. Instant one-tap interaction for brainstorms, coding, emails, and conceptual deep-dives.
             </p>
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
               <span class="badge-tag badge-q4">Prompt Starters</span>
               <span class="badge-tag badge-ram">Adaptive Dock</span>
-              <span class="badge-tag badge-q4">Privacy Focused</span>
+              <span class="badge-tag badge-purple">Privacy Focused</span>
             </div>
           </div>
 
-          <!-- Tab Content 3: Dark Settings -->
+          <!-- Tab 3: Dark Settings -->
           <div class="tab-pane" id="tab-settingsDark">
-            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px;">Runtime Inference Configuration</h3>
-            <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 0.95rem;">
+            <h3 class="tab-pane-title">Runtime Inference Configuration</h3>
+            <p class="tab-pane-desc">
               Live adjustment of Temperature, Top-P, Min-P, CPU Thread allocation, and Context Window size. Accommodates devices from 4 GB to 12 GB+ RAM.
             </p>
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
               <span class="badge-tag badge-q4">Tri-State Theming</span>
               <span class="badge-tag badge-ram">Hardware RAM Profiler</span>
+              <span class="badge-tag badge-purple">Thread Tuning</span>
             </div>
           </div>
 
-          <!-- Tab Content 4: Light Settings -->
+          <!-- Tab 4: Light Settings -->
           <div class="tab-pane" id="tab-settingsLight">
-            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px;">High-Contrast Light Theme</h3>
-            <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 0.95rem;">
+            <h3 class="tab-pane-title">High-Contrast Light Theme</h3>
+            <p class="tab-pane-desc">
               Neutral slate surfaces and deep text contrast designed for daytime visibility. Edge-to-edge transparent system bars with Material 3 dynamics.
             </p>
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
               <span class="badge-tag badge-q4">High Contrast</span>
               <span class="badge-tag badge-ram">Edge-to-Edge System Bars</span>
+              <span class="badge-tag badge-red">OLED Dark / Clean Light</span>
             </div>
           </div>
         </div>
@@ -179,25 +250,31 @@
   <section class="section" id="features">
     <div class="container">
       <div class="section-header">
-        <div class="section-tag">Capabilities</div>
-        <h2 class="section-title">Core Architecture & Features</h2>
+        <div class="section-tag">Core Capabilities</div>
+        <h2 class="section-title">Engineered for Silicon Independence</h2>
         <p class="section-desc">Native Android optimizations paired with modern quantized GGUF inference.</p>
       </div>
 
       <div class="grid-3">
         <!-- Feature 1 -->
         <div class="feature-card">
+          <div class="feature-icon-box">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          </div>
           <div class="feature-index">01 / PRIVACY</div>
           <h3 class="feature-title">100% Offline Execution</h3>
           <p class="feature-text">
-            Zero network requests, zero background telemetry, and zero remote APIs. Prompts, weights, and conversation histories remain strictly inside local device storage.
+            Zero network requests, zero background telemetry, and zero remote APIs. Prompts, model weights, and conversation histories remain strictly inside local device storage.
           </p>
         </div>
 
         <!-- Feature 2 -->
         <div class="feature-card">
+          <div class="feature-icon-box">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
+          </div>
           <div class="feature-index">02 / HARDWARE</div>
-          <h3 class="feature-title">Dynamic Hardware Acceleration</h3>
+          <h3 class="feature-title">Dynamic CPU Binary Dispatch</h3>
           <p class="feature-text">
             Startup CPU capability detection selectively loads native binaries compiled for ARM NEON, ARMv8.2 FP16, Dot-Product, and ARMv8.4 i8mm instructions.
           </p>
@@ -205,6 +282,9 @@
 
         <!-- Feature 3 -->
         <div class="feature-card">
+          <div class="feature-icon-box">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+          </div>
           <div class="feature-index">03 / MEMORY</div>
           <h3 class="feature-title">Adaptive Memory Guard</h3>
           <p class="feature-text">
@@ -214,6 +294,9 @@
 
         <!-- Feature 4 -->
         <div class="feature-card">
+          <div class="feature-icon-box">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          </div>
           <div class="feature-index">04 / REASONING</div>
           <h3 class="feature-title">Chain-of-Thought Folding</h3>
           <p class="feature-text">
@@ -223,17 +306,23 @@
 
         <!-- Feature 5 -->
         <div class="feature-card">
+          <div class="feature-icon-box">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          </div>
           <div class="feature-index">05 / TELEMETRY</div>
           <h3 class="feature-title">Real-Time Execution Telemetry</h3>
           <p class="feature-text">
-            Precise post-generation telemetry: Decode Speed (tok/s), Time to First Token (TTFT in ms), and total output token count.
+            Precise post-generation telemetry: Decode Speed (tok/s), Time to First Token (TTFT in ms), and total output token count displayed on every reply.
           </p>
         </div>
 
         <!-- Feature 6 -->
         <div class="feature-card">
+          <div class="feature-icon-box">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          </div>
           <div class="feature-index">06 / STORAGE</div>
-          <h3 class="feature-title">Resumable Downloads & GGUF Import</h3>
+          <h3 class="feature-title">Resumable Downloads & Sideload</h3>
           <p class="feature-text">
             In-app catalog with HTTP Range byte-level resume support and SHA-256 verification. Sideload any standard GGUF file via the system document picker.
           </p>
@@ -246,7 +335,7 @@
   <section class="section" id="simulator" style="background: var(--bg-secondary);">
     <div class="container">
       <div class="section-header">
-        <div class="section-tag">Interactive Engine Preview</div>
+        <div class="section-tag">Interactive Preview</div>
         <h2 class="section-title">Experience the Locian Streaming Engine</h2>
         <p class="section-desc">Test real-time on-device token streaming, chain-of-thought reasoning with budget caps, and live hardware telemetry right in your browser.</p>
       </div>
@@ -264,20 +353,18 @@
                 <div class="sim-icon-btn">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                 </div>
-                <div class="sim-appbar-logo">
-                  <img src="assets/logo.png" alt="Locian Logo" width="22" height="22">
-                </div>
+                <img src="assets/logo.png" alt="Locian Logo" width="22" height="22">
                 <span class="sim-appbar-title">Locian</span>
               </div>
               <div class="sim-appbar-right">
-                <div class="sim-model-selector" id="simModelSelector">
+                <div class="sim-model-selector" id="simModelSelector" title="Click to cycle active model">
                   <span class="sim-dot-red"></span>
-                  <span id="simSelectedModelName">Qwen 3.5 0.8B</span>
+                  <span id="simSelectedModelName">Qwen 2.5 0.5B</span>
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
                 </div>
-                <div class="sim-icon-btn" id="simResetBtn" title="New Chat">
+                <button class="sim-icon-btn" id="simResetBtn" title="New Chat">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                </div>
+                </button>
               </div>
             </div>
           </div>
@@ -285,21 +372,22 @@
           <!-- Phone Screen Chat Thread -->
           <div class="sim-screen" id="simScreen">
             <div class="sim-thread" id="simThread">
-              <!-- Rendered messages -->
+              <!-- Rendered dynamically by main.js -->
             </div>
           </div>
 
           <!-- Prompt Quick Chips -->
           <div class="sim-chips" id="simChips">
+            <button class="sim-chip active" data-prompt="python">🐍 Async Python Queue</button>
+            <button class="sim-chip" data-prompt="deepseek">🧠 DeepSeek R1 CoT</button>
             <button class="sim-chip" data-prompt="delhi">⚡ CM of Delhi</button>
-            <button class="sim-chip active" data-prompt="python">🐍 Async Python</button>
-            <button class="sim-chip" data-prompt="quantum">🔬 Quantum Info</button>
-            <button class="sim-chip" data-prompt="ideas">💡 On-Device AI</button>
+            <button class="sim-chip" data-prompt="quantum">🔬 Quantum Superposition</button>
+            <button class="sim-chip" data-prompt="ideas">💡 Top 5 Local AI Ideas</button>
           </div>
 
           <!-- Input Dock -->
           <div class="sim-dock">
-            <input type="text" id="simInput" class="sim-dock-input" placeholder="Message Locian..." autocomplete="off">
+            <input type="text" id="simInput" class="sim-dock-input" placeholder="Type a prompt..." autocomplete="off">
             <button id="simSendBtn" class="sim-dock-send" title="Send message">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="12" y1="19" x2="12" y2="5"></line>
@@ -321,30 +409,30 @@
             <div class="sim-metrics-grid">
               <div class="sim-metric-box">
                 <div class="sim-metric-label">DECODE SPEED</div>
-                <div class="sim-metric-val" id="dashSpeed">18.4 <span class="unit">tok/s</span></div>
-                <div class="sim-meter"><div class="sim-meter-fill" id="dashSpeedMeter" style="width: 78%;"></div></div>
+                <div class="sim-metric-val" id="dashSpeed">38.4 <span class="unit">tok/s</span></div>
+                <div class="sim-meter"><div class="sim-meter-fill" id="dashSpeedMeter" style="width: 88%;"></div></div>
               </div>
               <div class="sim-metric-box">
                 <div class="sim-metric-label">TIME TO FIRST TOKEN</div>
-                <div class="sim-metric-val" id="dashTtft">310 <span class="unit">ms</span></div>
-                <div class="sim-meter"><div class="sim-meter-fill" style="width: 82%; background: #10b981;"></div></div>
+                <div class="sim-metric-val" id="dashTtft">180 <span class="unit">ms</span></div>
+                <div class="sim-meter"><div class="sim-meter-fill" style="width: 85%; background: #10b981;"></div></div>
               </div>
               <div class="sim-metric-box">
                 <div class="sim-metric-label">REASONING BUDGET</div>
-                <div class="sim-metric-val" id="dashBudget">32 <span class="unit">/ 384 max</span></div>
-                <div class="sim-meter"><div class="sim-meter-fill" id="dashBudgetMeter" style="width: 12%; background: #3b82f6;"></div></div>
+                <div class="sim-metric-val" id="dashBudget">26 <span class="unit">/ 384 max</span></div>
+                <div class="sim-meter"><div class="sim-meter-fill" id="dashBudgetMeter" style="width: 10%; background: #3b82f6;"></div></div>
               </div>
               <div class="sim-metric-box">
                 <div class="sim-metric-label">ACTIVE MEMORY</div>
-                <div class="sim-metric-val" id="dashRam">~532 <span class="unit">MB</span></div>
-                <div class="sim-meter"><div class="sim-meter-fill" style="width: 26%; background: #a855f7;"></div></div>
+                <div class="sim-metric-val" id="dashRam">~380 <span class="unit">MB</span></div>
+                <div class="sim-meter"><div class="sim-meter-fill" style="width: 24%; background: #a855f7;"></div></div>
               </div>
             </div>
 
             <div class="sim-specs-list">
               <div class="sim-spec-item">
                 <span class="sim-spec-k">Target Kernel</span>
-                <span class="sim-spec-v">ARMv8.2-A FP16 + DotProd</span>
+                <span class="sim-spec-v">ARMv8.4-A i8mm + FP16 + DotProd</span>
               </div>
               <div class="sim-spec-item">
                 <span class="sim-spec-k">Quantization Scheme</span>
@@ -352,11 +440,11 @@
               </div>
               <div class="sim-spec-item">
                 <span class="sim-spec-k">Reasoning Safeguard</span>
-                <span class="sim-spec-v" style="color: #10b981;">Auto-close at 384 tokens</span>
+                <span class="sim-spec-v" style="color: #10b981;">Auto-close &lt;/think&gt; at budget</span>
               </div>
               <div class="sim-spec-item">
-                <span class="sim-spec-k">Repeat Penalties</span>
-                <span class="sim-spec-v">1.10 (rep) • 0.05 (freq/pres)</span>
+                <span class="sim-spec-k">KV Cache Optimization</span>
+                <span class="sim-spec-v">FlashAttention + FP16 KV</span>
               </div>
             </div>
           </div>
@@ -364,14 +452,14 @@
           <!-- Real Device Screenshot Inspector -->
           <div class="sim-panel-card">
             <div class="sim-panel-badge" style="color: var(--accent-red); background: var(--accent-red-subtle);">REAL DEVICE CAPTURE</div>
-            <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 8px;">Pixel-Perfect Native UI</h4>
-            <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 14px;">
-              Direct uncompressed capture from TECNO MediaTek hardware running Locian on Android 14.
+            <h4 style="font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; margin-bottom: 8px;">Pixel-Perfect Native Jetpack Compose UI</h4>
+            <p style="font-size: 0.92rem; color: var(--text-secondary); margin-bottom: 16px;">
+              Direct uncompressed capture from MediaTek Helio G99 / Dimensity hardware running Locian on Android 14.
             </p>
-            <div class="sim-device-preview">
-              <img id="simDeviceThumbnail" src="assets/screenshot-chat.png" alt="On-Device Screenshot" class="sim-thumb-img">
-              <div class="sim-thumb-overlay">
-                <a href="assets/screenshot-chat.png" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="font-size: 0.82rem; padding: 6px 14px; text-decoration: none;">
+            <div style="border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); position: relative;">
+              <img id="simDeviceThumbnail" src="assets/screenshot-chat.png" alt="On-Device Screenshot" style="width: 100%; height: 200px; object-fit: cover; object-position: top; display: block;">
+              <div style="position: absolute; bottom: 12px; right: 12px;">
+                <a href="assets/screenshot-chat.png" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="font-size: 0.8rem; padding: 6px 14px;">
                   🔍 View Full Screenshot
                 </a>
               </div>
@@ -379,22 +467,75 @@
           </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- RAM & Device Compatibility Calculator -->
+  <section class="section" id="calculator">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">Device Compatibility Tool</div>
+        <h2 class="section-title">Check Your Phone's RAM & Sizing</h2>
+        <p class="section-desc">Locian dynamically adjusts KV cache buffers to fit your hardware profile. Slide to find your phone's ideal configuration.</p>
+      </div>
+
+      <div class="calc-card">
+        <div class="calc-slider-wrap">
+          <div class="calc-slider-header">
+            <div>
+              <strong style="font-size: 1.1rem; color: var(--text-primary);">Installed Phone Memory:</strong>
+              <div style="font-size: 0.88rem; color: var(--text-muted);">Adjust based on your device specifications</div>
+            </div>
+            <div class="calc-ram-display" id="ramSliderVal">4 GB RAM</div>
+          </div>
+
+          <input type="range" min="3" max="16" value="4" step="1" class="calc-slider" id="ramSlider">
+
+          <div class="calc-ram-steps">
+            <span>3 GB</span>
+            <span>4 GB</span>
+            <span>6 GB</span>
+            <span>8 GB</span>
+            <span>12 GB</span>
+            <span>16 GB</span>
+          </div>
+        </div>
+
+        <div class="calc-result-grid">
+          <div class="calc-res-item">
+            <span class="calc-res-title">RECOMMENDED MODEL TIER</span>
+            <span class="calc-res-val" id="calcTierVal">Standard (1B – 1.5B)</span>
+          </div>
+          <div class="calc-res-item">
+            <span class="calc-res-title">OPTIMAL CONTEXT WINDOW</span>
+            <span class="calc-res-val" id="calcCtxVal">2048 – 4096 tokens</span>
+          </div>
+          <div class="calc-res-item">
+            <span class="calc-res-title">ANDROID LMK KILL RISK</span>
+            <span class="calc-res-val" id="calcLmkVal" style="color: #10b981;">Optimal; Low LMK risk</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- Curated Model Matrix -->
-  <section class="section" id="models">
+  <section class="section" id="models" style="background: var(--bg-secondary);">
     <div class="container">
       <div class="section-header">
-        <div class="section-tag">Model Library</div>
-        <h2 class="section-title">Tested & Verified Mobile GGUF Models</h2>
-        <p class="section-desc">Hand-tested on physical devices ranging from 4 GB budget phones to 12 GB+ flagships.</p>
+        <div class="section-tag">Tested Model Library</div>
+        <h2 class="section-title">Verified Mobile GGUF Weights</h2>
+        <p class="section-desc">Hand-tested on physical devices ranging from 3 GB budget phones to 16 GB flagships.</p>
       </div>
 
       <div class="matrix-filters">
-        <button class="filter-btn active" data-filter="all">All Models</button>
-        <button class="filter-btn" data-filter="low">≤ 3 GB RAM (Compact)</button>
-        <button class="filter-btn" data-filter="balanced">4–6 GB RAM (Balanced)</button>
-        <button class="filter-btn" data-filter="flagship">8 GB+ RAM (Flagship)</button>
+        <div class="matrix-filter-group">
+          <button class="filter-btn active" data-filter="all">All Models</button>
+          <button class="filter-btn" data-filter="low">≤ 3 GB RAM (Compact)</button>
+          <button class="filter-btn" data-filter="balanced">4–6 GB RAM (Balanced)</button>
+          <button class="filter-btn" data-filter="flagship">8 GB+ RAM (Flagship)</button>
+        </div>
+        <input type="text" id="modelSearchInput" class="matrix-search-input" placeholder="🔍 Search model or use case...">
       </div>
 
       <div class="matrix-table-wrap">
@@ -416,7 +557,7 @@
               <td><span class="badge-tag badge-q4">Q4_K_M (~380 MB)</span></td>
               <td><span class="badge-tag badge-ram">2 GB RAM</span></td>
               <td>2048</td>
-              <td>Low-latency extraction, classification, quick Q&amp;A</td>
+              <td>Ultra-low latency extraction, classification, quick Q&amp;A (35–50 tok/s)</td>
             </tr>
             <tr data-ram="3">
               <td><strong>Llama 3.2 1B Instruct</strong></td>
@@ -424,7 +565,7 @@
               <td><span class="badge-tag badge-q4">Q4_K_M (~770 MB)</span></td>
               <td><span class="badge-tag badge-ram">3 GB RAM</span></td>
               <td>2048</td>
-              <td>Instruction following and general dialogue synthesis</td>
+              <td>Instruction following and general dialogue synthesis (22–32 tok/s)</td>
             </tr>
             <tr data-ram="4">
               <td><strong>Qwen 2.5 1.5B Instruct</strong></td>
@@ -432,7 +573,7 @@
               <td><span class="badge-tag badge-q4">Q4_K_M (~940 MB)</span></td>
               <td><span class="badge-tag badge-ram">4 GB RAM</span></td>
               <td>4096</td>
-              <td>Code generation, technical explanations, and mathematics</td>
+              <td>Code generation, technical explanations, and mathematics (18–26 tok/s)</td>
             </tr>
             <tr data-ram="4">
               <td><strong>DeepSeek R1 Distill Qwen 1.5B</strong></td>
@@ -440,42 +581,112 @@
               <td><span class="badge-tag badge-q4">Q4_K_M (~1.0 GB)</span></td>
               <td><span class="badge-tag badge-ram">4 GB RAM</span></td>
               <td>4096</td>
-              <td>Step-by-step chain-of-thought logic and reasoning</td>
+              <td>Step-by-step chain-of-thought logic with collapsible reasoning tags</td>
             </tr>
             <tr data-ram="4">
               <td><strong>SmolLM2 1.7B Instruct</strong></td>
               <td>1.71B</td>
-              <td><span class="badge-tag badge-q4">Q4_K_M (~1.0 GB)</span></td>
+              <td><span class="badge-tag badge-q4">Q4_K_M (~1.02 GB)</span></td>
               <td><span class="badge-tag badge-ram">4 GB RAM</span></td>
               <td>4096</td>
-              <td>Synthetic training reasoning benchmark model</td>
+              <td>Synthetic reasoning benchmark model for structured data extraction</td>
             </tr>
             <tr data-ram="4">
               <td><strong>Gemma 2 2B IT</strong></td>
               <td>2.6B</td>
-              <td><span class="badge-tag badge-q4">Q4_K_M (~1.7 GB)</span></td>
+              <td><span class="badge-tag badge-q4">Q4_K_M (~1.71 GB)</span></td>
               <td><span class="badge-tag badge-ram">4 GB RAM</span></td>
               <td>4096</td>
-              <td>High accuracy sliding-window instruction clarity</td>
-            </tr>
-            <tr data-ram="6">
-              <td><strong>Gemma 4 E2B IT</strong></td>
-              <td>E2B</td>
-              <td><span class="badge-tag badge-q4">Q4_K_M (~3.4 GB)</span></td>
-              <td><span class="badge-tag badge-ram">6 GB RAM</span></td>
-              <td>8192</td>
-              <td>Google DeepMind next-gen dense reasoning architecture</td>
+              <td>Google sliding-window attention model for long-dialogue clarity</td>
             </tr>
             <tr data-ram="6">
               <td><strong>Llama 3.2 3B Instruct</strong></td>
               <td>3.21B</td>
-              <td><span class="badge-tag badge-q4">Q4_K_M (~1.9 GB)</span></td>
+              <td><span class="badge-tag badge-q4">Q4_K_M (~1.95 GB)</span></td>
               <td><span class="badge-tag badge-ram">6 GB – 8 GB</span></td>
               <td>8192</td>
-              <td>Multi-turn complex reasoning and structured synthesis</td>
+              <td>Multi-turn complex reasoning and structured creative generation</td>
+            </tr>
+            <tr data-ram="6">
+              <td><strong>Gemma 4 E2B IT</strong></td>
+              <td>E2B</td>
+              <td><span class="badge-tag badge-q4">Q4_K_M (~3.42 GB)</span></td>
+              <td><span class="badge-tag badge-ram">6 GB – 8 GB</span></td>
+              <td>8192</td>
+              <td>Google DeepMind next-generation dense reasoning architecture</td>
             </tr>
           </tbody>
         </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hardware Benchmarks Section -->
+  <section class="section" id="benchmarks">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">Physical Benchmarks</div>
+        <h2 class="section-title">Generation Speeds Across Mobile Chipsets</h2>
+        <p class="section-desc">Measured decode speeds running Qwen 2.5 0.5B and Llama 3.2 1B (Q4_K_M) on bare metal.</p>
+      </div>
+
+      <div class="benchmark-card">
+        <h3 style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; margin-bottom: 20px;">Qwen 2.5 0.5B Q4_K_M (Tokens Per Second)</h3>
+
+        <div class="benchmark-row">
+          <div>
+            <div class="benchmark-chip-name">Snapdragon 8 Gen 3 / Elite</div>
+            <div class="benchmark-chip-tier">Flagship (Cortex-X4 / Oryon)</div>
+          </div>
+          <div class="benchmark-bar-track">
+            <div class="benchmark-bar-fill" style="width: 95%;"></div>
+          </div>
+          <div class="benchmark-speed-val">48.5 tok/s</div>
+        </div>
+
+        <div class="benchmark-row">
+          <div>
+            <div class="benchmark-chip-name">MediaTek Dimensity 9300+</div>
+            <div class="benchmark-chip-tier">All-Big-Core Architecture</div>
+          </div>
+          <div class="benchmark-bar-track">
+            <div class="benchmark-bar-fill" style="width: 88%;"></div>
+          </div>
+          <div class="benchmark-speed-val">44.0 tok/s</div>
+        </div>
+
+        <div class="benchmark-row">
+          <div>
+            <div class="benchmark-chip-name">Google Tensor G4 (Pixel 9)</div>
+            <div class="benchmark-chip-tier">ARMv9.2 FP16 / i8mm</div>
+          </div>
+          <div class="benchmark-bar-track">
+            <div class="benchmark-bar-fill" style="width: 72%;"></div>
+          </div>
+          <div class="benchmark-speed-val">34.2 tok/s</div>
+        </div>
+
+        <div class="benchmark-row">
+          <div>
+            <div class="benchmark-chip-name">Snapdragon 7+ Gen 2</div>
+            <div class="benchmark-chip-tier">Midrange Performance Tier</div>
+          </div>
+          <div class="benchmark-bar-track">
+            <div class="benchmark-bar-fill" style="width: 62%;"></div>
+          </div>
+          <div class="benchmark-speed-val">29.5 tok/s</div>
+        </div>
+
+        <div class="benchmark-row">
+          <div>
+            <div class="benchmark-chip-name">MediaTek Helio G99</div>
+            <div class="benchmark-chip-tier">Budget Testbed (Cortex-A76)</div>
+          </div>
+          <div class="benchmark-bar-track">
+            <div class="benchmark-bar-fill" style="width: 38%;"></div>
+          </div>
+          <div class="benchmark-speed-val">18.4 tok/s</div>
+        </div>
       </div>
     </div>
   </section>
@@ -490,8 +701,8 @@
       </div>
 
       <div class="arch-card">
-        <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 8px;">Multi-Module Architecture Hierarchy</h3>
-        <p style="color: var(--text-secondary); font-size: 0.95rem;">
+        <h3 style="font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; margin-bottom: 8px;">Multi-Module Architecture Hierarchy</h3>
+        <p style="color: var(--text-secondary); font-size: 0.98rem;">
           Each layer communicates via Kotlin Coroutines <code>Flow</code>, reactive StateFlows, and Hilt dependency injection.
         </p>
 
@@ -517,8 +728,8 @@
 
       <!-- CPU Dispatcher Table -->
       <div class="arch-card">
-        <h3 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 8px;">Dynamic CPU Binary Dispatching</h3>
-        <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 16px;">
+        <h3 style="font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; margin-bottom: 8px;">Dynamic CPU Binary Dispatching</h3>
+        <p style="color: var(--text-secondary); font-size: 0.98rem; margin-bottom: 18px;">
           At startup, Locian detects hardware flags via <code>liblocian_cpu_features.so</code> and dynamically links the most accelerated engine binary:
         </p>
         <div class="matrix-table-wrap">
@@ -568,39 +779,50 @@
     <div class="container">
       <div class="section-header">
         <div class="section-tag">Getting Started</div>
-        <h2 class="section-title">Build & Run in Minutes</h2>
-        <p class="section-desc">Compile Locian locally using Android Studio or the command line.</p>
+        <h2 class="section-title">Install & Run Locian in Minutes</h2>
+        <p class="section-desc">Get the prebuilt release APK or compile locally with Android Studio and NDK.</p>
       </div>
 
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
-        <!-- Step 1 -->
+        <!-- Option 1: APK Release -->
         <div class="feature-card">
-          <h3 class="feature-title">1. Prerequisites</h3>
-          <ul style="color: var(--text-secondary); margin-left: 20px; font-size: 0.95rem; line-height: 1.8;">
-            <li>Android Studio Ladybug or newer</li>
-            <li>JDK 17 or JDK 21</li>
-            <li>Android NDK r27+ and CMake 3.22.1</li>
-            <li>Physical device with Android 8.0+ (API 26+) and 4 GB+ RAM</li>
-          </ul>
-        </div>
-
-        <!-- Step 2 -->
-        <div class="feature-card">
-          <h3 class="feature-title">2. Clone & Build Debug APK</h3>
-          <p class="feature-text">Assemble the debug APK with multi-target NDK binaries:</p>
-          <div class="code-block-display">
-            <button class="copy-icon-btn">Copy</button>
-            <code>./gradlew assembleDebug</code>
+          <div class="feature-icon-box">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          </div>
+          <h3 class="feature-title">1. Download Release APK</h3>
+          <p class="feature-text">Pre-compiled APK signed and packaged with multi-target NDK binaries for Android 8.0+:</p>
+          <div style="margin-top: 18px;">
+            <a href="https://github.com/cipherAman/Locian/releases/latest" target="_blank" rel="noopener noreferrer" class="btn-primary" style="width: 100%;">
+              Download Latest APK
+            </a>
           </div>
         </div>
 
-        <!-- Step 3 -->
+        <!-- Option 2: ADB Install -->
         <div class="feature-card">
-          <h3 class="feature-title">3. Install onto Device</h3>
-          <p class="feature-text">Connect device via USB with ADB debugging enabled:</p>
+          <div class="feature-icon-box">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+          </div>
+          <h3 class="feature-title">2. Install via ADB Command</h3>
+          <p class="feature-text">Push directly to your connected device with USB debugging enabled:</p>
           <div class="code-block-display">
             <button class="copy-icon-btn">Copy</button>
-            <code>adb install -r app/build/outputs/apk/debug/app-debug.apk</code>
+            <code>adb install -r Locian-v1.0.0.apk</code>
+          </div>
+        </div>
+
+        <!-- Option 3: Build from Source -->
+        <div class="feature-card">
+          <div class="feature-icon-box">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+          </div>
+          <h3 class="feature-title">3. Build from Source</h3>
+          <p class="feature-text">Requires Android Studio Ladybug+, JDK 17, and Android NDK r27+:</p>
+          <div class="code-block-display">
+            <button class="copy-icon-btn">Copy</button>
+            <code>git clone https://github.com/cipherAman/Locian.git
+cd Locian
+./gradlew assembleRelease</code>
           </div>
         </div>
       </div>
@@ -612,12 +834,12 @@
     <div class="container">
       <div class="footer-content">
         <div class="footer-brand">
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <img src="assets/logo.png" alt="Locian Logo" style="width: 32px; height: 32px;">
-            <strong style="font-size: 1.2rem; letter-spacing: -0.5px;">LOCIAN</strong>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <img src="assets/logo.png" alt="Locian Logo" style="width: 36px; height: 36px;">
+            <strong style="font-family: var(--font-display); font-size: 1.35rem; letter-spacing: -0.5px;">LOCIAN</strong>
           </div>
           <p class="footer-desc">
-            100% on-device private AI engine for Android. Built with Jetpack Compose, Kotlin, and llama.cpp.
+            100% on-device private AI engine for Android. Built with Jetpack Compose, Clean Architecture, and llama.cpp via native NDK C++ bindings.
           </p>
         </div>
 
@@ -626,9 +848,10 @@
             <div class="footer-col-title">Navigation</div>
             <ul class="footer-links">
               <li><a href="#features" class="footer-link">Features</a></li>
-              <li><a href="#simulator" class="footer-link">Live Demo</a></li>
-              <li><a href="#models" class="footer-link">Model Catalog</a></li>
-              <li><a href="#architecture" class="footer-link">Architecture</a></li>
+              <li><a href="#simulator" class="footer-link">Interactive Simulator</a></li>
+              <li><a href="#calculator" class="footer-link">RAM Calculator</a></li>
+              <li><a href="#models" class="footer-link">Model Matrix</a></li>
+              <li><a href="#benchmarks" class="footer-link">Hardware Benchmarks</a></li>
             </ul>
           </div>
 
@@ -636,16 +859,18 @@
             <div class="footer-col-title">Documentation</div>
             <ul class="footer-links">
               <li><a href="guide.html" class="footer-link">User Guide & Setup</a></li>
+              <li><a href="guide.html#sideloading" class="footer-link">Sideloading GGUF Models</a></li>
               <li><a href="guide.html#inference-tuning" class="footer-link">Inference Tuning Reference</a></li>
               <li><a href="guide.html#troubleshooting" class="footer-link">Troubleshooting & FAQ</a></li>
-              <li><a href="https://github.com/ggerganov/llama.cpp" target="_blank" rel="noopener noreferrer" class="footer-link">llama.cpp Engine</a></li>
+              <li><a href="https://github.com/cipherAman/Locian" target="_blank" rel="noopener noreferrer" class="footer-link">GitHub Repository</a></li>
             </ul>
           </div>
         </div>
       </div>
 
       <div class="footer-bottom">
-        <p>© 2026 Locian. Licensed under Apache License 2.0. Inference engine powered by llama.cpp (MIT License).</p>
+        <p>© 2026 Locian. Licensed under Apache License 2.0. Inference engine powered by llama.cpp.</p>
+        <p>Crafted for privacy-first on-device intelligence.</p>
       </div>
     </div>
   </footer>

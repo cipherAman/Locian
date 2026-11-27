@@ -36,14 +36,20 @@
           <li><a href="index.html" class="nav-link">Home</a></li>
           <li><a href="guide.html" class="nav-link active">Documentation</a></li>
           <li><a href="index.html#simulator" class="nav-link">Live Demo</a></li>
+          <li><a href="index.html#calculator" class="nav-link">RAM Calculator</a></li>
           <li><a href="index.html#models" class="nav-link">Models</a></li>
           <li><a href="index.html#architecture" class="nav-link">Architecture</a></li>
         </ul>
       </nav>
 
       <div class="nav-actions">
+        <a href="https://github.com/cipherAman/Locian/releases" target="_blank" rel="noopener noreferrer" class="status-pill" title="Latest stable release">
+          <span class="status-dot"></span>
+          <span>v1.0.0 Stable</span>
+        </a>
+
         <button id="themeToggleBtn" class="theme-toggle-btn" title="Toggle theme" aria-label="Toggle theme">
-          <svg id="themeIconSvg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="5"></circle>
             <line x1="12" y1="1" x2="12" y2="3"></line>
             <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -55,15 +61,37 @@
             <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
           </svg>
         </button>
-        <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="btn-secondary">
+
+        <a href="https://github.com/cipherAman/Locian" target="_blank" rel="noopener noreferrer" class="btn-secondary">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
           </svg>
-          GitHub
+          <span>GitHub</span>
         </a>
+
+        <a href="https://github.com/cipherAman/Locian/releases/latest" target="_blank" rel="noopener noreferrer" class="btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          <span>Get APK</span>
+        </a>
+
+        <button id="mobileNavToggle" class="mobile-nav-toggle" aria-label="Toggle navigation menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
       </div>
     </div>
   </header>
+
+  <!-- Mobile Drawer Menu -->
+  <div id="mobileDrawer" class="mobile-drawer">
+    <a href="index.html" class="nav-link">🏠 Home</a>
+    <a href="guide.html" class="nav-link active">📖 Documentation</a>
+    <a href="index.html#simulator" class="nav-link">🎮 Live Demo</a>
+    <a href="index.html#calculator" class="nav-link">📱 RAM Calculator</a>
+    <a href="index.html#models" class="nav-link">📦 Model Matrix</a>
+    <a href="https://github.com/cipherAman/Locian/releases/latest" target="_blank" rel="noopener noreferrer" class="btn-primary" style="margin-top: 10px;">
+      📥 Download APK (v1.0.0)
+    </a>
+  </div>
 
   <!-- Documentation Layout -->
   <div class="docs-wrapper">
@@ -203,7 +231,7 @@
               <button class="copy-icon-btn">Copy</button>
             </div>
             <div class="docs-code-body">
-              <code>git clone https://github.com/Kiphra/locian.git<br>cd locian<br>./gradlew assembleDebug</code>
+              <code>git clone https://github.com/cipherAman/Locian.git<br>cd Locian<br>./gradlew assembleRelease</code>
             </div>
           </div>
         </section>
@@ -631,7 +659,7 @@
             <ul class="footer-links">
               <li><a href="USER_GUIDE.md" class="footer-link">Raw Markdown Guide</a></li>
               <li><a href="https://github.com/ggerganov/llama.cpp" target="_blank" rel="noopener noreferrer" class="footer-link">llama.cpp Engine</a></li>
-              <li><a href="https://github.com" target="_blank" rel="noopener noreferrer" class="footer-link">GitHub Repository</a></li>
+              <li><a href="https://github.com/cipherAman/Locian" target="_blank" rel="noopener noreferrer" class="footer-link">GitHub Repository</a></li>
             </ul>
           </div>
         </div>
