@@ -9,24 +9,19 @@ on:
     - cron: '0 2 * * 0'  # Weekly on Sunday at 02:00 UTC
 
 jobs:
-  analyze:
-    name: Analyze (${{ matrix.language }})
+  analyze-kotlin:
+    name: Analyze (kotlin)
     runs-on: ubuntu-latest
     permissions:
       actions: read
       contents: read
       security-events: write
 
-    strategy:
-      fail-fast: false
-      matrix:
-        language: [kotlin, cpp]
-
     steps:
-      - name: Checkout with submodules (required for C++ analysis)
+      - name: Checkout
         uses: actions/checkout@v4
         with:
-          submodules: true
+          submodules: false   # Kotlin analysis doesn't need C++ submodules
           fetch-depth: 0
 
       - name: Set up JDK 17
@@ -35,19 +30,18 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Set up Android SDK + NDK (for C++ analysis)
-        if: matrix.language == 'cpp'
+      - name: Set up Android SDK
         uses: android-actions/setup-android@v3
         with:
-          packages: 'ndk;27.0.12077973 cmake;3.22.1'
+          packages: 'ndk;27.0.12077973'
           accept-android-sdk-licenses: true
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
-          languages: ${{ matrix.language }}
-          # Manual build mode required for NDK projects (CodeQL cannot autobuild NDK)
+          languages: kotlin
           build-mode: manual
+          config-file: .github/codeql/codeql-config.yml
 
       - name: Cache Gradle
         uses: actions/cache@v4
@@ -61,10 +55,41 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      - name: Build debug APK (trace for CodeQL)
-        run: ./gradlew assembleDebug
+      # Build only Kotlin/Java — skip NDK by injecting x86_64 ABI which is a no-op
+      # for our arm64-only native lib config, so the C++ compile step is skipped.
+      - name: Build debug APK (Kotlin trace for CodeQL)
+        run: ./gradlew assembleDebug -Pandroid.injected.build.abi=x86_64
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:
-          category: "/language:${{ matrix.language }}"
+          category: "/language:kotlin"
+
+  analyze-cpp:
+    name: Analyze (cpp)
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout with submodules (required for C++ analysis)
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: cpp
+          # 'none' build-mode: CodeQL analyses C++ source files directly without
+          # requiring a full NDK build. This avoids the 17-min llama.cpp compile.
+          build-mode: none
+          config-file: .github/codeql/codeql-config.yml
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:cpp"

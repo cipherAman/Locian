@@ -1,0 +1,10 @@
+name: "Locian CodeQL Configuration"
+
+# Only scan our own source code.
+# Excludes external submodules (llama.cpp, cpu_features) which would otherwise
+# cause the C++ job to spend 17+ min compiling third-party code.
+paths-ignore:
+  - external
+  - '**/*.md'
+  - '**/*.txt'
+  - '**/build/**'
