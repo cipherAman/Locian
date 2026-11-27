@@ -17,7 +17,7 @@ Versioning: [Semantic Versioning](https://semver.org/)
 
 ---
 
-## [1.0.0] — YYYY-MM-DD
+## [1.0.0] — 2026-11-28
 
 > Initial open source release.
 
