@@ -39,8 +39,8 @@ jobs:
         if: matrix.language == 'cpp'
         uses: android-actions/setup-android@v3
         with:
-          ndk-version: 27.0.12077973
-          cmake-version: 3.22.1
+          packages: 'ndk;27.0.12077973 cmake;3.22.1'
+          accept-android-sdk-licenses: true
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
