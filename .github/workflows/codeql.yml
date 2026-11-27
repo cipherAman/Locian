@@ -35,39 +35,11 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: kotlin
-          build-mode: manual
+          # 'none' build-mode: CodeQL analyses Kotlin/Java source files directly
+          # without requiring a build. Avoids compiler-tracing issues with Gradle
+          # configuration cache and NDK/CMake entanglement.
+          build-mode: none
           config-file: .github/codeql/codeql-config.yml
-
-      - name: Cache Gradle
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', 'gradle/libs.versions.toml') }}
-          restore-keys: gradle-${{ runner.os }}-
-
-      - name: Make gradlew executable
-        run: chmod +x gradlew
-
-      # Compile Kotlin sources for all modules directly — this gives CodeQL a full
-      # Kotlin compilation trace without invoking CMake or NDK at all.
-      - name: Compile Kotlin sources (all modules, no NDK)
-        run: |
-          ./gradlew \
-            :app:compileDebugKotlin \
-            :core:core-ui:compileDebugKotlin \
-            :core:core-common:compileDebugKotlin \
-            :core:core-model:compileDebugKotlin \
-            :data:data-database:compileDebugKotlin \
-            :data:data-datastore:compileDebugKotlin \
-            :data:data-network:compileDebugKotlin \
-            :data:data-repository:compileDebugKotlin \
-            :domain:domain-inference:compileDebugKotlin \
-            :feature:feature-chat:compileDebugKotlin \
-            :feature:feature-models:compileDebugKotlin \
-            :feature:feature-settings:compileDebugKotlin \
-            :feature:feature-conversations:compileDebugKotlin
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
