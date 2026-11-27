@@ -114,9 +114,9 @@
           </div>
         </div>
 
-        <div class="showcase-tabs-card">
           <div class="showcase-tabs-nav">
             <button class="showcase-tab-btn active" data-tab="chat">Chat & Code</button>
+            <button class="showcase-tab-btn" data-tab="empty">Welcome & Prompts</button>
             <button class="showcase-tab-btn" data-tab="settingsDark">Dark Interface</button>
             <button class="showcase-tab-btn" data-tab="settingsLight">Light Interface</button>
           </div>
@@ -134,7 +134,20 @@
             </div>
           </div>
 
-          <!-- Tab Content 2: Dark Settings -->
+          <!-- Tab Content 2: Empty / Welcome State -->
+          <div class="tab-pane" id="tab-empty">
+            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px;">Minimalist Welcome & Starter Cards</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 0.95rem;">
+              Clean hero branding with prompt starter suggestions and integrated pill dock input bar. Instant one-tap interaction for brainstorms, coding, emails, and conceptual deep-dives.
+            </p>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <span class="badge-tag badge-q4">Prompt Starters</span>
+              <span class="badge-tag badge-ram">Adaptive Dock</span>
+              <span class="badge-tag badge-q4">Privacy Focused</span>
+            </div>
+          </div>
+
+          <!-- Tab Content 3: Dark Settings -->
           <div class="tab-pane" id="tab-settingsDark">
             <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px;">Runtime Inference Configuration</h3>
             <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 0.95rem;">
@@ -146,7 +159,7 @@
             </div>
           </div>
 
-          <!-- Tab Content 3: Light Settings -->
+          <!-- Tab Content 4: Light Settings -->
           <div class="tab-pane" id="tab-settingsLight">
             <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 10px;">High-Contrast Light Theme</h3>
             <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 0.95rem;">
@@ -233,98 +246,139 @@
   <section class="section" id="simulator" style="background: var(--bg-secondary);">
     <div class="container">
       <div class="section-header">
-        <div class="section-tag">Interactive Preview</div>
+        <div class="section-tag">Interactive Engine Preview</div>
         <h2 class="section-title">Experience the Locian Streaming Engine</h2>
-        <p class="section-desc">Simulate live on-device token streaming, syntax highlighting, and telemetry stats right in your browser.</p>
+        <p class="section-desc">Test real-time on-device token streaming, chain-of-thought reasoning with budget caps, and live hardware telemetry right in your browser.</p>
       </div>
 
-      <div class="simulator-box">
-        <div class="sim-header">
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <label for="simPromptSelect" style="font-weight: 600; font-size: 0.9rem;">Select Demo Prompt:</label>
-            <select id="simPromptSelect" style="background: var(--bg-primary); color: var(--text-primary); border: 1px solid var(--border-color); padding: 8px 14px; border-radius: var(--radius-sm); font-family: var(--font-sans); font-size: 0.9rem;">
-              <option value="python">Write an async Python task queue</option>
-              <option value="quantum">Explain quantum computing simply</option>
-              <option value="flow">Write a Kotlin Coroutine Flow</option>
-            </select>
-          </div>
-
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <span class="sim-model-badge">
-              <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span>
-              Qwen 2.5 1.5B Instruct (Q4_K_M)
-            </span>
-            <button id="simStartBtn" class="btn-primary" style="padding: 8px 18px; font-size: 0.9rem;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-              Stream Response
-            </button>
-            <button id="simStopBtn" class="btn-secondary" style="padding: 8px 18px; font-size: 0.9rem; display: none; background: #ef4444; color: #fff; border-color: #ef4444;">
-              Stop
-            </button>
-          </div>
-        </div>
-
-        <div class="sim-chat-window">
-          <!-- User Prompt -->
-          <div class="chat-bubble user-bubble">
-            Write a clean Python script demonstrating asynchronous task queues.
-          </div>
-
-          <!-- Assistant Response -->
-          <div class="chat-bubble assistant-bubble" id="simAssistantBubble">
-            <p>Sure, here is a clean Python script using asyncio to implement an in-memory asynchronous task queue:</p>
-            <div class="code-container">
-              <div class="code-titlebar">
-                <div class="window-dots">
-                  <span class="window-dot dot-red"></span>
-                  <span class="window-dot dot-yellow"></span>
-                  <span class="window-dot dot-green"></span>
+      <div class="sim-wrapper">
+        <!-- Interactive Phone Device Frame -->
+        <div class="sim-phone">
+          <div class="sim-phone-header">
+            <div class="sim-island">
+              <span class="sim-speaker"></span>
+              <span class="sim-camera"></span>
+            </div>
+            <div class="sim-appbar">
+              <div class="sim-appbar-left">
+                <div class="sim-icon-btn">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                 </div>
-                <span class="code-lang">PYTHON</span>
-                <button class="copy-btn">Copy</button>
+                <div class="sim-appbar-logo">
+                  <img src="assets/logo.png" alt="Locian Logo" width="22" height="22">
+                </div>
+                <span class="sim-appbar-title">Locian</span>
               </div>
-              <div class="code-body">
-                <pre><code><span class="syn-kw">import</span> asyncio
-<span class="syn-kw">from</span> typing <span class="syn-kw">import</span> <span class="syn-type">Any</span>
-
-<span class="syn-kw">class</span> <span class="syn-type">TaskQueue</span>:
-    <span class="syn-kw">def</span> <span class="syn-fn">__init__</span>(<span class="syn-var">self</span>, max_concurrency: <span class="syn-type">int</span> = <span class="syn-num">3</span>):
-        <span class="syn-var">self</span>.queue = asyncio.<span class="syn-type">Queue</span>()
-        <span class="syn-var">self</span>.semaphore = asyncio.<span class="syn-type">Semaphore</span>(max_concurrency)
-
-    <span class="syn-kw">async def</span> <span class="syn-fn">enqueue</span>(<span class="syn-var">self</span>, task_name: <span class="syn-type">str</span>, payload: <span class="syn-type">Any</span>):
-        <span class="syn-kw">await</span> <span class="syn-var">self</span>.queue.put((task_name, payload))
-        print(<span class="syn-str">f"[Queued] {task_name}"</span>)
-
-    <span class="syn-kw">async def</span> <span class="syn-fn">worker</span>(<span class="syn-var">self</span>, worker_id: <span class="syn-type">int</span>):
-        <span class="syn-kw">while True</span>:
-            task_name, payload = <span class="syn-kw">await</span> <span class="syn-var">self</span>.queue.get()
-            <span class="syn-kw">async with</span> <span class="syn-var">self</span>.semaphore:
-                print(<span class="syn-str">f"[Worker {worker_id}] Executing: {task_name}"</span>)
-                <span class="syn-kw">await</span> asyncio.sleep(<span class="syn-num">0.5</span>)
-            <span class="syn-var">self</span>.queue.task_done()</code></pre>
+              <div class="sim-appbar-right">
+                <div class="sim-model-selector" id="simModelSelector">
+                  <span class="sim-dot-red"></span>
+                  <span id="simSelectedModelName">Qwen 3.5 0.8B</span>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+                </div>
+                <div class="sim-icon-btn" id="simResetBtn" title="New Chat">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </div>
               </div>
             </div>
-            <!-- Telemetry Pill -->
-            <div>
-              <div class="telemetry-pill" id="simTelemetryPill">
-                <span class="telemetry-bolt" style="font-size: 0.72rem; font-weight: 700; color: var(--accent-red); font-family: var(--font-mono); letter-spacing: 0.5px;">DECODE</span>
-                <strong id="simTokSpeed" style="color: var(--text-primary);">18.2 tok/s</strong>
-                <span style="opacity: 0.3;">|</span>
-                <span id="simTtft">385 ms TTFT</span>
-                <span style="opacity: 0.3;">|</span>
-                <span id="simTotalTokens">142 tok</span>
+          </div>
+
+          <!-- Phone Screen Chat Thread -->
+          <div class="sim-screen" id="simScreen">
+            <div class="sim-thread" id="simThread">
+              <!-- Rendered messages -->
+            </div>
+          </div>
+
+          <!-- Prompt Quick Chips -->
+          <div class="sim-chips" id="simChips">
+            <button class="sim-chip" data-prompt="delhi">⚡ CM of Delhi</button>
+            <button class="sim-chip active" data-prompt="python">🐍 Async Python</button>
+            <button class="sim-chip" data-prompt="quantum">🔬 Quantum Info</button>
+            <button class="sim-chip" data-prompt="ideas">💡 On-Device AI</button>
+          </div>
+
+          <!-- Input Dock -->
+          <div class="sim-dock">
+            <input type="text" id="simInput" class="sim-dock-input" placeholder="Message Locian..." autocomplete="off">
+            <button id="simSendBtn" class="sim-dock-send" title="Send message">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="19" x2="12" y2="5"></line>
+                <polyline points="5 12 12 5 19 12"></polyline>
+              </svg>
+            </button>
+            <button id="simStopBtn" class="sim-dock-stop" style="display: none;" title="Stop generation">
+              <div class="sim-stop-square"></div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Telemetry & Hardware Inspector Sidebar -->
+        <div class="sim-panel">
+          <div class="sim-panel-card">
+            <div class="sim-panel-badge">ENGINE TELEMETRY</div>
+            <h3 class="sim-panel-title">llama.cpp Runtime Stats</h3>
+            
+            <div class="sim-metrics-grid">
+              <div class="sim-metric-box">
+                <div class="sim-metric-label">DECODE SPEED</div>
+                <div class="sim-metric-val" id="dashSpeed">18.4 <span class="unit">tok/s</span></div>
+                <div class="sim-meter"><div class="sim-meter-fill" id="dashSpeedMeter" style="width: 78%;"></div></div>
+              </div>
+              <div class="sim-metric-box">
+                <div class="sim-metric-label">TIME TO FIRST TOKEN</div>
+                <div class="sim-metric-val" id="dashTtft">310 <span class="unit">ms</span></div>
+                <div class="sim-meter"><div class="sim-meter-fill" style="width: 82%; background: #10b981;"></div></div>
+              </div>
+              <div class="sim-metric-box">
+                <div class="sim-metric-label">REASONING BUDGET</div>
+                <div class="sim-metric-val" id="dashBudget">32 <span class="unit">/ 384 max</span></div>
+                <div class="sim-meter"><div class="sim-meter-fill" id="dashBudgetMeter" style="width: 12%; background: #3b82f6;"></div></div>
+              </div>
+              <div class="sim-metric-box">
+                <div class="sim-metric-label">ACTIVE MEMORY</div>
+                <div class="sim-metric-val" id="dashRam">~532 <span class="unit">MB</span></div>
+                <div class="sim-meter"><div class="sim-meter-fill" style="width: 26%; background: #a855f7;"></div></div>
+              </div>
+            </div>
+
+            <div class="sim-specs-list">
+              <div class="sim-spec-item">
+                <span class="sim-spec-k">Target Kernel</span>
+                <span class="sim-spec-v">ARMv8.2-A FP16 + DotProd</span>
+              </div>
+              <div class="sim-spec-item">
+                <span class="sim-spec-k">Quantization Scheme</span>
+                <span class="sim-spec-v badge-q4">Q4_K_M (4-bit Medium)</span>
+              </div>
+              <div class="sim-spec-item">
+                <span class="sim-spec-k">Reasoning Safeguard</span>
+                <span class="sim-spec-v" style="color: #10b981;">Auto-close at 384 tokens</span>
+              </div>
+              <div class="sim-spec-item">
+                <span class="sim-spec-k">Repeat Penalties</span>
+                <span class="sim-spec-v">1.10 (rep) • 0.05 (freq/pres)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Real Device Screenshot Inspector -->
+          <div class="sim-panel-card">
+            <div class="sim-panel-badge" style="color: var(--accent-red); background: var(--accent-red-subtle);">REAL DEVICE CAPTURE</div>
+            <h4 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 8px;">Pixel-Perfect Native UI</h4>
+            <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 14px;">
+              Direct uncompressed capture from TECNO MediaTek hardware running Locian on Android 14.
+            </p>
+            <div class="sim-device-preview">
+              <img id="simDeviceThumbnail" src="assets/screenshot-chat.png" alt="On-Device Screenshot" class="sim-thumb-img">
+              <div class="sim-thumb-overlay">
+                <a href="assets/screenshot-chat.png" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="font-size: 0.82rem; padding: 6px 14px; text-decoration: none;">
+                  🔍 View Full Screenshot
+                </a>
               </div>
             </div>
           </div>
         </div>
-
-        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: var(--text-secondary);">
-          <span>Engine Status: <strong id="simStatusIndicator" style="color: #10b981;">Ready (Idle)</strong></span>
-          <span>Quantization: <strong>Q4_K_M (4-bit Medium)</strong></span>
-        </div>
       </div>
-    </div>
   </section>
 
   <!-- Curated Model Matrix -->

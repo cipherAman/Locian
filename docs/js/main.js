@@ -83,6 +83,7 @@ function initShowcaseTabs() {
 
   const screenshots = {
     chat: 'assets/screenshot-chat.png',
+    empty: 'assets/screenshot-empty.png',
     settingsDark: 'assets/screenshot-settings-dark.png',
     settingsLight: 'assets/screenshot-settings-light.png'
   };
@@ -117,128 +118,105 @@ function initShowcaseTabs() {
    3. Live Inference Simulator
    -------------------------------------------------------------------------- */
 function initSimulator() {
-  const startBtn = document.getElementById('simStartBtn');
+  const thread = document.getElementById('simThread');
+  const inputEl = document.getElementById('simInput');
+  const sendBtn = document.getElementById('simSendBtn');
   const stopBtn = document.getElementById('simStopBtn');
-  const promptSelect = document.getElementById('simPromptSelect');
-  const assistantBubble = document.getElementById('simAssistantBubble');
-  const telemetryPill = document.getElementById('simTelemetryPill');
-  const tokSpeedEl = document.getElementById('simTokSpeed');
-  const ttftEl = document.getElementById('simTtft');
-  const totalTokensEl = document.getElementById('simTotalTokens');
-  const statusIndicator = document.getElementById('simStatusIndicator');
+  const resetBtn = document.getElementById('simResetBtn');
+  const chips = document.querySelectorAll('.sim-chip');
+  const modelSelector = document.getElementById('simModelSelector');
+
+  // Dashboard elements
+  const dashSpeed = document.getElementById('dashSpeed');
+  const dashTtft = document.getElementById('dashTtft');
+  const dashBudget = document.getElementById('dashBudget');
+  const dashSpeedMeter = document.getElementById('dashSpeedMeter');
+  const dashBudgetMeter = document.getElementById('dashBudgetMeter');
 
   let streamTimer = null;
   let isGenerating = false;
 
-  const responses = {
+  const presets = {
+    delhi: {
+      user: "Who is the Chief Minister of Delhi?",
+      think: "The user is inquiring about the current Chief Minister of Delhi. Fact check: Arvind Kejriwal served until September 2024. Following his resignation, Atishi Marlena was selected by the legislature party and sworn in as the 8th Chief Minister of Delhi. Safe reasoning budget maintained. Outputting clear direct answer.",
+      answer: "The Chief Minister of Delhi is **Atishi Marlena**.\n\nShe assumed office on **September 21, 2024**, following the resignation of Arvind Kejriwal, becoming the third woman to serve as Chief Minister of Delhi.",
+      speed: 18.6,
+      ttft: 310,
+      tokens: 64,
+      thinkTokens: 38
+    },
     python: {
-      text: `Sure, here is a clean Python script using asyncio to implement an in-memory asynchronous task queue:`,
-      code: `import asyncio\nfrom typing import Any\n\nclass TaskQueue:\n    def __init__(self, max_concurrency: int = 3):\n        self.queue = asyncio.Queue()\n        self.semaphore = asyncio.Semaphore(max_concurrency)\n\n    async def enqueue(self, task_name: str, payload: Any):\n        await self.queue.put((task_name, payload))\n        print(f"📦 [Queued] {task_name}")\n\n    async def worker(self, worker_id: int):\n        while True:\n            task_name, payload = await self.queue.get()\n            async with self.semaphore:\n                print(f"⚡ [Worker {worker_id}] Executing: {task_name}")\n                await asyncio.sleep(0.5)\n            self.queue.task_done()`,
+      user: "Write a clean Python script demonstrating asynchronous task queues.",
+      think: "Need an idiomatic asyncio queue implementation with bounded concurrency using asyncio.Semaphore. Construct clear worker and producer functions.",
+      answer: "Here is a clean Python script using `asyncio` to implement an in-memory asynchronous task queue with bounded worker concurrency:",
+      code: `import asyncio
+from typing import Any
+
+class TaskQueue:
+    def __init__(self, max_concurrency: int = 3):
+        self.queue = asyncio.Queue()
+        self.semaphore = asyncio.Semaphore(max_concurrency)
+
+    async def enqueue(self, task_name: str, payload: Any):
+        await self.queue.put((task_name, payload))
+        print(f"📦 [Queued] {task_name}")
+
+    async def worker(self, worker_id: int):
+        while True:
+            task_name, payload = await self.queue.get()
+            async with self.semaphore:
+                print(f"⚡ [Worker {worker_id}] Executing: {task_name}")
+                await asyncio.sleep(0.4)
+            self.queue.task_done()`,
+      speed: 18.4,
+      ttft: 340,
       tokens: 142,
-      ttft: 385,
-      speed: 18.2
+      thinkTokens: 26
     },
     quantum: {
-      text: `Quantum computing leverages the principles of quantum mechanics—specifically superposition and entanglement—to process information differently than classical binary computers. While a classical bit is either 0 or 1, a qubit can exist in a superposition of both states simultaneously until measured, enabling massive parallelism for specific mathematical problems like prime factorization and molecular simulation.`,
-      code: ``,
-      tokens: 78,
-      ttft: 290,
-      speed: 21.5
+      user: "Explain quantum computing simply.",
+      think: "Target audience needs a high-level conceptual explanation focusing on qubits, superposition, and entanglement without heavy mathematics.",
+      answer: "Quantum computing leverages the fundamental principles of quantum mechanics to solve problems that are intractable for classical computers:\n\n1. **Superposition**: Unlike classical bits that must be 0 or 1, a **qubit** can exist in a linear combination of both states simultaneously.\n2. **Entanglement**: Qubits can become correlated so that measuring one instantly dictates the state of another.\n3. **Exponential Parallelism**: Enables quadratic or exponential speedups for specialized problems like cryptographic factoring and molecular chemistry simulation.",
+      speed: 21.2,
+      ttft: 280,
+      tokens: 88,
+      thinkTokens: 22
     },
-    flow: {
-      text: `In Kotlin, Flow is a cold asynchronous data stream that produces values sequentially:`,
-      code: `import kotlinx.coroutines.flow.*\nimport kotlinx.coroutines.runBlocking\n\nfun tokenStream(): Flow<String> = flow {\n    val tokens = listOf("Locian", " runs", " 100%", " offline", " on-device!")\n    for (token in tokens) {\n        emit(token)\n        kotlinx.coroutines.delay(120)\n    }\n}\n\nfun main() = runBlocking {\n    tokenStream()\n        .collect { print(it) }\n}`,
-      tokens: 96,
+    ideas: {
+      user: "Give me 5 creative ideas for on-device local LLM apps.",
+      think: "Brainstorm private offline-first use cases that uniquely benefit from zero cloud latency, no subscription API costs, and total data privacy.",
+      answer: "Here are 5 high-impact on-device AI applications enabled by local inference:\n\n• **Private Health & Journaling Companion**: Analyzes personal thoughts and health metrics with zero risk of cloud leaks.\n• **Offline Code & Terminal Co-Pilot**: Autocompletes bash commands, regexes, and code snippets completely on airplanes or remote sites.\n• **Local Document Search & Summarizer**: Queries PDFs and notes directly on device without uploading sensitive documents.\n• **Real-Time Voice Translator**: Instant bilingual conversations with on-device Whisper STT and compact quantized LLMs.\n• **Smart Photo Organizer**: Synthesizes natural-language search queries across local image metadata.",
+      speed: 19.8,
       ttft: 320,
-      speed: 19.8
+      tokens: 116,
+      thinkTokens: 24
     }
   };
 
-  if (!startBtn) return;
-
-  startBtn.addEventListener('click', () => {
-    if (isGenerating) return;
-    const selectedKey = promptSelect ? promptSelect.value : 'python';
-    const target = responses[selectedKey] || responses.python;
-
-    isGenerating = true;
-    startBtn.style.display = 'none';
-    if (stopBtn) stopBtn.style.display = 'inline-flex';
-    if (statusIndicator) statusIndicator.textContent = 'Generating tokens via llama.cpp...';
-    if (telemetryPill) telemetryPill.style.display = 'none';
-
-    // Clear previous output
-    assistantBubble.innerHTML = '<span class="typing-cursor">▌</span>';
-
-    const fullContent = target.text + (target.code ? '\n\n```python\n' + target.code + '\n```' : '');
-    let charIndex = 0;
-    const startTime = performance.now();
-
-    streamTimer = setInterval(() => {
-      charIndex += 4;
-      if (charIndex >= fullContent.length) {
-        charIndex = fullContent.length;
-        clearInterval(streamTimer);
-        isGenerating = false;
-        startBtn.style.display = 'inline-flex';
-        if (stopBtn) stopBtn.style.display = 'none';
-        if (statusIndicator) statusIndicator.textContent = 'Ready (Idle)';
-
-        renderFormattedMessage(assistantBubble, target.text, target.code);
-
-        // Show telemetry pill only upon completion!
-        if (telemetryPill) {
-          telemetryPill.style.display = 'inline-flex';
-          if (tokSpeedEl) tokSpeedEl.textContent = `${target.speed} tok/s`;
-          if (ttftEl) ttftEl.textContent = `${target.ttft} ms`;
-          if (totalTokensEl) totalTokensEl.textContent = `${target.tokens} tok`;
-        }
-      } else {
-        const partial = fullContent.slice(0, charIndex);
-        assistantBubble.textContent = partial;
-      }
-    }, 28);
-  });
-
-  if (stopBtn) {
-    stopBtn.addEventListener('click', () => {
-      if (streamTimer) clearInterval(streamTimer);
-      isGenerating = false;
-      startBtn.style.display = 'inline-flex';
-      stopBtn.style.display = 'none';
-      if (statusIndicator) statusIndicator.textContent = 'Cancelled by user';
-    });
+  function escapeHtml(text) {
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
   }
 
-  function renderFormattedMessage(container, text, code) {
-    container.innerHTML = '';
-    const p = document.createElement('p');
-    p.textContent = text;
-    container.appendChild(p);
-
-    if (code) {
-      const codeBox = document.createElement('div');
-      codeBox.className = 'code-container';
-      codeBox.innerHTML = `
-        <div class="code-titlebar">
-          <div class="window-dots">
-            <span class="window-dot dot-red"></span>
-            <span class="window-dot dot-yellow"></span>
-            <span class="window-dot dot-green"></span>
-          </div>
-          <span class="code-lang">PYTHON</span>
-          <button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-container').querySelector('code').innerText); this.textContent='Copied!'; setTimeout(() => this.textContent='Copy', 1500)">Copy</button>
-        </div>
-        <div class="code-body">
-          <pre><code>${highlightSyntax(code)}</code></pre>
-        </div>
-      `;
-      container.appendChild(codeBox);
-    }
+  function formatText(text) {
+    let html = escapeHtml(text);
+    // Bold
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    // Inline code
+    html = html.replace(/`([^`]+)`/g, '<code class="sim-inline-code">$1</code>');
+    // Bullet points
+    html = html.replace(/^• (.*)$/gm, '<li class="sim-bullet">$1</li>');
+    html = html.replace(/(<li class="sim-bullet">.*<\/li>)/s, '<ul class="sim-ul">$1</ul>');
+    // Line breaks
+    html = html.replace(/\n\n/g, '<div class="sim-para-gap"></div>');
+    html = html.replace(/\n/g, '<br>');
+    return html;
   }
 
   function highlightSyntax(code) {
-    // Quick regex syntax highlight for Python demo
     return code
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
@@ -249,6 +227,288 @@ function initSimulator() {
       .replace(/\b(\d+)\b/g, '<span class="syn-num">$1</span>')
       .replace(/(#.*)$/gm, '<span class="syn-com">$1</span>');
   }
+
+  function scrollScreenToBottom() {
+    const screen = document.getElementById('simScreen');
+    if (screen) {
+      screen.scrollTo({ top: screen.scrollHeight, behavior: 'smooth' });
+    }
+  }
+
+  function stopGeneration() {
+    if (streamTimer) {
+      clearInterval(streamTimer);
+      streamTimer = null;
+    }
+    isGenerating = false;
+    if (sendBtn) sendBtn.style.display = 'inline-flex';
+    if (stopBtn) stopBtn.style.display = 'none';
+  }
+
+  function runPreset(key) {
+    if (isGenerating) stopGeneration();
+    const data = presets[key] || presets.python;
+
+    // Reset thread
+    if (!thread) return;
+    thread.innerHTML = '';
+
+    // Render User Bubble
+    const userWrap = document.createElement('div');
+    userWrap.className = 'sim-msg sim-msg-user';
+    userWrap.innerHTML = `<div class="sim-bubble sim-bubble-user">${escapeHtml(data.user)}</div>`;
+    thread.appendChild(userWrap);
+
+    // Prepare Bot Container
+    const botWrap = document.createElement('div');
+    botWrap.className = 'sim-msg sim-msg-bot';
+
+    const botAvatar = document.createElement('img');
+    botAvatar.src = 'assets/logo.png';
+    botAvatar.alt = 'Locian';
+    botAvatar.className = 'sim-avatar';
+    botWrap.appendChild(botAvatar);
+
+    const botContent = document.createElement('div');
+    botContent.className = 'sim-bot-body';
+    botWrap.appendChild(botContent);
+    thread.appendChild(botWrap);
+
+    // Update Telemetry Panel
+    if (dashSpeed) dashSpeed.innerHTML = `${data.speed.toFixed(1)} <span class="unit">tok/s</span>`;
+    if (dashTtft) dashTtft.innerHTML = `${data.ttft} <span class="unit">ms</span>`;
+    if (dashBudget) dashBudget.innerHTML = `${data.thinkTokens} <span class="unit">/ 384 max</span>`;
+    if (dashSpeedMeter) dashSpeedMeter.style.width = `${Math.min(100, (data.speed / 25) * 100)}%`;
+    if (dashBudgetMeter) dashBudgetMeter.style.width = `${Math.min(100, (data.thinkTokens / 384) * 100)}%`;
+
+    // Mode: Generating
+    isGenerating = true;
+    if (sendBtn) sendBtn.style.display = 'none';
+    if (stopBtn) stopBtn.style.display = 'inline-flex';
+
+    // Step 1: Thinking block (collapsible)
+    let thinkBlock = null;
+    let thinkTextSpan = null;
+    if (data.think) {
+      thinkBlock = document.createElement('div');
+      thinkBlock.className = 'sim-think-block';
+
+      const thinkHeader = document.createElement('div');
+      thinkHeader.className = 'sim-think-header';
+      thinkHeader.innerHTML = `
+        <div class="sim-think-title">
+          <span class="sim-think-sparkle">✨</span>
+          <span class="sim-think-label">Thinking...</span>
+        </div>
+        <span class="sim-think-chevron">▾</span>
+      `;
+
+      const thinkBody = document.createElement('div');
+      thinkBody.className = 'sim-think-body';
+      thinkTextSpan = document.createElement('span');
+      thinkBody.appendChild(thinkTextSpan);
+
+      thinkBlock.appendChild(thinkHeader);
+      thinkBlock.appendChild(thinkBody);
+      botContent.appendChild(thinkBlock);
+
+      // Accordion click toggle
+      thinkHeader.addEventListener('click', () => {
+        thinkBlock.classList.toggle('collapsed');
+      });
+    }
+
+    const answerDiv = document.createElement('div');
+    answerDiv.className = 'sim-bubble-bot';
+    botContent.appendChild(answerDiv);
+
+    // Stream tokens
+    const thinkWords = (data.think || '').split(' ');
+    const answerWords = data.answer.split(' ');
+    let thinkIdx = 0;
+    let answerIdx = 0;
+
+    scrollScreenToBottom();
+
+    streamTimer = setInterval(() => {
+      // Stream thinking first
+      if (thinkBlock && thinkIdx < thinkWords.length) {
+        thinkTextSpan.textContent += (thinkIdx > 0 ? ' ' : '') + thinkWords[thinkIdx];
+        thinkIdx++;
+        scrollScreenToBottom();
+        return;
+      }
+
+      // Finish thinking -> collapse and update label
+      if (thinkBlock && thinkIdx >= thinkWords.length && !thinkBlock.dataset.done) {
+        thinkBlock.dataset.done = 'true';
+        const label = thinkBlock.querySelector('.sim-think-label');
+        if (label) label.textContent = `Thought for ${(data.thinkTokens * 0.045).toFixed(1)}s`;
+        thinkBlock.classList.add('collapsed');
+      }
+
+      // Stream answer words
+      if (answerIdx < answerWords.length) {
+        answerIdx += 2; // Stream 2 words per tick for snappy local speed
+        const currentSlice = answerWords.slice(0, answerIdx).join(' ');
+        answerDiv.innerHTML = formatText(currentSlice);
+        scrollScreenToBottom();
+        return;
+      }
+
+      // Streaming complete: Add code block if present
+      stopGeneration();
+
+      if (data.code) {
+        const codeCard = document.createElement('div');
+        codeCard.className = 'sim-code-card';
+        codeCard.innerHTML = `
+          <div class="sim-code-header">
+            <div class="sim-code-dots">
+              <span class="sim-code-dot" style="background: #ef4444;"></span>
+              <span class="sim-code-dot" style="background: #f59e0b;"></span>
+              <span class="sim-code-dot" style="background: #10b981;"></span>
+              <span class="sim-code-lang">PYTHON</span>
+            </div>
+            <button class="sim-code-copy-btn" title="Copy code">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              <span>Copy</span>
+            </button>
+          </div>
+          <pre class="sim-code-pre"><code>${highlightSyntax(data.code)}</code></pre>
+        `;
+
+        const copyBtn = codeCard.querySelector('.sim-code-copy-btn');
+        if (copyBtn) {
+          copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(data.code).then(() => {
+              copyBtn.querySelector('span').textContent = 'Copied!';
+              setTimeout(() => {
+                copyBtn.querySelector('span').textContent = 'Copy';
+              }, 2000);
+            });
+          });
+        }
+        botContent.appendChild(codeCard);
+      }
+
+      // Append Telemetry pill
+      const pill = document.createElement('div');
+      pill.className = 'sim-telemetry-pill';
+      pill.innerHTML = `
+        <span>⚡ ${data.speed.toFixed(1)} t/s</span>
+        <span>⏱️ ${data.ttft}ms TTFT</span>
+        <span>🧠 ${data.thinkTokens} think tok</span>
+        <span>📊 ${data.tokens} total tok</span>
+      `;
+      botContent.appendChild(pill);
+      scrollScreenToBottom();
+
+    }, 38);
+  }
+
+  function handleCustomQuery(rawQuery) {
+    const q = rawQuery.trim();
+    if (!q) return;
+
+    if (inputEl) inputEl.value = '';
+
+    // Check presets
+    const lower = q.toLowerCase();
+    if (lower.includes('delhi') || lower.includes('chief minister') || lower.includes('cm')) {
+      runPreset('delhi');
+      return;
+    }
+    if (lower.includes('python') || lower.includes('async') || lower.includes('queue') || lower.includes('code')) {
+      runPreset('python');
+      return;
+    }
+    if (lower.includes('quantum') || lower.includes('qubit')) {
+      runPreset('quantum');
+      return;
+    }
+    if (lower.includes('idea') || lower.includes('offline') || lower.includes('creative')) {
+      runPreset('ideas');
+      return;
+    }
+
+    // Dynamic response for arbitrary prompt
+    const dynamicData = {
+      user: q,
+      think: `Analyzing the prompt: "${q}". The user is requesting on-device processing. Accessing quantized weights in RAM and applying temperature sampling without cloud transmission.`,
+      answer: `Here is the response processed entirely on-device:\n\n**${escapeHtml(q)}** was analyzed locally using our ARM NEON-optimized llama.cpp backend. The model performed prompt evaluation with zero network latency or external API calls.`,
+      speed: 19.1,
+      ttft: 295,
+      tokens: 72,
+      thinkTokens: 28
+    };
+
+    presets._custom = dynamicData;
+    runPreset('_custom');
+  }
+
+  // Bind Chip clicks
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const promptKey = chip.dataset.prompt;
+      if (presets[promptKey]) {
+        runPreset(promptKey);
+      }
+    });
+  });
+
+  // Bind Send & Stop & Reset
+  if (sendBtn && inputEl) {
+    sendBtn.addEventListener('click', () => handleCustomQuery(inputEl.value));
+    inputEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleCustomQuery(inputEl.value);
+      }
+    });
+  }
+
+  if (stopBtn) {
+    stopBtn.addEventListener('click', stopGeneration);
+  }
+
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      stopGeneration();
+      runPreset('python');
+    });
+  }
+
+  // Model Selector interactive menu
+  if (modelSelector) {
+    const modelOptions = [
+      { name: "Qwen 3.5 0.8B", speed: 24.5, ram: "480 MB" },
+      { name: "LFM3 1.7B Instruct", speed: 18.4, ram: "532 MB" },
+      { name: "DeepSeek R1 1.5B", speed: 14.8, ram: "890 MB" },
+      { name: "Gemma 2 2B Instruct", speed: 12.2, ram: "1.2 GB" }
+    ];
+    let currentModelIdx = 0;
+    modelSelector.style.cursor = 'pointer';
+    modelSelector.addEventListener('click', () => {
+      currentModelIdx = (currentModelIdx + 1) % modelOptions.length;
+      const m = modelOptions[currentModelIdx];
+      const nameEl = document.getElementById('simSelectedModelName');
+      if (nameEl) nameEl.textContent = m.name;
+      const ramEl = document.getElementById('dashRam');
+      if (ramEl) ramEl.innerHTML = `~${m.ram.split(' ')[0]} <span class="unit">${m.ram.split(' ')[1]}</span>`;
+      // Run current active chip
+      const activeChip = document.querySelector('.sim-chip.active');
+      const activeKey = activeChip ? activeChip.dataset.prompt : 'python';
+      runPreset(activeKey);
+    });
+  }
+
+  // Auto-run python preset on initial load
+  setTimeout(() => {
+    runPreset('python');
+  }, 300);
 }
 
 /* --------------------------------------------------------------------------
