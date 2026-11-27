@@ -58,6 +58,10 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      - name: Build signed release APK
         run: ./gradlew assembleRelease
 
       - name: Determine APK name

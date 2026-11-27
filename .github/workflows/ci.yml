@@ -35,6 +35,9 @@ jobs:
           key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', 'gradle/libs.versions.toml') }}
           restore-keys: gradle-${{ runner.os }}-
 
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
       - name: Run ktlint
         run: ./gradlew ktlintCheck
 
@@ -76,6 +79,9 @@ jobs:
             ~/.gradle/wrapper
           key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', 'gradle/libs.versions.toml') }}
           restore-keys: gradle-${{ runner.os }}-
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
 
       - name: Run unit tests
         run: ./gradlew test
@@ -126,6 +132,9 @@ jobs:
             app/.cxx
           key: ndk-${{ runner.os }}-27.0.12077973-${{ hashFiles('inference/src/main/cpp/CMakeLists.txt') }}
           restore-keys: ndk-${{ runner.os }}-27.0.12077973-
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
 
       - name: Build debug APK
         run: ./gradlew assembleDebug

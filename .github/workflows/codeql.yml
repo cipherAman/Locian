@@ -50,6 +50,10 @@ jobs:
           build-mode: manual
 
       - name: Build (manual trace for CodeQL)
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      - name: Build debug APK (trace for CodeQL)
         run: ./gradlew assembleDebug
 
       - name: Perform CodeQL Analysis
