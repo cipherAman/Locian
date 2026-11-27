@@ -46,7 +46,7 @@ class AppPreferences(private val context: Context) {
             contextLength = prefs[KEY_CONTEXT_LENGTH] ?: 2048,
             nThreads = prefs[KEY_N_THREADS] ?: 4,
             useMmap = prefs[KEY_USE_MMAP] ?: true,
-            systemPrompt = prefs[KEY_SYSTEM_PROMPT] ?: "You are Locian, a helpful and precise offline AI assistant running locally on the user's Android device."
+            systemPrompt = prefs[KEY_SYSTEM_PROMPT] ?: "You are Locian, a helpful and precise offline AI assistant running locally on the user's Android device. Provide direct, concise, and accurate answers. Keep internal reasoning concise."
         )
     }
 

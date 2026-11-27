@@ -51,21 +51,21 @@ LLMInference::loadModel(const char *model_path, float minP, float temperature, f
     sampler_params.no_perf = true;
     _sampler = llama_sampler_chain_init(sampler_params);
 
-    if (topP > 0.0f && topP < 1.0f) {
-        llama_sampler_chain_add(_sampler, llama_sampler_init_top_p(topP, 1));
-    }
-    if (minP >= 0.01f) {
-        llama_sampler_chain_add(_sampler, llama_sampler_init_min_p(minP, 1));
-    }
     if (repeatPenalty > 1.0f && repeatLastN > 0) {
         int32_t nVocab = llama_vocab_n_tokens(llama_model_get_vocab(_model));
         llama_sampler_chain_add(_sampler, llama_sampler_init_penalties(
             nVocab,
             repeatLastN,
             repeatPenalty,
-            0.0f,
-            0.0f
+            0.05f,
+            0.05f
         ));
+    }
+    if (topP > 0.0f && topP < 1.0f) {
+        llama_sampler_chain_add(_sampler, llama_sampler_init_top_p(topP, 1));
+    }
+    if (minP >= 0.01f) {
+        llama_sampler_chain_add(_sampler, llama_sampler_init_min_p(minP, 1));
     }
     llama_sampler_chain_add(_sampler, llama_sampler_init_temp(temperature));
     llama_sampler_chain_add(_sampler, llama_sampler_init_dist(LLAMA_DEFAULT_SEED));
@@ -101,6 +101,9 @@ LLMInference::clearMessages() {
     _response.clear();
     _cacheResponseTokens.clear();
     _promptPrefilledThink = false;
+    _insideThink = false;
+    _thinkingTokens = 0;
+    _forceTokens.clear();
     if (_ctx) {
         llama_memory_clear(llama_get_memory(_ctx), false);
     }
@@ -216,11 +219,15 @@ LLMInference::startCompletion(const char *query) {
     }
 
     _promptPrefilledThink = false;
+    _insideThink = false;
+    _thinkingTokens = 0;
+    _forceTokens.clear();
     size_t lastThink = prompt.rfind("<think>");
     if (lastThink != std::string::npos) {
         size_t lastCloseThink = prompt.rfind("</think>");
         if (lastCloseThink == std::string::npos || lastCloseThink < lastThink) {
             _promptPrefilledThink = true;
+            _insideThink = true;
             LOGi("Detected unclosed <think> tag prefilled in prompt");
         }
     }
@@ -266,14 +273,20 @@ std::string
 LLMInference::completionLoop() {
     if (_promptPrefilledThink) {
         _promptPrefilledThink = false;
+        _insideThink = true;
+        _thinkingTokens = 0;
         _response += "<think>\n";
         return "<think>\n";
     }
 
     uint32_t contextSize = llama_n_ctx(_ctx);
     _nCtxUsed = llama_memory_seq_pos_max(llama_get_memory(_ctx), 0) + 1;
-    if (_nCtxUsed + _batch->n_tokens > contextSize) {
+    if (_nCtxUsed + _batch->n_tokens >= contextSize - 4) {
         LOGi("Context size capacity reached (%d / %u). Concluding response gracefully.", _nCtxUsed, contextSize);
+        if (_insideThink) {
+            _response += "\n</think>\n";
+            _insideThink = false;
+        }
         if (_storeChats && !_response.empty()) {
             addChatMessage(_response.c_str(), "assistant");
         }
@@ -301,6 +314,10 @@ LLMInference::completionLoop() {
     if (llama_vocab_is_eog(vocab, _currToken) ||
         _currToken == llama_vocab_eos(vocab) ||
         _currToken == llama_vocab_eot(vocab)) {
+        if (_insideThink) {
+            _response += "\n</think>\n";
+            _insideThink = false;
+        }
         if (_storeChats && !_response.empty()) {
             addChatMessage(_response.c_str(), "assistant");
         }
@@ -312,11 +329,44 @@ LLMInference::completionLoop() {
 
     // Stop token cleanup: don't emit raw end tokens to the user
     if (piece == "<|eot_id|>" || piece == "<|end_of_text|>" || piece == "<|im_end|>" || piece == "<end_of_turn>") {
+        if (_insideThink) {
+            _response += "\n</think>\n";
+            _insideThink = false;
+        }
         if (_storeChats && !_response.empty()) {
             addChatMessage(_response.c_str(), "assistant");
         }
         _response.clear();
         return "[EOG]";
+    }
+
+    // Thinking state tracking & budget enforcement:
+    if (piece.find("<think>") != std::string::npos) {
+        _insideThink = true;
+    }
+
+    if (_insideThink) {
+        _thinkingTokens++;
+        if (piece.find("</think>") != std::string::npos) {
+            _insideThink = false;
+        } else if (_thinkingTokens >= _maxThinkingTokens) {
+            LOGi("Thinking token budget reached (%d tokens). Force-closing <think> tag.", _thinkingTokens);
+            _insideThink = false;
+
+            // Prepare tokens to decode </think>\n on next step so model transitions to answer
+            _forceTokens = common_tokenize(vocab, "\n</think>\n\n", false, false);
+            delete _batch;
+            if (!_forceTokens.empty()) {
+                _batch = new llama_batch(llama_batch_get_one(_forceTokens.data(), _forceTokens.size()));
+            } else {
+                _batch = new llama_batch(llama_batch_get_one(&_currToken, 1));
+            }
+
+            std::string closeChunk = piece + "\n</think>\n\n";
+            _response += closeChunk;
+            _cacheResponseTokens.clear();
+            return closeChunk;
+        }
     }
 
     _cacheResponseTokens += piece;
@@ -336,6 +386,10 @@ LLMInference::completionLoop() {
 
 void
 LLMInference::stopCompletion() {
+    if (_insideThink) {
+        _response += "\n</think>\n";
+        _insideThink = false;
+    }
     if (_storeChats && !_response.empty()) {
         addChatMessage(_response.c_str(), "assistant");
     }

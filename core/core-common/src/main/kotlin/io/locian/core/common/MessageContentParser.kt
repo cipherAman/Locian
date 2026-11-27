@@ -45,7 +45,7 @@ object MessageContentParser {
                 val thinking = content.substring(thinkStart).trimStart()
                 return ParsedMessage(
                     thinking = thinking,
-                    response = "",
+                    response = if (!isStreaming && thinking.isNotBlank()) thinking else "",
                     isStillThinking = isStreaming
                 )
             }
@@ -79,7 +79,7 @@ object MessageContentParser {
                 val thinking = content.substring(thinkStart).trimStart()
                 return ParsedMessage(
                     thinking = thinking,
-                    response = "",
+                    response = if (!isStreaming && thinking.isNotBlank()) thinking else "",
                     isStillThinking = isStreaming
                 )
             }

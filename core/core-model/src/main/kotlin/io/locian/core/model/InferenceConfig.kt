@@ -13,5 +13,5 @@ data class InferenceConfig(
     val useMmap: Boolean = true,
     val useMlock: Boolean = false,
     val nGpuLayers: Int = 0,
-    val systemPrompt: String = "You are Locian, a helpful and precise offline AI assistant running locally on the user's Android device."
+    val systemPrompt: String = "You are Locian, a helpful and precise offline AI assistant running locally on the user's Android device. Provide direct, concise, and accurate answers. Keep internal reasoning concise."
 )
