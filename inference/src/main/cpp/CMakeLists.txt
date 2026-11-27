@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) [YEAR] [COPYRIGHT HOLDER]. All rights reserved.
+# See LICENSE-MIT in the project root for license terms.
+
 cmake_minimum_required(VERSION 3.22.1)
 project("locian_inference")
 

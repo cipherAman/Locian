@@ -1,0 +1,53 @@
+name: Model Catalog Request
+description: Request adding a GGUF model to the curated catalog
+labels: ["model-request"]
+body:
+  - type: input
+    id: model_name
+    attributes:
+      label: Model Name
+      placeholder: e.g. Mistral 7B Instruct v0.3
+    validations:
+      required: true
+
+  - type: input
+    id: quantization
+    attributes:
+      label: Recommended Quantization
+      placeholder: e.g. Q4_K_M
+    validations:
+      required: true
+
+  - type: input
+    id: hf_link
+    attributes:
+      label: GGUF Download URL
+      placeholder: https://huggingface.co/...
+    validations:
+      required: true
+
+  - type: input
+    id: min_ram
+    attributes:
+      label: Minimum RAM Requirement
+      placeholder: e.g. 4 GB
+    validations:
+      required: true
+
+  - type: textarea
+    id: justification
+    attributes:
+      label: Why Should This Be Added?
+      description: What makes this valuable for mobile on-device use?
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: Model is under an open-source or permissive license
+          required: true
+        - label: Tested and confirmed running on at least one Android device
+          required: true

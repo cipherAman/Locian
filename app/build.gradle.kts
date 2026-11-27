@@ -23,13 +23,35 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file(
+                System.getenv("KEYSTORE_PATH")
+                    ?: (project.findProperty("storeFile") as String? ?: "")
+            )
+            storePassword = System.getenv("KEYSTORE_PASSWORD")
+                ?: (project.findProperty("storePassword") as String? ?: "")
+            keyAlias = System.getenv("KEY_ALIAS")
+                ?: (project.findProperty("keyAlias") as String? ?: "")
+            keyPassword = System.getenv("KEY_PASSWORD")
+                ?: (project.findProperty("keyPassword") as String? ?: "")
+        }
+    }
+
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        debug {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+            isDebuggable = true
         }
     }
 

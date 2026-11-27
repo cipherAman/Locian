@@ -13,3 +13,28 @@ captures
 .ccache
 *.apk
 *.aab
+
+# Signing credentials — NEVER commit these
+*.keystore
+*.jks
+keystore.properties
+signing.properties
+
+# Google services (if added in future)
+google-services.json
+
+# NDK binary cache metadata
+*.so.meta_data
+
+# macOS
+.DS_Store
+
+# Linux editor swap files
+*.swp
+*~
+
+# Windows
+Thumbs.db
+
+# Kotlin scratch files
+*.kts.compiled

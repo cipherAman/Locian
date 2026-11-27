@@ -1,0 +1,39 @@
+complexity:
+  LongMethod:
+    threshold: 60          # Composables can be long
+  LongParameterList:
+    threshold: 8           # Hilt constructors can be large
+  CyclomaticComplexMethod:
+    threshold: 15
+  TooManyFunctions:
+    threshold: 20
+
+style:
+  MagicNumber:
+    active: false          # Too noisy for UI constants in Compose
+  UnusedImports:
+    active: true
+  UnusedPrivateMember:
+    active: true
+  ForbiddenComment:
+    active: false          # Allow TODO comments
+
+formatting:
+  MaxLineLength:
+    maxLineLength: 120
+
+naming:
+  FunctionNaming:
+    functionPattern: '[a-z][a-zA-Z0-9]*'
+    excludes: ['**/**.kt']
+    ignoreAnnotated: ['Composable']
+
+output-reports:
+  active: true
+
+build:
+  excludes:
+    - '**/build/**'
+    - '**/generated/**'
+    - '**/external/**'    # Exclude llama.cpp + cpu_features submodules
+    - '**/.gradle/**'

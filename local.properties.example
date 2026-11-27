@@ -1,0 +1,14 @@
+# Copy this file to: local.properties
+# local.properties is git-ignored and must NEVER be committed.
+
+# Required: Android SDK path
+sdk.dir=/path/to/your/Android/Sdk
+
+# Optional: Override JDK if JAVA_HOME is not set in your shell
+# org.gradle.java.home=/path/to/jdk17
+
+# Optional: Signing config for local release builds
+# storeFile=../locian-release.keystore
+# storePassword=your_store_password
+# keyAlias=locian
+# keyPassword=your_key_password
