@@ -4,7 +4,7 @@
 [![Native License](https://img.shields.io/badge/Native_License-MIT-green.svg?style=flat-square)](LICENSE-MIT)
 [![Open Source](https://img.shields.io/badge/Open_Source-OSI_Approved-brightgreen.svg?style=flat-square)](https://opensource.org)
 [![Android](https://img.shields.io/badge/Platform-Android_8.0%2B-3DDC84?style=flat-square&logo=android)](app/)
-[![CI](https://github.com/[owner]/Locian/actions/workflows/ci.yml/badge.svg)](https://github.com/[owner]/Locian/actions/workflows/ci.yml)
+[![CI](https://github.com/cipherAman/Locian/actions/workflows/ci.yml/badge.svg)](https://github.com/cipherAman/Locian/actions/workflows/ci.yml)
 [![Documentation](https://img.shields.io/badge/Documentation-User%20Guide-FA010E?style=flat-square&logo=github)](docs/guide.html)
 
 > **✅ True Open Source** — Locian is licensed under **Apache 2.0** (Kotlin) and **MIT**
@@ -52,7 +52,7 @@
 
 ```bash
 # 1. Clone with submodules (REQUIRED — llama.cpp is a submodule)
-git clone --recurse-submodules https://github.com/[owner]/Locian.git
+git clone --recurse-submodules https://github.com/cipherAman/Locian.git
 
 # 2. If you already cloned without submodules:
 git submodule update --init --recursive
@@ -189,4 +189,4 @@ Locian uses a dual-license model:
 
 See [LICENSE-DEPENDENCIES.md](LICENSE-DEPENDENCIES.md) for all third-party dependency licenses.
 
-> **⚠️ Note for maintainers:** Replace `[YEAR]` and `[COPYRIGHT HOLDER]` placeholders in `LICENSE`, `LICENSE-MIT`, `NOTICE`, and all source file headers before making the repository public.
+> **⚠️ Note for maintainers:** Replace `2026` and `Aman Kumar` placeholders in `LICENSE`, `LICENSE-MIT`, `NOTICE`, and all source file headers before making the repository public.

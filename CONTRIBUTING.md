@@ -40,7 +40,7 @@ git clone --recurse-submodules https://github.com/YOUR_USERNAME/Locian.git
 cd Locian
 
 # 2. Add upstream remote
-git remote add upstream https://github.com/[owner]/Locian.git
+git remote add upstream https://github.com/cipherAman/Locian.git
 
 # 3. Set up local.properties
 cp local.properties.example local.properties
